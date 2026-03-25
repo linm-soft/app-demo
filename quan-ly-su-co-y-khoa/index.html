@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quy Trình Quản Lý Sự Cố Y Khoa — TT43/2018/TT-BYT</title>
+  <style>
+    /* ─── Reset & Base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 15px; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f0f4f8;
+      color: #1e293b;
+      min-height: 100vh;
+      padding: 0 0 60px;
+    }
+
+    /* ─── Page Header ───────────────────────────────────────────── */
+    .page-header {
+      background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 50%, #2563eb 100%);
+      color: #fff;
+      padding: 36px 32px 28px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(30,64,175,.35);
+    }
+    .page-header .badge {
+      display: inline-block;
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: .75rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .page-header h1 {
+      font-size: 1.9rem;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      margin-bottom: 8px;
+    }
+    .page-header p {
+      font-size: .92rem;
+      opacity: .82;
+    }
+
+    /* ─── Section wrapper ───────────────────────────────────────── */
+    .section {
+      max-width: 1180px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #1e40af;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      margin-bottom: 24px;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(90deg, #3b82f6 0%, transparent 100%);
+      border-radius: 2px;
+    }
+
+    /* ─── Status Flow ────────────────────────────────────────────── */
+    .status-flow {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 16px rgba(0,0,0,.07);
+      padding: 28px 24px;
+      overflow: hidden;
+    }
+    .status-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      flex: 1;
+      min-width: 120px;
+      position: relative;
+      padding: 0 6px;
+    }
+    .status-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+    }
+    .status-circle.reported   { background: #fef3c7; color: #d97706; border: 3px solid #fbbf24; }
+    .status-circle.investigating { background: #dbeafe; color: #2563eb; border: 3px solid #60a5fa; }
+    .status-circle.handling   { background: #fce7f3; color: #db2777; border: 3px solid #f472b6; }
+    .status-circle.resolved   { background: #dcfce7; color: #16a34a; border: 3px solid #4ade80; }
+    .status-circle.closed     { background: #f1f5f9; color: #64748b; border: 3px solid #94a3b8; }
+    .status-label {
+      font-size: .78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .status-sub {
+      font-size: .7rem;
+      color: #64748b;
+      margin-top: 3px;
+    }
+    .status-arrow {
+      font-size: 1.3rem;
+      color: #94a3b8;
+      flex-shrink: 0;
+      padding: 0 2px;
+      align-self: center;
+      margin-bottom: 24px;
+    }
+
+    /* ─── Main Lifecycle Flow ────────────────────────────────────── */
+    .lifecycle-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 16px rgba(0,0,0,.07);
+      overflow: hidden;
+    }
+
+    /* ─── Step Card ─────────────────────────────────────────────── */
+    .step-card {
+      display: grid;
+      grid-template-columns: 72px 4px 1fr;
+      gap: 0;
+      position: relative;
+    }
+    .step-card:last-child .step-line { background: transparent; }
+
+    /* Number column */
+    .step-num-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 0;
+    }
+    .step-num {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 3px 10px rgba(0,0,0,.18);
+    }
+
+    /* Vertical line */
+    .step-line {
+      width: 3px;
+      background: #e2e8f0;
+      flex: 1;
+      margin-top: 68px;
+      margin-left: 34px;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 34px;
+      width: 3px;
+      z-index: 0;
+    }
+    .step-card:last-child .step-line { background: transparent; }
+
+    /* Content column */
+    .step-content {
+      padding: 22px 24px 22px 16px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .step-card:last-child .step-content { border-bottom: none; }
+
+    .step-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .step-title {
+      font-size: 1rem;
+      font-weight: 700;
+      flex: 1;
+      min-width: 180px;
+    }
+    .step-actor-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: .72rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .actor-staff   { background: #dbeafe; color: #1d4ed8; }
+    .actor-manager { background: #f3e8ff; color: #7e22ce; }
+    .actor-system  { background: #f0fdf4; color: #15803d; }
+    .actor-admin   { background: #fff7ed; color: #c2410c; }
+
+    .step-desc {
+      font-size: .86rem;
+      color: #475569;
+      line-height: 1.65;
+      margin-bottom: 14px;
+    }
+
+    /* Sub-items */
+    .step-items {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 10px 12px;
+      border-left: 3px solid;
+      font-size: .82rem;
+    }
+    .step-item-icon { font-size: 1rem; flex-shrink: 0; }
+    .step-item-text { color: #374151; line-height: 1.5; }
+    .step-item-text strong { display: block; font-weight: 600; margin-bottom: 2px; color: #1e293b; }
+
+    /* ─── Colour palette per step ────────────────────────────────── */
+    .c-yellow  { background: #d97706; }
+    .c-blue    { background: #2563eb; }
+    .c-pink    { background: #db2777; }
+    .c-green   { background: #16a34a; }
+    .c-slate   { background: #475569; }
+    .c-indigo  { background: #4f46e5; }
+
+    .b-yellow  { border-color: #fbbf24; }
+    .b-blue    { border-color: #60a5fa; }
+    .b-pink    { border-color: #f472b6; }
+    .b-green   { border-color: #4ade80; }
+    .b-slate   { border-color: #94a3b8; }
+    .b-indigo  { border-color: #818cf8; }
+
+    /* ─── Detail Screen Tabs ─────────────────────────────────────── */
+    .tabs-showcase {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 16px rgba(0,0,0,.07);
+      overflow: hidden;
+    }
+    .tab-nav {
+      display: flex;
+      border-bottom: 2px solid #e2e8f0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tab-nav::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      padding: 14px 20px;
+      font-size: .82rem;
+      font-weight: 600;
+      color: #64748b;
+      white-space: nowrap;
+      cursor: default;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tab-btn.active {
+      color: #2563eb;
+      border-bottom-color: #2563eb;
+    }
+    .tab-body {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      padding: 24px;
+    }
+    .tab-feature-card {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid #e2e8f0;
+    }
+    .tab-feature-card .icon { font-size: 1.6rem; margin-bottom: 8px; }
+    .tab-feature-card h4 { font-size: .85rem; font-weight: 700; margin-bottom: 4px; color: #1e293b; }
+    .tab-feature-card p { font-size: .77rem; color: #64748b; line-height: 1.5; }
+
+    /* ─── Status Transition Table ────────────────────────────────── */
+    .transition-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .83rem;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(0,0,0,.07);
+    }
+    .transition-table th {
+      background: #1e40af;
+      color: #fff;
+      padding: 12px 16px;
+      text-align: left;
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+    }
+    .transition-table td {
+      padding: 11px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: middle;
+    }
+    .transition-table tr:last-child td { border-bottom: none; }
+    .transition-table tr:hover td { background: #f8fafc; }
+    .chip {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .03em;
+    }
+    .chip-yellow   { background:#fef3c7; color:#d97706; }
+    .chip-blue     { background:#dbeafe; color:#2563eb; }
+    .chip-pink     { background:#fce7f3; color:#db2777; }
+    .chip-green    { background:#dcfce7; color:#16a34a; }
+    .chip-slate    { background:#f1f5f9; color:#475569; }
+
+    /* ─── Architecture Diagram ───────────────────────────────────── */
+    .arch-diagram {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 16px rgba(0,0,0,.07);
+      padding: 32px 28px;
+      font-size: .82rem;
+    }
+    .arch-layers {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .arch-layer {
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .arch-layer-icon { font-size: 1.6rem; flex-shrink: 0; }
+    .arch-layer-info h4 { font-size: .88rem; font-weight: 700; margin-bottom: 3px; }
+    .arch-layer-info p  { font-size: .78rem; color: #64748b; }
+    .al-mobile  { background: #eff6ff; border: 1px solid #bfdbfe; }
+    .al-bff     { background: #faf5ff; border: 1px solid #e9d5ff; }
+    .al-service { background: #f0fdf4; border: 1px solid #bbf7d0; }
+    .al-db      { background: #fff7ed; border: 1px solid #fed7aa; }
+    .al-mqtt    { background: #fef2f2; border: 1px solid #fecaca; }
+    .al-fcm     { background: #fffbeb; border: 1px solid #fde68a; }
+
+    .arch-connector {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #94a3b8;
+      margin: 2px 0;
+      letter-spacing: .05em;
+    }
+
+    /* ─── Legend ─────────────────────────────────────────────────── */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      padding: 20px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px rgba(0,0,0,.07);
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: .78rem;
+      color: #475569;
+    }
+    .legend-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ─── TT43 Compliance ────────────────────────────────────────── */
+    .compliance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .compliance-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.07);
+      padding: 18px;
+      border-top: 4px solid;
+      position: relative;
+    }
+    .compliance-card.done  { border-top-color: #16a34a; }
+    .compliance-card.todo  { border-top-color: #dc2626; }
+    .compliance-card.wip   { border-top-color: #d97706; }
+    .compliance-card h4    { font-size: .85rem; font-weight: 700; margin-bottom: 6px; }
+    .compliance-card p     { font-size: .77rem; color: #64748b; line-height: 1.5; }
+    .compliance-status {
+      position: absolute;
+      top: 12px; right: 12px;
+      font-size: .7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+    .cs-done { background: #dcfce7; color: #16a34a; }
+    .cs-todo { background: #fee2e2; color: #dc2626; }
+    .cs-wip  { background: #fef3c7; color: #d97706; }
+
+    /* ─── Footer ─────────────────────────────────────────────────── */
+    .footer {
+      text-align: center;
+      padding: 32px;
+      font-size: .78rem;
+      color: #94a3b8;
+      border-top: 1px solid #e2e8f0;
+      margin-top: 48px;
+    }
+
+    /* ─── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 700px) {
+      .status-flow { padding: 20px 12px; }
+      .status-arrow { font-size: 1rem; }
+      .step-card { grid-template-columns: 52px 4px 1fr; }
+      .tab-body { grid-template-columns: 1fr 1fr; }
+      .page-header h1 { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════ PAGE HEADER -->
+<div class="page-header">
+  <div class="badge">TT43/2018/TT-BYT · Hệ Thống Quản Lý Sự Cố Y Khoa</div>
+  <h1>🏥 Quy Trình Quản Lý Sự Cố Y Khoa</h1>
+  <p style="margin-top:6px;font-size:.8rem;opacity:.65">iOS · Android · Backend · TT43 Compliance · MQTT Real-time</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ SECTION 1 — STATUS FLOW -->
+<div class="section">
+  <div class="section-title">1 — Vòng Đời Trạng Thái (Status Lifecycle)</div>
+
+  <div class="status-flow">
+    <div class="status-node">
+      <div class="status-circle reported">📝</div>
+      <div class="status-label" style="color:#d97706">REPORTED</div>
+      <div class="status-sub">Đã báo cáo</div>
+      <div class="status-sub" style="margin-top:6px;font-size:.65rem;background:#fef3c7;padding:2px 8px;border-radius:8px">Status = 1</div>
+    </div>
+
+    <div class="status-arrow">▶</div>
+
+    <div class="status-node">
+      <div class="status-circle investigating">🔍</div>
+      <div class="status-label" style="color:#2563eb">INVESTIGATING</div>
+      <div class="status-sub">Đang điều tra</div>
+      <div class="status-sub" style="margin-top:6px;font-size:.65rem;background:#dbeafe;padding:2px 8px;border-radius:8px">Status = 2</div>
+    </div>
+
+    <div class="status-arrow">▶</div>
+
+    <div class="status-node">
+      <div class="status-circle handling">⚙️</div>
+      <div class="status-label" style="color:#db2777">HANDLING</div>
+      <div class="status-sub">Đang xử lý</div>
+      <div class="status-sub" style="margin-top:6px;font-size:.65rem;background:#fce7f3;padding:2px 8px;border-radius:8px">Status = 3</div>
+    </div>
+
+    <div class="status-arrow">▶</div>
+
+    <div class="status-node">
+      <div class="status-circle resolved">✅</div>
+      <div class="status-label" style="color:#16a34a">RESOLVED</div>
+      <div class="status-sub">Đã giải quyết</div>
+      <div class="status-sub" style="margin-top:6px;font-size:.65rem;background:#dcfce7;padding:2px 8px;border-radius:8px">Status = 4</div>
+    </div>
+
+    <div class="status-arrow">▶</div>
+
+    <div class="status-node">
+      <div class="status-circle closed">🔒</div>
+      <div class="status-label" style="color:#475569">CLOSED</div>
+      <div class="status-sub">Đã đóng</div>
+      <div class="status-sub" style="margin-top:6px;font-size:.65rem;background:#f1f5f9;padding:2px 8px;border-radius:8px">Status = 5</div>
+    </div>
+  </div>
+
+  <!-- Transition note -->
+  <div style="margin-top:12px;padding:12px 16px;background:#eff6ff;border-radius:10px;border-left:4px solid #3b82f6;font-size:.8rem;color:#1e40af">
+    ⚠️ <strong>Lưu ý:</strong> Trạng thái chỉ được chuyển theo chiều tiến (không lùi). Mỗi lần chuyển trạng thái tự động ghi nhận vào <code>IncidentStatusHistory</code> và gửi MQTT message hệ thống.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ SECTION 2 — MAIN WORKFLOW -->
+<div class="section">
+  <div class="section-title">2 — Quy Trình Chi Tiết (End-to-End Workflow)</div>
+
+  <div class="lifecycle-flow">
+
+    <!-- Step 1 -->
+    <div class="step-card">
+      <div class="step-line"></div>
+      <div class="step-num-col">
+        <div class="step-num c-yellow">1</div>
+      </div>
+      <div style="width:4px"></div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title">📝 Phát Hiện & Tạo Báo Cáo Sự Cố</div>
+          <span class="step-actor-badge actor-staff">👤 Nhân viên y tế</span>
+        </div>
+        <div class="step-desc">
+          Khi nhân viên y tế phát hiện sự cố (té ngã, sai thuốc, nhiễm khuẩn...),
+          họ mở ứng dụng Staff và tạo ticket báo cáo ngay lập tức.
+          Theo TT43/2018, báo cáo phải được thực hiện trong thời gian sớm nhất có thể.
+        </div>
+        <div class="step-items">
+          <div class="step-item b-yellow">
+            <div class="step-item-icon">📱</div>
+            <div class="step-item-text">
+              <strong>Điền form tạo sự cố (CreateMedicalIncidentView)</strong>
+              Tiêu đề · Mô tả · Loại sự cố (8 types) · Mức độ nghiêm trọng · Vị trí · Khoa/phòng · Bệnh nhân liên quan · Thời gian xảy ra
+            </div>
+          </div>
+          <div class="step-item b-yellow">
+            <div class="step-item-icon">📋</div>
+            <div class="step-item-text">
+              <strong>Phân loại báo cáo (TT43 Phụ lục III)</strong>
+              Hình thức: Tự nguyện / Bắt buộc · Đối tượng xảy ra · Tình trạng sự cố (Near-miss / Đã xảy ra)
+            </div>
+          </div>
+          <div class="step-item b-yellow">
+            <div class="step-item-icon">🔗</div>
+            <div class="step-item-text">
+              <strong>API: POST /api/v1/medical-incidents</strong>
+              Hệ thống tự tạo mã số sự cố (SI-2026-XXXX) · Trạng thái khởi tạo: REPORTED
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-card">
+      <div class="step-line"></div>
+      <div class="step-num-col">
+        <div class="step-num c-blue">2</div>
+      </div>
+      <div style="width:4px"></div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title">🔍 Tiếp Nhận & Điều Tra</div>
+          <span class="step-actor-badge actor-manager">👨‍⚕️ Trưởng khoa / Quản lý</span>
+          <span class="step-actor-badge actor-system">🤖 Hệ thống</span>
+        </div>
+        <div class="step-desc">
+          Sau khi ticket được tạo, quản lý tiếp nhận qua notification push (FCM) hoặc kiểm tra
+          danh sách sự cố. Chuyển trạng thái sang INVESTIGATING để bắt đầu điều tra nguyên nhân.
+        </div>
+        <div class="step-items">
+          <div class="step-item b-blue">
+            <div class="step-item-icon">🔔</div>
+            <div class="step-item-text">
+              <strong>FCM Notification Push</strong>
+              Hệ thống tự động gửi push notification đến quản lý khi có sự cố mới được báo cáo
+            </div>
+          </div>
+          <div class="step-item b-blue">
+            <div class="step-item-icon">💬</div>
+            <div class="step-item-text">
+              <strong>Chat nội bộ (MQTT Real-time)</strong>
+              Nhân viên &amp; quản lý trao đổi thông tin qua chat tab. MQTT EMQX đảm bảo độ trễ &lt;300ms
+            </div>
+          </div>
+          <div class="step-item b-blue">
+            <div class="step-item-icon">🔗</div>
+            <div class="step-item-text">
+              <strong>API: PUT /api/v1/medical-incidents/{id}/status</strong>
+              status: "INVESTIGATING" · note: ghi chú điều tra · assignedToId: phân công nhân viên
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step-card">
+      <div class="step-line"></div>
+      <div class="step-num-col">
+        <div class="step-num c-pink">3</div>
+      </div>
+      <div style="width:4px"></div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title">⚙️ Xử Lý Sự Cố</div>
+          <span class="step-actor-badge actor-staff">👤 Nhân viên được phân công</span>
+          <span class="step-actor-badge actor-manager">👨‍⚕️ Quản lý</span>
+        </div>
+        <div class="step-desc">
+          Nhân viên được phân công tiến hành xử lý sự cố, ghi biên bản xử lý (handling record)
+          cho từng bước can thiệp. Đây là phase chính của quy trình — có thể có nhiều biên bản.
+        </div>
+        <div class="step-items">
+          <div class="step-item b-pink">
+            <div class="step-item-icon">📄</div>
+            <div class="step-item-text">
+              <strong>Biên bản xử lý (Handling Records)</strong>
+              Hành động đã thực hiện · Kết quả · Hành động tiếp theo cần làm
+            </div>
+          </div>
+          <div class="step-item b-pink">
+            <div class="step-item-icon">📊</div>
+            <div class="step-item-text">
+              <strong>Phân tích sự cố (TT43 Phụ lục IV)</strong>
+              Điền 4 tabs: Mô tả chi tiết · 11 nhóm sự cố · 6 nhóm nguyên nhân · Đánh giá mức độ
+            </div>
+          </div>
+          <div class="step-item b-pink">
+            <div class="step-item-icon">🔗</div>
+            <div class="step-item-text">
+              <strong>API: POST /api/v1/medical-incidents/{id}/handling</strong>
+              actionTaken · outcome · nextAction
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step-card">
+      <div class="step-line"></div>
+      <div class="step-num-col">
+        <div class="step-num c-green">4</div>
+      </div>
+      <div style="width:4px"></div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title">✅ Giải Quyết Sự Cố</div>
+          <span class="step-actor-badge actor-manager">👨‍⚕️ Quản lý / Trưởng nhóm</span>
+        </div>
+        <div class="step-desc">
+          Sau khi sự cố được xử lý xong, quản lý hoặc trưởng nhóm chuyên gia đánh giá
+          kết quả và chuyển sang trạng thái RESOLVED. Ghi nhận kết quả cuối cùng và
+          khuyến cáo phòng ngừa.
+        </div>
+        <div class="step-items">
+          <div class="step-item b-green">
+            <div class="step-item-icon">🏷️</div>
+            <div class="step-item-text">
+              <strong>Đánh giá Trưởng nhóm chuyên gia (Phụ lục IV — Phần B)</strong>
+              Kết quả phát hiện · Đã thảo luận khuyến cáo · Mức độ tổn thương NC0-NC3
+            </div>
+          </div>
+          <div class="step-item b-green">
+            <div class="step-item-icon">📋</div>
+            <div class="step-item-text">
+              <strong>Đề xuất khuyến cáo phòng ngừa</strong>
+              Ghi nhận vào hệ thống để phòng tránh tái diễn trong tương lai
+            </div>
+          </div>
+          <div class="step-item b-green">
+            <div class="step-item-icon">🔗</div>
+            <div class="step-item-text">
+              <strong>API: PUT /api/v1/medical-incidents/{id}/status</strong>
+              status: "RESOLVED" · resolvedAt tự động được ghi nhận
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step-card">
+      <div class="step-num-col">
+        <div class="step-num c-slate">5</div>
+      </div>
+      <div style="width:4px"></div>
+      <div class="step-content" style="border-bottom:none">
+        <div class="step-header">
+          <div class="step-title">🔒 Đóng Ticket</div>
+          <span class="step-actor-badge actor-admin">🔑 Admin / Quản lý cấp cao</span>
+        </div>
+        <div class="step-desc">
+          Ticket được đóng sau khi toàn bộ quy trình hoàn tất và lưu trữ vĩnh viễn.
+          Trạng thái CLOSED là trạng thái cuối — không thể thay đổi.
+          Toàn bộ audit trail được lưu cho mục đích tuân thủ và báo cáo định kỳ.
+        </div>
+        <div class="step-items">
+          <div class="step-item b-slate">
+            <div class="step-item-icon">🗄️</div>
+            <div class="step-item-text">
+              <strong>Lưu trữ audit trail đầy đủ</strong>
+              Toàn bộ lịch sử trạng thái · biên bản xử lý · chat · phiếu phân tích được lưu giữ
+            </div>
+          </div>
+          <div class="step-item b-slate">
+            <div class="step-item-icon">📊</div>
+            <div class="step-item-text">
+              <strong>Đưa vào báo cáo định kỳ</strong>
+              Thống kê 6 tháng / hàng năm theo yêu cầu Thông tư 43
+            </div>
+          </div>
+          <div class="step-item b-slate">
+            <div class="step-item-icon">⚠️</div>
+            <div class="step-item-text">
+              <strong>Cảnh báo trước khi đóng</strong>
+              UI hiển thị modal xác nhận: "Sự cố sẽ được đóng và không thể thay đổi trạng thái sau này"
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /lifecycle-flow -->
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ SECTION 3 — SCREEN TABS -->
+<div class="section">
+  <div class="section-title">3 — Màn Hình Chi Tiết — 5 Tabs</div>
+
+  <div class="tabs-showcase">
+    <div class="tab-nav">
+      <div class="tab-btn active">ℹ️ Thông tin</div>
+      <div class="tab-btn">💬 Tin nhắn</div>
+      <div class="tab-btn">📄 Xử lý</div>
+      <div class="tab-btn">🕐 Lịch sử</div>
+      <div class="tab-btn">📊 Phân tích</div>
+    </div>
+    <div class="tab-body">
+      <div class="tab-feature-card">
+        <div class="icon">ℹ️</div>
+        <h4>Thông tin sự cố</h4>
+        <p>Mã số, tiêu đề, loại, mức độ nghiêm trọng, địa điểm, bệnh nhân, người báo cáo. Nút cập nhật trạng thái.</p>
+      </div>
+      <div class="tab-feature-card">
+        <div class="icon">💬</div>
+        <h4>Chat nội bộ</h4>
+        <p>Real-time qua MQTT/EMQX. Message bubble phân biệt Own/Other. FCM khi background.</p>
+      </div>
+      <div class="tab-feature-card">
+        <div class="icon">📄</div>
+        <h4>Biên bản xử lý</h4>
+        <p>Danh sách Handling Records. Thêm biên bản mới (disabled khi CLOSED). ActionTaken · Outcome · NextAction.</p>
+      </div>
+      <div class="tab-feature-card">
+        <div class="icon">🕐</div>
+        <h4>Lịch sử trạng thái</h4>
+        <p>Audit trail đầy đủ: mỗi lần đổi trạng thái ghi từ→đến, người thực hiện, thời gian, ghi chú.</p>
+      </div>
+      <div class="tab-feature-card">
+        <div class="icon">📊</div>
+        <h4>Phân tích TT43</h4>
+        <p>Phụ lục IV — 4 sub-tabs: Mô tả · 11 Nhóm SC · 6 Nguyên nhân · Đánh giá B. Save riêng biệt.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ SECTION 4 — STATUS TRANSITIONS -->
+<div class="section">
+  <div class="section-title">4 — Bảng Chuyển Đổi Trạng Thái</div>
+
+  <table class="transition-table">
+    <thead>
+      <tr>
+        <th>Từ trạng thái</th>
+        <th>Sang trạng thái</th>
+        <th>Người thực hiện</th>
+        <th>Điều kiện</th>
+        <th>Hệ thống tự động</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Tạo mới</td>
+        <td><span class="chip chip-yellow">REPORTED</span></td>
+        <td>Nhân viên y tế</td>
+        <td>Điền đủ thông tin bắt buộc</td>
+        <td>Tạo mã SI-YYYY-XXXX · Ghi reportedAt</td>
+      </tr>
+      <tr>
+        <td><span class="chip chip-yellow">REPORTED</span></td>
+        <td><span class="chip chip-blue">INVESTIGATING</span></td>
+        <td>Quản lý / Trưởng khoa</td>
+        <td>Đã tiếp nhận và bắt đầu điều tra</td>
+        <td>Gửi MQTT status event · FCM notify</td>
+      </tr>
+      <tr>
+        <td><span class="chip chip-blue">INVESTIGATING</span></td>
+        <td><span class="chip chip-pink">HANDLING</span></td>
+        <td>Nhân viên được phân công</td>
+        <td>Xác định được nguyên nhân, bắt đầu xử lý</td>
+        <td>Ghi assignedToId nếu có · MQTT event</td>
+      </tr>
+      <tr>
+        <td><span class="chip chip-pink">HANDLING</span></td>
+        <td><span class="chip chip-green">RESOLVED</span></td>
+        <td>Quản lý / Trưởng nhóm</td>
+        <td>Sự cố đã được xử lý xong</td>
+        <td>Ghi resolvedAt · MQTT event · FCM notify</td>
+      </tr>
+      <tr>
+        <td><span class="chip chip-green">RESOLVED</span></td>
+        <td><span class="chip chip-slate">CLOSED</span></td>
+        <td>Admin / Quản lý cấp cao</td>
+        <td>Hoàn tất quy trình, phiếu phân tích đầy đủ</td>
+        <td>Ghi closedAt · Vô hiệu hóa mọi thay đổi</td>
+      </tr>
+      <tr>
+        <td><span class="chip chip-yellow">REPORTED</span></td>
+        <td><span class="chip chip-pink">HANDLING</span></td>
+        <td>Quản lý (fast-track)</td>
+        <td>Sự cố nghiêm trọng cần xử lý ngay</td>
+        <td>Bỏ qua bước INVESTIGATING · Log đặc biệt</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ SECTION 5 — ARCHITECTURE -->
+<div class="section">
+  <div class="section-title">5 — Kiến Trúc Hệ Thống</div>
+
+  <div class="arch-diagram">
+    <div class="arch-layers">
+
+      <div class="arch-layer al-mobile">
+        <div class="arch-layer-icon">📱</div>
+        <div class="arch-layer-info">
+          <h4>Mobile App (iOS SwiftUI · Android Kotlin/Compose)</h4>
+          <p>MVVM · Repository pattern · Factory DI · MqttManager subscribe: <code>incident/{id}/messages</code> · <code>incident/{id}/status</code></p>
+        </div>
+      </div>
+
+      <div class="arch-connector">⬇ REST API (Create / Update) &nbsp;·&nbsp; ⬆ MQTT Subscribe (Real-time)</div>
+
+      <div class="arch-layer al-bff">
+        <div class="arch-layer-icon">🌐</div>
+        <div class="arch-layer-info">
+          <h4>BFF Gateway — MedicalIncidentsController</h4>
+          <p>Route: <code>mobile-bff/api/v1/medical-incidents</code> · Proxy đến MedicalIncidentService · Phát MQTT · Trigger FCM</p>
+        </div>
+      </div>
+
+      <div class="arch-connector">⬇ HTTP Internal</div>
+
+      <div class="arch-layer al-service">
+        <div class="arch-layer-icon">⚙️</div>
+        <div class="arch-layer-info">
+          <h4>MedicalIncidentService (.NET Microservice)</h4>
+          <p>Business logic · EF Core → PostgreSQL · Ghi StatusHistory khi đổi trạng thái · Ghi IncidentAnalysis · REST API Internal</p>
+        </div>
+      </div>
+
+      <div class="arch-connector">⬇ EF Core</div>
+
+      <div class="arch-layer al-db">
+        <div class="arch-layer-icon">🗄️</div>
+        <div class="arch-layer-info">
+          <h4>PostgreSQL — medical_incident_db</h4>
+          <p>MedicalIncidents · IncidentMessages · IncidentStatusHistory · IncidentHandlingRecords · IncidentAnalysis</p>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px">
+        <div>
+          <div class="arch-connector" style="text-align:left;padding-left:8px">↕ MQTT Publish (BFF → EMQX)</div>
+          <div class="arch-layer al-mqtt">
+            <div class="arch-layer-icon">📡</div>
+            <div class="arch-layer-info">
+              <h4>EMQX Broker</h4>
+              <p>Topics: <code>incident/{id}/messages</code> · <code>incident/{id}/status</code> · Latency &lt;300ms</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="arch-connector" style="text-align:left;padding-left:8px">↕ FCM Push (Background)</div>
+          <div class="arch-layer al-fcm">
+            <div class="arch-layer-icon">🔔</div>
+            <div class="arch-layer-info">
+              <h4>FCM / APNs</h4>
+              <p>Push khi app background/closed · Click notification → navigate đến incident chat · Delivery &lt;10s</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ SECTION 6 — TT43 COMPLIANCE -->
+<div class="section">
+  <div class="section-title">6 — Trạng Thái Tuân Thủ TT43/2018/TT-BYT</div>
+
+  <div class="compliance-grid">
+    <div class="compliance-card done">
+      <span class="compliance-status cs-done">✅ Implemented</span>
+      <h4>Phụ lục III — Mẫu báo cáo cơ bản</h4>
+      <p>Mã số sự cố · Ngày báo cáo · Tên bệnh nhân · Khoa/phòng · Địa điểm · Thời gian · Mô tả · Người báo cáo</p>
+    </div>
+    <div class="compliance-card done">
+      <span class="compliance-status cs-done">✅ Implemented</span>
+      <h4>Vòng đời & Audit Trail</h4>
+      <p>5 trạng thái REPORTED→CLOSED · IncidentStatusHistory đầy đủ · Ghi nhận thời gian mỗi bước</p>
+    </div>
+    <div class="compliance-card done">
+      <span class="compliance-status cs-done">✅ Implemented</span>
+      <h4>Phụ lục IV — Phần A (Nhân viên)</h4>
+      <p>Mô tả chi tiết · 11 nhóm sự cố · 6 nhóm nguyên nhân · Khắc phục · Khuyến cáo phòng ngừa</p>
+    </div>
+    <div class="compliance-card done">
+      <span class="compliance-status cs-done">✅ Implemented</span>
+      <h4>Phụ lục IV — Phần B (Quản lý)</h4>
+      <p>Đánh giá trưởng nhóm · Mức độ tổn thương NC0-NC3 · Mã A-I · Tác động tổ chức (7 loại)</p>
+    </div>
+    <div class="compliance-card wip">
+      <span class="compliance-status cs-wip">🔄 Phase 2</span>
+      <h4>Phụ lục III — Bổ sung thông tin BN</h4>
+      <p>Số bệnh án · Ngày sinh · Giới tính · SĐT người báo cáo · Người chứng kiến · Thông báo bác sĩ</p>
+    </div>
+    <div class="compliance-card wip">
+      <span class="compliance-status cs-wip">🔄 Phase 2</span>
+      <h4>Phân quyền theo vai trò</h4>
+      <p>Phần A chỉ nhân viên chuyên trách · Phần B chỉ quản lý/admin · Hiện tại cả 2 phần mở cho mọi người</p>
+    </div>
+    <div class="compliance-card todo">
+      <span class="compliance-status cs-todo">❌ Chưa có</span>
+      <h4>Xuất báo cáo PDF</h4>
+      <p>Xuất Phụ lục III và IV dạng PDF chuẩn Bộ Y tế · Đóng dấu điện tử</p>
+    </div>
+    <div class="compliance-card todo">
+      <span class="compliance-status cs-todo">❌ Chưa có</span>
+      <h4>Thống kê & Dashboard</h4>
+      <p>Tổng hợp báo cáo 6 tháng / năm · Thống kê tần suất theo loại · Xu hướng và cảnh báo</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ SECTION 7 — INCIDENT TYPES -->
+<div class="section">
+  <div class="section-title">7 — Phân Loại Sự Cố & Mức Độ</div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+    <!-- Incident Types -->
+    <div style="background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.07)">
+      <h3 style="font-size:.88rem;font-weight:700;margin-bottom:14px;color:#1e40af">Loại Sự Cố (IncidentType)</h3>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:.8rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:#f8fafc;border-radius:8px">
+          <span>💊 Sai thuốc</span><code style="color:#6366f1">MEDICATION_ERROR</code>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:#f8fafc;border-radius:8px">
+          <span>🤕 Bệnh nhân té ngã</span><code style="color:#6366f1">PATIENT_FALL</code>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:#f8fafc;border-radius:8px">
+          <span>🔪 Biến chứng phẫu thuật</span><code style="color:#6366f1">SURGICAL_COMPLICATION</code>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:#f8fafc;border-radius:8px">
+          <span>🔧 Thiết bị hỏng</span><code style="color:#6366f1">EQUIPMENT_FAILURE</code>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:#f8fafc;border-radius:8px">
+          <span>🦠 Nhiễm khuẩn</span><code style="color:#6366f1">INFECTION</code>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:#f8fafc;border-radius:8px">
+          <span>📋 Nhầm quy trình</span><code style="color:#6366f1">WRONG_PROCEDURE</code>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:#f8fafc;border-radius:8px">
+          <span>🔬 Sai chẩn đoán</span><code style="color:#6366f1">DIAGNOSTIC_ERROR</code>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:#f8fafc;border-radius:8px">
+          <span>❓ Khác</span><code style="color:#6366f1">OTHER (99)</code>
+        </div>
+      </div>
+    </div>
+
+    <!-- Severity -->
+    <div style="background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.07)">
+      <h3 style="font-size:.88rem;font-weight:700;margin-bottom:14px;color:#1e40af">Mức Độ Nghiêm Trọng (IncidentSeverity)</h3>
+      <div style="display:flex;flex-direction:column;gap:10px;font-size:.82rem">
+        <div style="padding:12px;background:#f0fdf4;border-radius:10px;border-left:4px solid #4ade80">
+          <div style="font-weight:700;color:#16a34a">🟢 MINOR — Nhẹ</div>
+          <div style="color:#64748b;margin-top:4px">Không ảnh hưởng lâm sàng. Xử lý tại chỗ.</div>
+        </div>
+        <div style="padding:12px;background:#fffbeb;border-radius:10px;border-left:4px solid #fbbf24">
+          <div style="font-weight:700;color:#d97706">🟡 MODERATE — Trung bình</div>
+          <div style="color:#64748b;margin-top:4px">Cần theo dõi và can thiệp nhẹ.</div>
+        </div>
+        <div style="padding:12px;background:#fff7ed;border-radius:10px;border-left:4px solid #fb923c">
+          <div style="font-weight:700;color:#ea580c">🟠 SERIOUS — Nghiêm trọng</div>
+          <div style="color:#64748b;margin-top:4px">Cần can thiệp y tế ngay. Báo cáo bắt buộc.</div>
+        </div>
+        <div style="padding:12px;background:#fef2f2;border-radius:10px;border-left:4px solid #f87171">
+          <div style="font-weight:700;color:#dc2626">🔴 CRITICAL — Nguy kịch</div>
+          <div style="color:#64748b;margin-top:4px">Đe dọa tính mạng. Báo cáo khẩn cấp trong 1 giờ.</div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;padding:10px;background:#f8fafc;border-radius:8px;font-size:.75rem;color:#475569">
+        ⚠️ <strong>TT43:</strong> CRITICAL bắt buộc báo cáo bằng điện thoại trước trong vòng 1 giờ kể từ khi phát hiện.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ LEGEND -->
+<div class="section">
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#d97706"></div> REPORTED</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#2563eb"></div> INVESTIGATING</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#db2777"></div> HANDLING</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div> RESOLVED</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#475569"></div> CLOSED</div>
+    <div style="width:1px;background:#e2e8f0;margin:0 6px"></div>
+    <div class="legend-item"><div class="legend-dot" style="background:#1d4ed8"></div> Actor: Staff</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#7e22ce"></div> Actor: Manager</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#15803d"></div> Actor: System</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#c2410c"></div> Actor: Admin</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ FOOTER -->
+<div class="footer">
+  <strong>Hệ Thống Quản Lý Sự Cố Y Khoa</strong> · Linm Hospital Source<br>
+  Tuân thủ Thông tư số 43/2018/TT-BYT ngày 26/12/2018 — Bộ Y Tế Việt Nam<br>
+  <span style="margin-top:4px;display:block">iOS (SwiftUI) · Android (Kotlin) · .NET Backend · EMQX MQTT · FCM/APNs</span>
+  <span style="margin-top:4px;display:block;font-size:.72rem">Generated: March 2026</span>
+</div>
+
+</body>
+</html>

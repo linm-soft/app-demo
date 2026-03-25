@@ -1,0 +1,1698 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Sự Cố Y Khoa - Interactive Mock-up</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container { max-width: 1600px; margin: 0 auto; }
+
+        h1 {
+            color: white; text-align: center; font-size: 28px;
+            margin-bottom: 30px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ===== NAV TABS ===== */
+        .nav-tabs {
+            display: flex; gap: 10px; margin-bottom: 30px;
+            justify-content: center; flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            background: white; color: #667eea; border: none;
+            padding: 12px 24px; border-radius: 8px; cursor: pointer;
+            font-size: 14px; font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            transition: all 0.2s ease;
+        }
+
+        .nav-tab:hover { transform: translateY(-2px); }
+        .nav-tab.active { background: #667eea; color: white; }
+
+        /* ===== SCREEN CONTAINER ===== */
+        .screen-container { display: none; }
+        .screen-container.active { display: block; }
+
+        .screens-grid {
+            display: flex; gap: 24px;
+            justify-content: center; flex-wrap: wrap;
+        }
+
+        /* ===== PHONE FRAME ===== */
+        .phone-frame {
+            width: 375px; background: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden; position: relative;
+        }
+
+        .phone-notch {
+            height: 30px; background: #1a1a1a;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+            width: 120px; margin: 0 auto;
+        }
+
+        .screen-label {
+            background: #667eea; color: white;
+            font-size: 11px; font-weight: 600;
+            padding: 8px 16px; text-align: center;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        .screen-content {
+            height: 667px; overflow-y: auto; background: #f5f5f7;
+        }
+
+        /* ===== APP HEADER ===== */
+        .app-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; padding: 16px;
+        }
+
+        .app-header h2 { font-size: 22px; margin-bottom: 8px; }
+        .app-header p { font-size: 13px; opacity: 0.9; }
+
+        /* ===== DETAIL HEADER (compact) ===== */
+        .detail-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; padding: 12px 16px;
+        }
+
+        .detail-header-top {
+            display: flex; align-items: center;
+            gap: 12px; margin-bottom: 8px;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none; color: white;
+            width: 32px; height: 32px; border-radius: 50%;
+            cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+
+        .detail-header h2 {
+            font-size: 17px; flex: 1; font-weight: 600;
+        }
+
+        .header-info {
+            display: flex; flex-direction: column; gap: 6px;
+        }
+
+        .header-title-row {
+            font-size: 14px; font-weight: 500; line-height: 1.3;
+        }
+
+        .header-chips {
+            display: flex; gap: 6px; flex-wrap: wrap;
+        }
+
+        .chip {
+            padding: 4px 10px; border-radius: 12px;
+            font-size: 11px; font-weight: 600;
+        }
+
+        .chip-status {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            color: white;
+        }
+
+        .chip-severity {
+            background: #ff3b30; color: white;
+        }
+
+        /* ===== TAB BAR (iOS style with icons) ===== */
+        .tab-bar {
+            display: flex; background: white;
+            border-bottom: 1px solid #ddd; overflow-x: auto;
+        }
+
+        .tab-bar-item {
+            flex: 1; padding: 8px 4px; text-align: center;
+            font-size: 10px; color: #8e8e93;
+            background: none; border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer; white-space: nowrap;
+            min-width: 70px; transition: all 0.2s ease;
+        }
+
+        .tab-bar-item.active {
+            color: #667eea; border-bottom-color: #667eea;
+        }
+
+        .tab-bar-icon {
+            display: block; font-size: 20px; margin-bottom: 2px;
+        }
+
+        /* ===== TAB CONTENT ===== */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* ===== INFO SECTIONS ===== */
+        .info-container { padding: 16px; }
+
+        .info-section {
+            background: white; border-radius: 12px;
+            padding: 16px; margin-bottom: 16px;
+        }
+
+        .info-section-title {
+            font-size: 15px; font-weight: 700;
+            color: #1a1a1a; margin-bottom: 12px;
+        }
+
+        .info-content {
+            background: #f5f5f7; border-radius: 10px; padding: 12px;
+        }
+
+        .info-row {
+            display: flex; margin-bottom: 6px;
+        }
+
+        .info-row:last-child { margin-bottom: 0; }
+
+        .info-label {
+            width: 130px; font-size: 13px;
+            color: #666; flex-shrink: 0;
+        }
+
+        .info-value {
+            font-size: 13px; color: #1a1a1a; flex: 1;
+        }
+
+        .info-multiline {
+            display: block; width: 100%;
+            margin-bottom: 4px;
+        }
+
+        /* ===== ACTION BUTTONS ===== */
+        .action-buttons {
+            padding: 16px; display: flex;
+            flex-direction: column; gap: 12px;
+        }
+
+        .btn-primary {
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; border-radius: 12px;
+            font-size: 15px; font-weight: 600; cursor: pointer;
+        }
+
+        .btn-secondary {
+            width: 100%; padding: 14px; background: white;
+            color: #667eea; border: 2px solid #667eea;
+            border-radius: 12px; font-size: 15px;
+            font-weight: 600; cursor: pointer;
+        }
+
+        /* ===== MODAL / SHEET OVERLAY ===== */
+        .modal-overlay {
+            display: none; position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9998; align-items: center;
+            justify-content: center; padding: 20px;
+        }
+
+        .modal-overlay.show { display: flex; }
+
+        .modal-sheet {
+            background: white;
+            border-radius: 12px 12px 0 0;
+            max-width: 500px; width: 100%;
+            max-height: 80vh; overflow-y: auto;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .sheet-header {
+            background: #f5f5f7; padding: 16px;
+            border-bottom: 1px solid #ddd;
+            display: flex; justify-content: space-between;
+            align-items: center; position: sticky;
+            top: 0; z-index: 10;
+        }
+
+        .sheet-title {
+            font-size: 17px; font-weight: 600;
+        }
+
+        .sheet-close {
+            background: none; border: none;
+            color: #667eea; font-size: 16px;
+            font-weight: 600; cursor: pointer;
+        }
+
+        .sheet-content { padding: 16px; }
+
+        .sheet-section { margin-bottom: 20px; }
+
+        .sheet-section-title {
+            font-size: 13px; font-weight: 600;
+            color: #666; margin-bottom: 8px;
+        }
+
+        .sheet-picker {
+            width: 100%; padding: 10px 12px;
+            border: 1px solid #ddd; border-radius: 8px;
+            font-size: 14px; background: white;
+        }
+
+        .sheet-textarea {
+            width: 100%; padding: 10px 12px;
+            border: 1px solid #ddd; border-radius: 8px;
+            font-size: 14px; min-height: 80px;
+            font-family: inherit; resize: vertical;
+        }
+
+        .sheet-warning {
+            background: #fff3e0; border: 1px solid #ffb74d;
+            border-radius: 8px; padding: 12px;
+            display: flex; align-items: flex-start; gap: 8px;
+        }
+
+        .sheet-warning-icon {
+            color: #f57c00; font-size: 18px; flex-shrink: 0;
+        }
+
+        .sheet-warning-text {
+            font-size: 12px; color: #e65100; line-height: 1.4;
+        }
+
+        .sheet-actions {
+            padding: 16px; border-top: 1px solid #eee;
+            display: flex; gap: 12px;
+        }
+
+        .sheet-btn {
+            flex: 1; padding: 12px; border-radius: 8px;
+            font-size: 15px; font-weight: 600;
+            cursor: pointer; border: none;
+        }
+
+        .sheet-btn-cancel {
+            background: #f5f5f7; color: #333;
+        }
+
+        .sheet-btn-confirm {
+            background: #667eea; color: white;
+        }
+
+        .sheet-btn:disabled {
+            opacity: 0.5; cursor: not-allowed;
+        }
+
+        /* ===== LIST VIEW ===== */
+        .list-container { padding: 16px; }
+
+        .incident-card {
+            background: white; border-radius: 12px;
+            padding: 16px; margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #ff3b30;
+            cursor: pointer; transition: transform 0.2s ease;
+        }
+
+        .incident-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex; justify-content: space-between;
+            align-items: flex-start; margin-bottom: 8px;
+        }
+
+        .card-number {
+            font-size: 12px; color: #667eea; font-weight: 600;
+        }
+
+        .severity-badge {
+            padding: 4px 10px; border-radius: 12px;
+            font-size: 11px; font-weight: 600;
+            color: white; background: #ff3b30;
+        }
+
+        .card-title {
+            font-size: 15px; font-weight: 600;
+            color: #1a1a1a; margin-bottom: 8px;
+        }
+
+        .card-meta {
+            display: flex; gap: 12px;
+            font-size: 12px; color: #666; margin-bottom: 8px;
+        }
+
+        .card-footer {
+            display: flex; justify-content: space-between;
+            align-items: center; padding-top: 8px;
+            border-top: 1px solid #eee;
+        }
+
+        .status-badge {
+            padding: 4px 10px; border-radius: 12px;
+            font-size: 11px; font-weight: 600;
+        }
+
+        .status-reported { background: #fff3cd; color: #856404; }
+        .status-investigating { background: #d1ecf1; color: #0c5460; }
+        .status-handling { background: #fff3cd; color: #856404; }
+        .status-resolved { background: #d4edda; color: #155724; }
+        .status-closed { background: #d6d8db; color: #383d41; }
+
+        .card-footer-right {
+            font-size: 11px; color: #999;
+        }
+
+        /* ===== HANDLING RECORD CARD ===== */
+        .handling-list { padding: 16px; }
+
+        .handling-record {
+            background: white; border-radius: 12px;
+            padding: 16px; margin-bottom: 12px;
+            border-left: 4px solid #ff3b90;
+        }
+
+        .record-header {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 12px;
+            padding-bottom: 8px; border-bottom: 1px solid #eee;
+        }
+
+        .record-author {
+            font-size: 13px; font-weight: 600;
+            color: #1a1a1a; display: flex;
+            align-items: center; gap: 4px;
+        }
+
+        .record-date {
+            font-size: 11px; color: #999;
+        }
+
+        .record-section { margin-bottom: 10px; }
+        .record-section:last-child { margin-bottom: 0; }
+
+        .record-label {
+            font-size: 10px; font-weight: 700;
+            color: #ff3b90; text-transform: uppercase;
+            letter-spacing: 0.5px; margin-bottom: 4px;
+            display: flex; align-items: center; gap: 4px;
+        }
+
+        .record-text {
+            font-size: 13px; color: #333; line-height: 1.4;
+        }
+
+        /* ===== HISTORY TIMELINE ===== */
+        .history-list { padding: 16px; }
+
+        .history-item {
+            background: white; border-radius: 12px;
+            padding: 16px; margin-bottom: 12px;
+        }
+
+        .history-transition {
+            display: flex; align-items: center;
+            gap: 8px; margin-bottom: 8px;
+        }
+
+        .history-arrow {
+            color: #999; font-size: 12px;
+        }
+
+        .history-meta {
+            display: flex; justify-content: space-between;
+            align-items: center; font-size: 13px; color: #666;
+        }
+
+        .history-author {
+            display: flex; align-items: center;
+            gap: 4px; font-weight: 600;
+        }
+
+        .history-time {
+            font-size: 11px; color: #999;
+        }
+
+        .history-note {
+            margin-top: 8px; padding-top: 8px;
+            border-top: 1px solid #eee; font-size: 12px;
+            color: #666; font-style: italic;
+        }
+
+        /* ===== CHAT STYLES ===== */
+        .chat-container {
+            display: flex; flex-direction: column; height: 100%;
+        }
+
+        .mqtt-indicator {
+            background: #f5f5f7; padding: 8px 16px;
+            display: flex; align-items: center;
+            gap: 6px; border-bottom: 1px solid #ddd;
+        }
+
+        .mqtt-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%; background: #4caf50;
+        }
+
+        .mqtt-text {
+            font-size: 11px; color: #666;
+        }
+
+        .chat-messages {
+            flex: 1; padding: 16px; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 12px;
+        }
+
+        .message-bubble {
+            max-width: 75%; padding: 10px 14px;
+            border-radius: 16px; font-size: 14px; line-height: 1.4;
+        }
+
+        .message-own {
+            background: #667eea; color: white;
+            align-self: flex-end; border-bottom-right-radius: 4px;
+        }
+
+        .message-other {
+            background: #e5e5ea; color: #000;
+            align-self: flex-start; border-bottom-left-radius: 4px;
+        }
+
+        .message-system {
+            background: #f5f5f7; color: #666;
+            align-self: center; max-width: 80%;
+            text-align: center; font-size: 12px;
+            font-style: italic; border-radius: 12px;
+        }
+
+        .message-sender {
+            font-size: 11px; color: #666;
+            margin-bottom: 2px; font-weight: 600;
+        }
+
+        .chat-input-bar {
+            padding: 12px 16px; background: white;
+            border-top: 1px solid #ddd; display: flex;
+            gap: 10px; align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1; padding: 8px 12px;
+            border: 1px solid #ddd; border-radius: 20px;
+            font-size: 14px; font-family: inherit;
+            resize: none; max-height: 80px;
+        }
+
+        .chat-send-btn {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: #667eea; color: white; border: none;
+            cursor: pointer; font-size: 18px; display: flex;
+            align-items: center; justify-content: center;
+        }
+
+        /* ===== ANALYSIS TAB STYLES ===== */
+        .analysis-container {
+            height: 100%; display: flex; flex-direction: column;
+        }
+
+        .analysis-tab-bar {
+            display: flex; background: white;
+            border-bottom: 1px solid #ddd; overflow-x: auto;
+        }
+
+        .analysis-tab {
+            flex: 1; padding: 12px 8px; text-align: center;
+            font-size: 12px; font-weight: 600; color: #666;
+            background: none; border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer; white-space: nowrap; min-width: 90px;
+        }
+
+        .analysis-tab.active {
+            color: #667eea; border-bottom-color: #667eea;
+        }
+
+        .analysis-content {
+            flex: 1; overflow-y: auto; padding: 16px;
+        }
+
+        .analysis-content-tab {
+            display: none;
+        }
+
+        .analysis-content-tab.active {
+            display: block;
+        }
+
+        .analysis-section {
+            background: white; border-radius: 12px;
+            padding: 16px; margin-bottom: 16px;
+        }
+
+        .analysis-section-header {
+            font-size: 14px; font-weight: 700;
+            color: #1a1a1a; margin-bottom: 12px;
+        }
+
+        .checkbox-row {
+            display: flex; align-items: flex-start;
+            gap: 8px; padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .checkbox-row:last-child {
+            border-bottom: none;
+        }
+
+        .checkbox-icon {
+            color: #667eea; font-size: 18px; flex-shrink: 0;
+        }
+
+        .checkbox-label {
+            font-size: 13px; color: #333; line-height: 1.4;
+        }
+
+        .analysis-save-bar {
+            padding: 12px 16px; background: white;
+            border-top: 1px solid #ddd;
+        }
+
+        @media (max-width: 768px) {
+            .screens-grid {
+                flex-direction: column; align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 Quản Lý Sự Cố Y Khoa - Interactive Mock-up</h1>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showNav('list')">📋 Danh Sách</button>
+            <button class="nav-tab" onclick="showNav('create')">➕ Tạo Mới</button>
+            <button class="nav-tab" onclick="showNav('detail')">🔍 Chi Tiết (5 Tabs)</button>
+        </div>
+
+        <!-- ===== LIST SCREEN ===== -->
+        <div id="screen-list" class="screen-container active">
+            <div class="screens-grid">
+                <div class="phone-frame">
+                    <div class="phone-notch"></div>
+                    <div class="screen-label">IOS — Danh Sách Sự Cố</div>
+                    <div class="screen-content">
+                        <div class="app-header">
+                            <h2>Sự Cố Y Khoa</h2>
+                            <p>Quản lý và theo dõi sự cố bệnh viện</p>
+                        </div>
+                        <div class="list-container">
+                            <!-- Card 1 -->
+                            <div class="incident-card">
+                                <div class="card-header">
+                                    <div class="card-number">SI-2026-0012</div>
+                                    <div class="severity-badge">Nguy kịch</div>
+                                </div>
+                                <div class="card-title">
+                                    Truyền nhầm máu cho bệnh nhân ICU
+                                </div>
+                                <div class="card-meta">
+                                    <span>🏥 ICU</span>
+                                    <span>📍 Tầng 3</span>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="status-badge status-handling">Đang xử lý</div>
+                                    <div class="card-footer-right">
+                                        BS.Nguyễn Văn A • 2h trước
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card 2 -->
+                            <div class="incident-card">
+                                <div class="card-header">
+                                    <div class="card-number">SI-2026-0011</div>
+                                    <div class="severity-badge">Nghiêm trọng</div>
+                                </div>
+                                <div class="card-title">
+                                    Bệnh nhân ngã trong phòng tắm
+                                </div>
+                                <div class="card-meta">
+                                    <span>🏥 Nội khoa</span>
+                                    <span>📍 Phòng 205</span>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="status-badge status-resolved">Đã giải quyết</div>
+                                    <div class="card-footer-right">
+                                        ĐD.Trần Thị B • 1 ngày trước
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card 3 -->
+                            <div class="incident-card">
+                                <div class="card-header">
+                                    <div class="card-number">SI-2026-0010</div>
+                                    <div class="severity-badge">Trung bình</div>
+                                </div>
+                                <div class="card-title">
+                                    Thiết bị y tế bị hỏng trong ca mổ
+                                </div>
+                                <div class="card-meta">
+                                    <span>🏥 Phòng mổ</span>
+                                    <span>📍 Tầng 5</span>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="status-badge status-investigating">Đang điều tra</div>
+                                    <div class="card-footer-right">
+                                        BS.Lê Văn C • 3 ngày trước
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== CREATE SCREEN ===== -->
+        <div id="screen-create" class="screen-container">
+            <div class="screens-grid">
+                <div class="phone-frame">
+                    <div class="phone-notch"></div>
+                    <div class="screen-label">IOS — Tạo Sự Cố Mới</div>
+                    <div class="screen-content">
+                        <div class="app-header">
+                            <h2>Tạo sự cố mới</h2>
+                        </div>
+                        <div style="padding:16px; display:flex; flex-direction:column; gap:20px;">
+                            <!-- Section 1: Tiêu đề -->
+                            <div class="info-section">
+                                <div class="info-section-title">Tiêu đề *</div>
+                                <input type="text" placeholder="Nhập tiêu đề sự cố" 
+                                    style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:14px;">
+                            </div>
+
+                            <!-- Section 2: Mô tả chi tiết -->
+                            <div class="info-section">
+                                <div class="info-section-title">Mô tả chi tiết *</div>
+                                <textarea placeholder="Nhập mô tả chi tiết về sự cố..." 
+                                    style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; min-height:100px; font-size:14px; font-family:inherit;"></textarea>
+                            </div>
+
+                            <!-- Section 3: Loại sự cố -->
+                            <div class="info-section">
+                                <div class="info-section-title">Loại sự cố *</div>
+                                <select style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:14px;">
+                                    <option value="">Chọn loại sự cố...</option>
+                                    <option value="technical">Kỹ thuật / Thủ thuật chuyên môn</option>
+                                    <option value="infection">Nhiễm khuẩn bệnh viện</option>
+                                    <option value="drug">Thuốc và dịch truyền</option>
+                                    <option value="blood">Máu và chế phẩm máu</option>
+                                    <option value="equipment">Trang thiết bị y tế</option>
+                                    <option value="behavior">Hành vi</option>
+                                    <option value="accident">Tai nạn đối với người bệnh</option>
+                                    <option value="infrastructure">Cơ sở vật chất / Hạ tầng</option>
+                                    <option value="resource">Quản lý nguồn lực / Tổ chức</option>
+                                    <option value="admin">Hồ sơ / Hành chính</option>
+                                    <option value="other">Khác</option>
+                                </select>
+                                <div style="font-size:12px; color:#ef4444; margin-top:4px; display:none;" id="incident-type-error">
+                                    Vui lòng chọn loại sự cố
+                                </div>
+                            </div>
+
+                            <!-- Section 4: Mức độ nghiêm trọng -->
+                            <div class="info-section">
+                                <div class="info-section-title">Mức độ nghiêm trọng *</div>
+                                <div style="display:flex; gap:8px;">
+                                    <button onclick="selectSeverity(this, 'low')" 
+                                        style="flex:1; padding:12px 8px; border:2px solid #667eea; background:white; color:#667eea; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer; transition:all 0.2s;">
+                                        Nhẹ
+                                    </button>
+                                    <button onclick="selectSeverity(this, 'medium')" 
+                                        style="flex:1; padding:12px 8px; border:2px solid #667eea; background:#667eea; color:white; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer; transition:all 0.2s;">
+                                        Trung bình
+                                    </button>
+                                    <button onclick="selectSeverity(this, 'high')" 
+                                        style="flex:1; padding:12px 8px; border:2px solid #667eea; background:white; color:#667eea; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer; transition:all 0.2s;">
+                                        Nghiêm trọng
+                                    </button>
+                                    <button onclick="selectSeverity(this, 'critical')" 
+                                        style="flex:1; padding:12px 8px; border:2px solid #667eea; background:white; color:#667eea; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer; transition:all 0.2s;">
+                                        Nguy kịch
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Section 5: Địa điểm xảy ra -->
+                            <div class="info-section">
+                                <div class="info-section-title">Địa điểm xảy ra *</div>
+                                <input type="text" placeholder="VD: Phòng 203 - Khoa Nội" 
+                                    style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:14px;">
+                            </div>
+
+                            <!-- Section 6: Bệnh nhân liên quan (optional) -->
+                            <div class="info-section">
+                                <div class="info-section-title">Bệnh nhân liên quan (tuỳ chọn)</div>
+                                <input type="text" placeholder="Tên bệnh nhân" 
+                                    style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:14px;">
+                            </div>
+
+                            <!-- Section 7: Thời gian xảy ra -->
+                            <div class="info-section">
+                                <div class="info-section-title">Thời gian xảy ra *</div>
+                                <input type="datetime-local" 
+                                    value="2026-03-25T08:00"
+                                    style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:14px;">
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px;">
+                                <button class="btn-primary" style="display:flex; align-items:center; justify-content:center; gap:8px;">
+                                    <span>✓</span> Tạo Sự Cố
+                                </button>
+                                <button class="btn-secondary" onclick="showNav('list')">
+                                    Hủy
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== DETAIL SCREEN (5 TABS) ===== -->
+        <div id="screen-detail" class="screen-container">
+            <div class="screens-grid">
+                <div class="phone-frame">
+                    <div class="phone-notch"></div>
+                    <div class="screen-label">IOS — Chi Tiết Sự Cố (Interactive)</div>
+                    <div class="screen-content">
+                        <!-- Compact Header -->
+                        <div class="detail-header">
+                            <div class="detail-header-top">
+                                <button class="back-btn">‹</button>
+                                <h2>SI-2026-0012</h2>
+                            </div>
+                            <div class="header-info">
+                                <div class="header-title-row">
+                                    Truyền nhầm máu cho bệnh nhân ICU
+                                </div>
+                                <div class="header-chips">
+                                    <div class="chip chip-status">Đang xử lý</div>
+                                    <div class="chip chip-severity">Nguy kịch</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab Bar (iOS style) -->
+                        <div class="tab-bar">
+                            <button class="tab-bar-item active" onclick="showDetailTab(0)">
+                                <span class="tab-bar-icon">ℹ️</span>
+                                Thông tin
+                            </button>
+                            <button class="tab-bar-item" onclick="showDetailTab(1)">
+                                <span class="tab-bar-icon">💬</span>
+                                Tin nhắn
+                            </button>
+                            <button class="tab-bar-item" onclick="showDetailTab(2)">
+                                <span class="tab-bar-icon">📄</span>
+                                Xử lý
+                            </button>
+                            <button class="tab-bar-item" onclick="showDetailTab(3)">
+                                <span class="tab-bar-icon">🕐</span>
+                                Lịch sử
+                            </button>
+                            <button class="tab-bar-item" onclick="showDetailTab(4)">
+                                <span class="tab-bar-icon">📊</span>
+                                Phân tích
+                            </button>
+                        </div>
+
+                        <!-- Tab 0: Thông tin -->
+                        <div id="detail-tab-0" class="tab-content active">
+                            <div class="info-container">
+                                <!-- Thông tin sự cố -->
+                                <div class="info-section">
+                                    <div class="info-section-title">THÔNG TIN SỰ CỐ</div>
+                                    <div class="info-content">
+                                        <div class="info-row">
+                                            <span class="info-label">Tiêu đề</span>
+                                            <span class="info-value">Truyền nhầm máu cho BN ICU</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Số sự cố</span>
+                                            <span class="info-value">SI-2026-0012</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Loại</span>
+                                            <span class="info-value">Máu & chế phẩm máu</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Mức độ</span>
+                                            <span class="info-value">Nguy kịch</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Trạng thái</span>
+                                            <span class="info-value">Đang xử lý</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Địa điểm</span>
+                                            <span class="info-value">Phòng ICU - Tầng 3</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Khoa phòng</span>
+                                            <span class="info-value">ICU</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Thông tin TT43 -->
+                                <div class="info-section">
+                                    <div class="info-section-title">THÔNG TIN TT43</div>
+                                    <div class="info-content">
+                                        <div class="info-row">
+                                            <span class="info-label">Loại báo cáo</span>
+                                            <span class="info-value">Báo cáo đầy đủ</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Đơn vị báo cáo</span>
+                                            <span class="info-value">Khoa ICU</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Đối tượng</span>
+                                            <span class="info-value">Người bệnh</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Tình trạng</span>
+                                            <span class="info-value">Đã xảy ra</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Mức độ ban đầu</span>
+                                            <span class="info-value">NC2 - Cần can thiệp</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Bệnh nhân liên quan -->
+                                <div class="info-section">
+                                    <div class="info-section-title">BỆNH NHÂN LIÊN QUAN</div>
+                                    <div class="info-content">
+                                        <div class="info-row">
+                                            <span class="info-label">Tên BN</span>
+                                            <span class="info-value">Nguyễn Văn A</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Số hồ sơ</span>
+                                            <span class="info-value">BN2026001234</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Giới tính</span>
+                                            <span class="info-value">Nam</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Khoa điều trị</span>
+                                            <span class="info-value">ICU</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Nhân sự -->
+                                <div class="info-section">
+                                    <div class="info-section-title">NHÂN SỰ</div>
+                                    <div class="info-content">
+                                        <div class="info-row">
+                                            <span class="info-label">Người báo cáo</span>
+                                            <span class="info-value">BS.Nguyễn Văn A</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Người xử lý</span>
+                                            <span class="info-value">ĐD.Trần Thị B</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">SĐT</span>
+                                            <span class="info-value">0912345678</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Email</span>
+                                            <span class="info-value">nvana@hospital.vn</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Thời gian -->
+                                <div class="info-section">
+                                    <div class="info-section-title">THỜI GIAN</div>
+                                    <div class="info-content">
+                                        <div class="info-row">
+                                            <span class="info-label">Xảy ra lúc</span>
+                                            <span class="info-value">25/03/2026 08:00</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Báo cáo lúc</span>
+                                            <span class="info-value">25/03/2026 08:15</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Giải quyết lúc</span>
+                                            <span class="info-value">—</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Mô tả -->
+                                <div class="info-section">
+                                    <div class="info-section-title">MÔ TẢ CHI TIẾT</div>
+                                    <div class="info-content">
+                                        <div class="info-multiline">
+                                            Bệnh nhân Nguyễn Văn A (58 tuổi) đang điều trị tại ICU được chỉ định truyền máu nhóm O+. Do nhầm lẫn trong quá trình kiểm tra chéo, bệnh nhân đã được truyền máu nhóm A+. Sau 15 phút truyền, bệnh nhân xuất hiện các triệu chứng sốt, khó thở và huyết áp tăng. Đã dừng truyền ngay lập tức và xử lý theo quy trình cấp cứu. Hiện bệnh nhân đã ổn định nhưng cần theo dõi sát.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="action-buttons">
+                                <button class="btn-primary" onclick="showUpdateStatusSheet()">
+                                    Cập nhật trạng thái
+                                </button>
+                                <button class="btn-secondary" onclick="showAddHandlingSheet()">
+                                    Thêm hồ sơ xử lý
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tab 1: Tin nhắn -->
+                        <div id="detail-tab-1" class="tab-content">
+                            <div class="chat-container">
+                                <div class="mqtt-indicator">
+                                    <div class="mqtt-dot"></div>
+                                    <div class="mqtt-text">Kết nối trực tiếp (MQTT)</div>
+                                </div>
+                                <div class="chat-messages">
+                                    <div class="message-bubble message-system">
+                                        Sự cố đã được tạo bởi BS.Nguyễn Văn A
+                                    </div>
+                                    <div>
+                                        <div class="message-sender">BS.Nguyễn Văn A</div>
+                                        <div class="message-bubble message-other">
+                                            Em vừa phát hiện sự cố truyền nhầm máu ở ICU. Đã xử lý cấp cứu cho bệnh nhân.
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="message-sender">ĐD.Trần Thị B</div>
+                                        <div class="message-bubble message-other">
+                                            Tôi sẽ phụ trách điều tra vụ này. Anh chuẩn bị đầy đủ hồ sơ y bạ và biên bản sự việc nhé.
+                                        </div>
+                                    </div>
+                                    <div class="message-bubble message-own">
+                                        Vâng ạ. Em đã lưu đầy đủ thông tin và sẽ gửi báo cáo chi tiết trong chiều nay.
+                                    </div>
+                                    <div class="message-bubble message-system">
+                                        Trạng thái đã thay đổi: Đang điều tra → Đang xử lý
+                                    </div>
+                                </div>
+                                <div class="chat-input-bar">
+                                    <textarea class="chat-input" placeholder="Nhập tin nhắn..."></textarea>
+                                    <button class="chat-send-btn">➤</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab 2: Xử lý -->
+                        <div id="detail-tab-2" class="tab-content">
+                            <div class="handling-list">
+                                <div class="handling-record">
+                                    <div class="record-header">
+                                        <div class="record-author">
+                                            🩺 BS.Nguyễn Văn A
+                                        </div>
+                                        <div class="record-date">25/03 08:20</div>
+                                    </div>
+                                    <div class="record-section">
+                                        <div class="record-label">HÀNH ĐỘNG ĐÃ THỰC HIỆN</div>
+                                        <div class="record-text">
+                                            Dừng truyền máu ngay lập tức. Kiểm tra dấu hiệu sinh tồn. Báo cáo cho bác sĩ trưởng. Lấy mẫu máu kiểm tra phản ứng. Theo dõi sát bệnh nhân.
+                                        </div>
+                                    </div>
+                                    <div class="record-section">
+                                        <div class="record-label">KẾT QUẢ</div>
+                                        <div class="record-text">
+                                            Bệnh nhân xuất hiện sốt 38.5°C, huyết áp tăng 160/95. Đã xử lý kịp thời với thuốc hạ nhiệt và theo dõi. Sau 2h, tình trạng ổn định, huyết áp về 130/80, nhiệt độ 37.2°C.
+                                        </div>
+                                    </div>
+                                    <div class="record-section">
+                                        <div class="record-label">BƯỚC TIẾP THEO</div>
+                                        <div class="record-text">
+                                            Tiếp tục theo dõi 24h. Làm xét nghiệm máu kiểm tra chức năng gan thận. Báo cáo lên Ban giám đốc. Rà soát quy trình kiểm tra máu.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="handling-record">
+                                    <div class="record-header">
+                                        <div class="record-author">
+                                            👨‍⚕️ ĐD.Trần Thị B
+                                        </div>
+                                        <div class="record-date">25/03 10:00</div>
+                                    </div>
+                                    <div class="record-section">
+                                        <div class="record-label">HÀNH ĐỘNG ĐÃ THỰC HIỆN</div>
+                                        <div class="record-text">
+                                            Họp khẩn với ekip ICU. Rà soát lại toàn bộ quy trình kiểm tra máu. Phỏng vấn nhân viên liên quan. Kiểm tra hồ sơ bệnh án.
+                                        </div>
+                                    </div>
+                                    <div class="record-section">
+                                        <div class="record-label">KẾT QUẢ</div>
+                                        <div class="record-text">
+                                            Xác định nguyên nhân: Nhân viên y tá A đã không thực hiện đúng quy trình kiểm tra chéo do áp lực công việc cao. Đã có biện pháp xử lý và đào tạo lại.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn-primary" onclick="showAddHandlingSheet()">
+                                    + Thêm hồ sơ xử lý
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tab 3: Lịch sử -->
+                        <div id="detail-tab-3" class="tab-content">
+                            <div class="history-list">
+                                <div class="history-item">
+                                    <div class="history-transition">
+                                        <div class="status-badge status-reported">Đã báo cáo</div>
+                                        <div class="history-arrow">→</div>
+                                        <div class="status-badge status-investigating">Đang điều tra</div>
+                                    </div>
+                                    <div class="history-meta">
+                                        <div class="history-author">
+                                            👤 ĐD.Trần Thị B
+                                        </div>
+                                        <div class="history-time">2h trước</div>
+                                    </div>
+                                    <div class="history-note">
+                                        Bắt đầu điều tra nguyên nhân sự cố. Yêu cầu ekip chuẩn bị đầy đủ tài liệu.
+                                    </div>
+                                </div>
+
+                                <div class="history-item">
+                                    <div class="history-transition">
+                                        <div class="status-badge status-investigating">Đang điều tra</div>
+                                        <div class="history-arrow">→</div>
+                                        <div class="status-badge status-handling">Đang xử lý</div>
+                                    </div>
+                                    <div class="history-meta">
+                                        <div class="history-author">
+                                            👤 ĐD.Trần Thị B
+                                        </div>
+                                        <div class="history-time">1h trước</div>
+                                    </div>
+                                    <div class="history-note">
+                                        Đã xác định nguyên nhân. Chuyển sang giai đoạn xử lý và khắc phục. Phân công BS.Nguyễn Văn A tiếp tục theo dõi BN.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab 4: Phân tích (4 sub-tabs) -->
+                        <div id="detail-tab-4" class="tab-content">
+                            <div class="analysis-container">
+                                <div class="analysis-tab-bar">
+                                    <button class="analysis-tab active" onclick="showAnalysisTab(0)">I. Mô tả</button>
+                                    <button class="analysis-tab" onclick="showAnalysisTab(1)">II. Nhóm SC</button>
+                                    <button class="analysis-tab" onclick="showAnalysisTab(2)">IV. Nguyên nhân</button>
+                                    <button class="analysis-tab" onclick="showAnalysisTab(3)">V-B. Đánh giá</button>
+                                </div>
+                                
+                                <div class="analysis-content">
+                                    <!-- Analysis Tab 0: Mô tả -->
+                                    <div id="analysis-tab-0" class="analysis-content-tab active">
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">A.I. Mô tả chi tiết sự cố</div>
+                                            <div style="margin-bottom:12px;">
+                                                <label style="font-size:12px; color:#666; display:block; margin-bottom:6px;">📝 Mô tả chi tiết</label>
+                                                <textarea style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; min-height:80px; font-size:13px; font-family:inherit;">Bệnh nhân được chỉ định truyền máu nhóm O+, nhưng do nhầm lẫn trong kiểm tra chéo đã truyền máu nhóm A+. Phát hiện sau 15 phút khi bệnh nhân có triệu chứng bất thường.</textarea>
+                                            </div>
+                                            <div style="margin-bottom:12px;">
+                                                <label style="font-size:12px; color:#666; display:block; margin-bottom:6px;">Bên bị ảnh hưởng</label>
+                                                <input type="text" value="Bệnh nhân Nguyễn Văn A" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:13px;">
+                                            </div>
+                                            <div style="margin-bottom:12px;">
+                                                <label style="font-size:12px; color:#666; display:block; margin-bottom:6px;">Phạm vi ảnh hưởng</label>
+                                                <input type="text" value="1 bệnh nhân" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:13px;">
+                                            </div>
+                                            <div style="margin-bottom:12px;">
+                                                <label style="font-size:12px; color:#666; display:block; margin-bottom:6px;">Tình trạng BN khi nhập viện</label>
+                                                <input type="text" value="Nặng, cần truyền máu khẩn cấp" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:13px;">
+                                            </div>
+                                        </div>
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">A.III. Điều trị / Y lệnh đã thực hiện</div>
+                                            <textarea style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; min-height:60px; font-size:13px; font-family:inherit;">Dừng truyền ngay. Xử lý phản ứng với thuốc hạ nhiệt, theo dõi huyết áp. Kiểm tra chức năng gan thận. Truyền dịch hỗ trợ.</textarea>
+                                        </div>
+                                    </div>
+
+                                    <!-- Analysis Tab 1: Nhóm SC -->
+                                    <div id="analysis-tab-1" class="analysis-content-tab">
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">Nhóm Sự Cố 1 – Kỹ thuật / Thủ thuật chuyên môn</div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☐</div>
+                                                <div class="checkbox-label">Thực hiện sai kỹ thuật</div>
+                                            </div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☐</div>
+                                                <div class="checkbox-label">Thiếu kỹ năng chuyên môn</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">Nhóm Sự Cố 2 – Nhiễm khuẩn bệnh viện</div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☐</div>
+                                                <div class="checkbox-label">Nhiễm khuẩn vết mổ</div>
+                                            </div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☐</div>
+                                                <div class="checkbox-label">Nhiễm khuẩn đường hô hấp</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">Nhóm Sự Cố 3 – Thuốc và dịch truyền</div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☐</div>
+                                                <div class="checkbox-label">Sai thuốc</div>
+                                            </div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☐</div>
+                                                <div class="checkbox-label">Sai liều lượng</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">Nhóm Sự Cố 4 – Máu và chế phẩm máu</div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☑</div>
+                                                <div class="checkbox-label">Nhầm lẫn nhóm máu</div>
+                                            </div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☑</div>
+                                                <div class="checkbox-label">Không kiểm tra chéo đúng quy trình</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">Nhóm Sự Cố 5 – Trang thiết bị y tế</div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☐</div>
+                                                <div class="checkbox-label">Thiết bị hỏng</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">Nhóm Sự Cố 6 – Hành vi</div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☐</div>
+                                                <div class="checkbox-label">Không tuân thủ quy trình</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">Nhóm Sự Cố 7 – Tai nạn đối với người bệnh (chọn 1)</div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☐</div>
+                                                <div class="checkbox-label">Ngã</div>
+                                            </div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☐</div>
+                                                <div class="checkbox-label">Va chạm</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">Nhóm Sự Cố 8 – Cơ sở vật chất / Hạ tầng</div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☐</div>
+                                                <div class="checkbox-label">Hư hỏng cơ sở vật chất</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">Nhóm Sự Cố 9 – Quản lý nguồn lực / Tổ chức</div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☑</div>
+                                                <div class="checkbox-label">Áp lực công việc cao</div>
+                                            </div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☑</div>
+                                                <div class="checkbox-label">Thiếu nhân sự</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">Nhóm Sự Cố 10 – Hồ sơ / Hành chính</div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☐</div>
+                                                <div class="checkbox-label">Sai sót hồ sơ</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">Nhóm Sự Cố 11 – Khác</div>
+                                            <textarea style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; min-height:60px; font-size:13px; font-family:inherit;" placeholder="Mô tả (nếu không thuộc nhóm 1–10)"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <!-- Analysis Tab 2: Nguyên nhân -->
+                                    <div id="analysis-tab-2" class="analysis-content-tab">
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">A.IV.1 – Nhân viên y tế</div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☑</div>
+                                                <div class="checkbox-label">Không tuân thủ quy trình kiểm tra</div>
+                                            </div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☑</div>
+                                                <div class="checkbox-label">Mệt mỏi, stress</div>
+                                            </div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☐</div>
+                                                <div class="checkbox-label">Thiếu kinh nghiệm</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">A.IV.2 – Người bệnh</div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☐</div>
+                                                <div class="checkbox-label">Không hợp tác điều trị</div>
+                                            </div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☐</div>
+                                                <div class="checkbox-label">Tình trạng bệnh phức tạp</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">A.IV.3 – Môi trường làm việc</div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☑</div>
+                                                <div class="checkbox-label">Khối lượng công việc lớn</div>
+                                            </div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☑</div>
+                                                <div class="checkbox-label">Thiếu thời gian kiểm tra kỹ</div>
+                                            </div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☐</div>
+                                                <div class="checkbox-label">Thiếu ánh sáng</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">A.IV.4 – Tổ chức / Quản lý</div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☐</div>
+                                                <div class="checkbox-label">Quy trình không rõ ràng</div>
+                                            </div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☐</div>
+                                                <div class="checkbox-label">Thiếu giám sát</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">A.IV.5 – Yếu tố bên ngoài</div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☐</div>
+                                                <div class="checkbox-label">Thời tiết xấu</div>
+                                            </div>
+                                            <div class="checkbox-row">
+                                                <div class="checkbox-icon">☐</div>
+                                                <div class="checkbox-label">Mất điện</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">A.IV.6 – Nguyên nhân khác</div>
+                                            <textarea style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; min-height:60px; font-size:13px; font-family:inherit;" placeholder="Mô tả nguyên nhân khác"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <!-- Analysis Tab 3: Đánh giá -->
+                                    <div id="analysis-tab-3" class="analysis-content-tab">
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">A.V. Biện pháp khắc phục sự cố</div>
+                                            <textarea style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; min-height:80px; font-size:13px; font-family:inherit;">1. Đào tạo lại toàn bộ nhân viên ICU về quy trình kiểm tra máu
+2. Bổ sung thêm 2 y tá ca đêm
+3. Lắp đặt hệ thống cảnh báo tự động khi có sai lệch nhóm máu
+4. Kiểm soát khối lượng công việc của từng nhân viên</textarea>
+                                        </div>
+
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">A.VI. Đề xuất khuyến cáo phòng ngừa sự cố</div>
+                                            <textarea style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; min-height:80px; font-size:13px; font-family:inherit;">1. Áp dụng kiểm tra chéo 2 lần bởi 2 người khác nhau
+2. Sử dụng công nghệ mã vạch để đối chiếu nhóm máu
+3. Giảm số ca/ngày của mỗi y tá xuống 8-10 ca
+4. Tổ chức đào tạo refresh mỗi 3 tháng/lần</textarea>
+                                        </div>
+
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">B.I. Đánh giá của Trưởng nhóm chuyên gia</div>
+                                            <div style="margin-bottom:12px;">
+                                                <label style="font-size:12px; color:#666; display:block; margin-bottom:6px;">Kết quả phát hiện / Nhận xét</label>
+                                                <textarea style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; min-height:80px; font-size:13px; font-family:inherit;">Sự cố xảy ra do vi phạm nghiêm trọng quy trình kiểm tra máu. Nguyên nhân chính là áp lực công việc cao dẫn đến nhân viên bỏ qua bước kiểm tra chéo. Cần có biện pháp xử lý kỷ luật và đào tạo lại.</textarea>
+                                            </div>
+                                            <div style="margin-bottom:12px;">
+                                                <label style="font-size:13px; font-weight:600; color:#333; display:block; margin-bottom:8px;">Đã thảo luận đưa khuyến cáo với người báo cáo?</label>
+                                                <div style="display:flex; gap:8px;">
+                                                    <button onclick="selectThreeState(this, 'yes')" style="flex:1; padding:10px; border:2px solid #667eea; background:#667eea; color:white; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer;">Có</button>
+                                                    <button onclick="selectThreeState(this, 'no')" style="flex:1; padding:10px; border:2px solid #667eea; background:white; color:#667eea; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer;">Không</button>
+                                                    <button onclick="selectThreeState(this, 'na')" style="flex:1; padding:10px; border:2px solid #667eea; background:white; color:#667eea; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer;">KGN</button>
+                                                </div>
+                                            </div>
+                                            <div style="margin-bottom:12px;">
+                                                <label style="font-size:13px; font-weight:600; color:#333; display:block; margin-bottom:8px;">Phù hợp với khuyến cáo chính thức được ban hành?</label>
+                                                <div style="display:flex; gap:8px;">
+                                                    <button onclick="selectThreeState(this, 'yes')" style="flex:1; padding:10px; border:2px solid #667eea; background:#667eea; color:white; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer;">Có</button>
+                                                    <button onclick="selectThreeState(this, 'no')" style="flex:1; padding:10px; border:2px solid #667eea; background:white; color:#667eea; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer;">Không</button>
+                                                    <button onclick="selectThreeState(this, 'na')" style="flex:1; padding:10px; border:2px solid #667eea; background:white; color:#667eea; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer;">KGN</button>
+                                                </div>
+                                            </div>
+                                            <div style="margin-bottom:12px;">
+                                                <label style="font-size:12px; color:#666; display:block; margin-bottom:6px;">Ghi cụ thể các khuyến cáo</label>
+                                                <textarea style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; min-height:60px; font-size:13px; font-family:inherit;">Bắt buộc kiểm tra chéo 2 lần. Sử dụng công nghệ hỗ trợ. Giảm tải công việc.</textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="analysis-section">
+                                            <div class="analysis-section-header">B.II. Đánh giá mức độ tổn thương</div>
+                                            <div style="margin-bottom:16px;">
+                                                <label style="font-size:13px; font-weight:600; color:#333; display:block; margin-bottom:8px;">Trên người bệnh - Mức NC:</label>
+                                                <div style="display:flex; flex-direction:column; gap:6px;">
+                                                    <label style="display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer;">
+                                                        <input type="radio" name="nc" value="NC0"> NC0 - Không có tác hại
+                                                    </label>
+                                                    <label style="display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer;">
+                                                        <input type="radio" name="nc" value="NC1"> NC1 - Không cần can thiệp
+                                                    </label>
+                                                    <label style="display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer;">
+                                                        <input type="radio" name="nc" value="NC2" checked> NC2 - Cần can thiệp
+                                                    </label>
+                                                    <label style="display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer;">
+                                                        <input type="radio" name="nc" value="NC3"> NC3 - Tổn thương nặng/tử vong
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div style="margin-bottom:16px;">
+                                                <label style="font-size:13px; font-weight:600; color:#333; display:block; margin-bottom:8px;">Mã chi tiết:</label>
+                                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                                                    <label style="display:flex; align-items:center; gap:6px; font-size:12px; cursor:pointer;">
+                                                        <input type="radio" name="code" value="A"> A - Không tác hại
+                                                    </label>
+                                                    <label style="display:flex; align-items:center; gap:6px; font-size:12px; cursor:pointer;">
+                                                        <input type="radio" name="code" value="B"> B - Tạm thời nhẹ
+                                                    </label>
+                                                    <label style="display:flex; align-items:center; gap:6px; font-size:12px; cursor:pointer;">
+                                                        <input type="radio" name="code" value="C"> C - Tạm thời TB
+                                                    </label>
+                                                    <label style="display:flex; align-items:center; gap:6px; font-size:12px; cursor:pointer;">
+                                                        <input type="radio" name="code" value="D"> D - Tạm thời nặng
+                                                    </label>
+                                                    <label style="display:flex; align-items:center; gap:6px; font-size:12px; cursor:pointer;">
+                                                        <input type="radio" name="code" value="E" checked> E - Điều trị cần thiết
+                                                    </label>
+                                                    <label style="display:flex; align-items:center; gap:6px; font-size:12px; cursor:pointer;">
+                                                        <input type="radio" name="code" value="F"> F - Vĩnh viễn nhẹ
+                                                    </label>
+                                                    <label style="display:flex; align-items:center; gap:6px; font-size:12px; cursor:pointer;">
+                                                        <input type="radio" name="code" value="G"> G - Vĩnh viễn TB
+                                                    </label>
+                                                    <label style="display:flex; align-items:center; gap:6px; font-size:12px; cursor:pointer;">
+                                                        <input type="radio" name="code" value="H"> H - Vĩnh viễn nặng
+                                                    </label>
+                                                    <label style="display:flex; align-items:center; gap:6px; font-size:12px; cursor:pointer;">
+                                                        <input type="radio" name="code" value="I"> I - Tử vong
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div style="margin-bottom:16px;">
+                                                <label style="font-size:13px; font-weight:600; color:#333; display:block; margin-bottom:8px;">Trên tổ chức:</label>
+                                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                                                    <div class="checkbox-row" style="border:none; padding:4px 0;">
+                                                        <div class="checkbox-icon">☐</div>
+                                                        <div class="checkbox-label" style="font-size:12px;">Tổn thất tài sản</div>
+                                                    </div>
+                                                    <div class="checkbox-row" style="border:none; padding:4px 0;">
+                                                        <div class="checkbox-icon">☑</div>
+                                                        <div class="checkbox-label" style="font-size:12px;">Tăng chăm sóc BN</div>
+                                                    </div>
+                                                    <div class="checkbox-row" style="border:none; padding:4px 0;">
+                                                        <div class="checkbox-icon">☑</div>
+                                                        <div class="checkbox-label" style="font-size:12px;">Chú ý truyền thông</div>
+                                                    </div>
+                                                    <div class="checkbox-row" style="border:none; padding:4px 0;">
+                                                        <div class="checkbox-icon">☐</div>
+                                                        <div class="checkbox-label" style="font-size:12px;">Khiếu nại BN</div>
+                                                    </div>
+                                                    <div class="checkbox-row" style="border:none; padding:4px 0;">
+                                                        <div class="checkbox-icon">☑</div>
+                                                        <div class="checkbox-label" style="font-size:12px;">Mất uy tín</div>
+                                                    </div>
+                                                    <div class="checkbox-row" style="border:none; padding:4px 0;">
+                                                        <div class="checkbox-icon">☐</div>
+                                                        <div class="checkbox-label" style="font-size:12px;">Can thiệp pháp lý</div>
+                                                    </div>
+                                                    <div class="checkbox-row" style="border:none; padding:4px 0;">
+                                                        <div class="checkbox-icon">☐</div>
+                                                        <div class="checkbox-label" style="font-size:12px;">Khác</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="analysis-section" style="background:#f9fafb;">
+                                            <div class="analysis-section-header">Thông tin phiếu</div>
+                                            <div style="display:flex; flex-direction:column; gap:8px; font-size:13px;">
+                                                <div style="display:flex; justify-content:space-between;">
+                                                    <span style="color:#666;">Người tạo:</span>
+                                                    <span style="font-weight:600;">ĐD.Trần Thị B</span>
+                                                </div>
+                                                <div style="display:flex; justify-content:space-between;">
+                                                    <span style="color:#666;">Ngày tạo:</span>
+                                                    <span>25/03/2026 10:30</span>
+                                                </div>
+                                                <div style="display:flex; justify-content:space-between;">
+                                                    <span style="color:#666;">Người duyệt:</span>
+                                                    <span>—</span>
+                                                </div>
+                                                <div style="display:flex; justify-content:space-between;">
+                                                    <span style="color:#666;">Ngày duyệt:</span>
+                                                    <span>—</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="analysis-save-bar">
+                                    <button class="btn-primary" style="width:100%;">
+                                        Lưu phiếu phân tích
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===== UPDATE STATUS SHEET ===== -->
+    <div id="update-status-sheet" class="modal-overlay">
+        <div class="modal-sheet">
+            <div class="sheet-header">
+                <div class="sheet-title">Cập nhật trạng thái</div>
+                <button class="sheet-close" onclick="closeUpdateStatusSheet()">Hủy</button>
+            </div>
+            <div class="sheet-content">
+                <div class="sheet-section">
+                    <div class="sheet-section-title">Trạng thái mới *</div>
+                    <select class="sheet-picker">
+                        <option value="">Chọn trạng thái</option>
+                        <option value="resolved" selected>🟢 Đã giải quyết</option>
+                    </select>
+                </div>
+                <div class="sheet-section">
+                    <div class="sheet-section-title">Ghi chú</div>
+                    <textarea class="sheet-textarea" placeholder="Nhập ghi chú về thay đổi trạng thái..."></textarea>
+                </div>
+            </div>
+            <div class="sheet-actions">
+                <button class="sheet-btn sheet-btn-cancel" onclick="closeUpdateStatusSheet()">Hủy</button>
+                <button class="sheet-btn sheet-btn-confirm">Cập nhật</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ADD HANDLING RECORD SHEET ===== -->
+    <div id="add-handling-sheet" class="modal-overlay">
+        <div class="modal-sheet">
+            <div class="sheet-header">
+                <div class="sheet-title">Thêm hồ sơ xử lý</div>
+                <button class="sheet-close" onclick="closeAddHandlingSheet()">Hủy</button>
+            </div>
+            <div class="sheet-content">
+                <div class="sheet-section">
+                    <div class="sheet-section-title">Hành động đã thực hiện *</div>
+                    <textarea class="sheet-textarea" style="min-height:100px;" placeholder="Mô tả các hành động đã thực hiện..."></textarea>
+                </div>
+                <div class="sheet-section">
+                    <div class="sheet-section-title">Kết quả *</div>
+                    <textarea class="sheet-textarea" placeholder="Kết quả của các hành động..."></textarea>
+                </div>
+                <div class="sheet-section">
+                    <div class="sheet-section-title">Bước tiếp theo (tuỳ chọn)</div>
+                    <textarea class="sheet-textarea" style="min-height:60px;" placeholder="Các bước tiếp theo cần thực hiện..."></textarea>
+                </div>
+            </div>
+            <div class="sheet-actions">
+                <button class="sheet-btn sheet-btn-cancel" onclick="closeAddHandlingSheet()">Hủy</button>
+                <button class="sheet-btn sheet-btn-confirm">Thêm</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== NAVIGATION =====
+        function showNav(navId) {
+            // Update nav buttons
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update screen containers
+            document.querySelectorAll('.screen-container').forEach(container => {
+                container.classList.remove('active');
+            });
+            document.getElementById('screen-' + navId).classList.add('active');
+        }
+
+        // ===== CREATE FORM: SEVERITY SELECTOR =====
+        function selectSeverity(btn, value) {
+            // Remove active from all
+            const parent = btn.parentElement;
+            parent.querySelectorAll('button').forEach(b => {
+                b.style.background = 'white';
+                b.style.color = '#667eea';
+            });
+            // Set active
+            btn.style.background = '#667eea';
+            btn.style.color = 'white';
+        }
+
+        // ===== DETAIL TABS =====
+        function showDetailTab(tabIndex) {
+            // Update tab bar
+            const tabButtons = document.querySelectorAll('.tab-bar-item');
+            tabButtons.forEach((btn, index) => {
+                if (index === tabIndex) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Update tab content
+            const tabContents = document.querySelectorAll('#screen-detail .tab-content');
+            tabContents.forEach((content, index) => {
+                if (index === tabIndex) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+        }
+
+        // ===== ANALYSIS SUB-TABS =====
+        function showAnalysisTab(subIndex) {
+            // Update analysis tab bar
+            const analysisTabs = document.querySelectorAll('.analysis-tab');
+            analysisTabs.forEach((tab, index) => {
+                if (index === subIndex) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+
+            // Update analysis content
+            const analysisContents = document.querySelectorAll('.analysis-content-tab');
+            analysisContents.forEach((content, index) => {
+                if (index === subIndex) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+        }
+
+        // ===== THREE-STATE PICKER (B.I) =====
+        function selectThreeState(btn, value) {
+            // Remove active from all siblings
+            const parent = btn.parentElement;
+            parent.querySelectorAll('button').forEach(b => {
+                b.style.background = 'white';
+                b.style.color = '#667eea';
+            });
+            // Set active
+            btn.style.background = '#667eea';
+            btn.style.color = 'white';
+        }
+
+        // ===== MODAL SHEETS =====
+        function showUpdateStatusSheet() {
+            document.getElementById('update-status-sheet').classList.add('show');
+        }
+
+        function closeUpdateStatusSheet() {
+            document.getElementById('update-status-sheet').classList.remove('show');
+        }
+
+        function showAddHandlingSheet() {
+            document.getElementById('add-handling-sheet').classList.add('show');
+        }
+
+        function closeAddHandlingSheet() {
+            document.getElementById('add-handling-sheet').classList.remove('show');
+        }
+
+        // Close modals when clicking outside
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) {
+                    overlay.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
