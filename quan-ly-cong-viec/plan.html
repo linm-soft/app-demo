@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lộ Trình Phát Triển - Hệ Thống Quản Lý Công Việc Y Khoa</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --border: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 50px 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            margin-bottom: 20px;
+        }
+
+        .header .meta {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .header .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+
+        /* Content */
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .summary-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .summary-card .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .summary-card .label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Feature Table */
+        .feature-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .feature-table thead {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .feature-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .feature-table tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s;
+        }
+
+        .feature-table tbody tr:hover {
+            background: #f0f9ff;
+        }
+
+        .feature-table td {
+            padding: 15px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-in-progress {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-planned {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .priority-critical {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .priority-high {
+            background: #fed7aa;
+            color: #9a3412;
+        }
+
+        .priority-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row;
+        }
+
+        .timeline-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            width: 45%;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 2px solid var(--border);
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content {
+            margin-right: 5%;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            margin-left: 5%;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 4px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--primary);
+            z-index: 1;
+        }
+
+        .timeline-content h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .timeline-content .duration {
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .timeline-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .timeline-content li {
+            padding: 5px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .timeline-content li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        /* Cost Estimate */
+        .cost-section {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid #3b82f6;
+        }
+
+        .cost-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .cost-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .cost-item .label {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .cost-item .value {
+            color: var(--primary);
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .cta-section h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .cta-section p {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            opacity: 0.95;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+        }
+
+        .footer p {
+            margin-bottom: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-item {
+                flex-direction: column !important;
+            }
+
+            .timeline-content {
+                width: calc(100% - 60px) !important;
+                margin-left: 60px !important;
+                margin-right: 0 !important;
+            }
+
+            .timeline-marker {
+                left: 20px !important;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                margin: 0;
+            }
+
+            .cta-section {
+                display: none;
+            }
+
+            /* Page Break for Each Section */
+            .section {
+                page-break-before: always;
+                break-before: page; /* Modern browsers */
+            }
+
+            /* Don't break the first section */
+            .content > .section:first-child {
+                page-break-before: auto;
+                break-before: auto;
+            }
+
+            /* Tables can span pages but don't break rows */
+            .feature-table {
+                page-break-inside: auto;
+                break-inside: auto;
+            }
+
+            .feature-table thead {
+                display: table-header-group; /* Repeat header on each page */
+            }
+
+            .feature-table tbody tr {
+                page-break-inside: avoid;
+                break-inside: avoid;
+                page-break-after: auto;
+                break-after: auto;
+            }
+
+            /* Timeline adjustments for print */
+            .timeline {
+                page-break-inside: auto;
+                break-inside: auto;
+            }
+
+            .timeline-item {
+                page-break-inside: avoid;
+                break-inside: avoid;
+                page-break-after: auto;
+                break-after: auto;
+            }
+
+            /* Remove shadows for cleaner print */
+            .summary-card,
+            .timeline-content,
+            .cost-section {
+                box-shadow: none !important;
+                border: 1px solid #e5e7eb;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-hospital"></i> Hệ Thống Quản Lý Công Việc Y Khoa</h1>
+            <p class="subtitle">Đề Xuất Lộ Trình Phát Triển & Triển Khai</p>
+            <div class="meta">
+                <div class="meta-item">
+                    <i class="fas fa-calendar"></i>
+                    <span>Ngày: 25 tháng 3, 2026</span>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>Thời gian: 10 tuần</span>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-code"></i>
+                    <span>BUILD WITH LINM-SOFT</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Summary -->
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-chart-pie"></i>
+                    Tổng Quan Dự Án
+                </h2>
+                <div class="summary-grid">
+                    <div class="summary-card" style="background: linear-gradient(135deg, #10b981, #059669);">
+                        <i class="fas fa-check-circle"></i>
+                        <div class="number">3/13</div>
+                        <div class="label">Tính Năng Hoàn Thành</div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-desktop"></i>
+                        <div class="number">45+</div>
+                        <div class="label">Màn Hình</div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-mobile-alt"></i>
+                        <div class="number">2</div>
+                        <div class="label">Nền Tảng Mobile</div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-calendar-alt"></i>
+                        <div class="number">10</div>
+                        <div class="label">Tuần Phát Triển</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Completed Features Highlight -->
+            <div class="section">
+                <div style="background: linear-gradient(135deg, #d1fae5, #a7f3d0); padding: 30px; border-radius: 12px; border: 2px solid #10b981;">
+                    <h3 style="color: #065f46; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-rocket"></i>
+                        Các Tính Năng Đã Hoàn Thành & Đang Hoạt Động
+                    </h3>
+                    <div class="features-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                        <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <div style="color: #10b981; font-size: 2rem; margin-bottom: 10px;">✅</div>
+                            <strong style="color: #065f46;">Xác Thực & Phân Quyền</strong>
+                            <p style="color: #6b7280; font-size: 0.9rem; margin-top: 5px;">JWT, RBAC, quản lý vai trò</p>
+                        </div>
+                        <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <div style="color: #10b981; font-size: 2rem; margin-bottom: 10px;">✅</div>
+                            <strong style="color: #065f46;">Thông Báo</strong>
+                            <p style="color: #6b7280; font-size: 0.9rem; margin-top: 5px;">FCM push, Email, In-app</p>
+                        </div>
+                        <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <div style="color: #10b981; font-size: 2rem; margin-bottom: 10px;">✅</div>
+                            <strong style="color: #065f46;">Chat & Messaging</strong>
+                            <p style="color: #6b7280; font-size: 0.9rem; margin-top: 5px;">MQTT real-time, @mentions</p>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #10b981; text-align: center;">
+                        <p style="color: #065f46; font-weight: 600;">
+                            🎯 <strong>23% Progress</strong> - Auth + Notifications + Chat hoàn thành, Ticket & Task đang phát triển
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features List -->
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-list-check"></i>
+                    Danh Sách Tính Năng Chi Tiết
+                </h2>
+                <table class="feature-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%">#</th>
+                            <th style="width: 25%">Tính Năng</th>
+                            <th style="width: 35%">Mô Tả</th>
+                            <th style="width: 15%">Độ Ưu Tiên</th>
+                            <th style="width: 10%">Thời Gian</th>
+                            <th style="width: 10%">Trạng Thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td><strong>Xác Thực & Phân Quyền</strong></td>
+                            <td>Đăng nhập JWT, phân quyền RBAC, quản lý vai trò</td>
+                            <td><span class="status-badge priority-critical">Urgent</span></td>
+                            <td>1 tuần</td>
+                            <td><span class="status-badge status-completed"><i class="fas fa-check"></i> Hoàn Thành</span></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td><strong>Quản Lý Ticket</strong></td>
+                            <td>Tạo, giao việc, theo dõi SLA, workflow hoàn chỉnh</td>
+                            <td><span class="status-badge priority-critical">Urgent</span></td>
+                            <td>2 tuần</td>
+                            <td><span class="status-badge status-in-progress"><i class="fas fa-spinner"></i> Đang Phát Triển</span></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td><strong>Quản Lý Task</strong></td>
+                            <td>3 chiến lược giao việc, theo dõi tiến độ, review</td>
+                            <td><span class="status-badge priority-critical">Urgent</span></td>
+                            <td>2 tuần</td>
+                            <td><span class="status-badge status-in-progress"><i class="fas fa-spinner"></i> Đang Phát Triển</span></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td><strong>Task Pool</strong></td>
+                            <td>Tự chọn task, claim validation, auto-escalation</td>
+                            <td><span class="status-badge priority-high">High</span></td>
+                            <td>1 tuần</td>
+                            <td><span class="status-badge status-planned"><i class="fas fa-clock"></i> Dự Kiến</span></td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td><strong>Quợn Lý SLA</strong></td>
+                            <td>Giám sát SLA, cảnh báo, escalation, gợi ý phân công</td>
+                            <td><span class="status-badge priority-critical">Urgent</span></td>
+                            <td>2 tuần</td>
+                            <td><span class="status-badge status-planned"><i class="fas fa-clock"></i> Dự Kiến</span></td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td><strong>Dashboard</strong></td>
+                            <td>23+ widgets, role-based layout, real-time updates</td>
+                            <td><span class="status-badge priority-high">High</span></td>
+                            <td>1.5 tuần</td>
+                            <td><span class="status-badge status-planned"><i class="fas fa-clock"></i> Dự Kiến</span></td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td><strong>Thông Báo</strong></td>
+                            <td>Push notifications (FCM), Email alerts, In-app notifications</td>
+                            <td><span class="status-badge priority-high">High</span></td>
+                            <td>1.5 tuần</td>
+                            <td><span class="status-badge status-completed"><i class="fas fa-check"></i> Hoàn Thành</span></td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td><strong>Chat & Messaging</strong></td>
+                            <td>MQTT real-time messaging, threaded comments, @mentions</td>
+                            <td><span class="status-badge priority-high">High</span></td>
+                            <td>1.5 tuần</td>
+                            <td><span class="status-badge status-completed"><i class="fas fa-check"></i> Hoàn Thành</span></td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td><strong>Quản Lý File</strong></td>
+                            <td>Upload/download, local storage, preview images</td>
+                            <td><span class="status-badge priority-medium">Medium</span></td>
+                            <td>1 tuần</td>
+                            <td><span class="status-badge status-planned"><i class="fas fa-clock"></i> Dự Kiến</span></td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td><strong>Quản Lý Users & Teams</strong></td>
+                            <td>User management, teams, departments, RBAC</td>
+                            <td><span class="status-badge priority-critical">Urgent</span></td>
+                            <td>1.5 tuần</td>
+                            <td><span class="status-badge status-planned"><i class="fas fa-clock"></i> Dự Kiến</span></td>
+                        </tr>
+                        <tr>
+                            <td>11</td>
+                            <td><strong>Mobile App (iOS + Android)</strong></td>
+                            <td>React Native, offline mode, camera, biometric, QR</td>
+                            <td><span class="status-badge priority-high">High</span></td>
+                            <td>3 tuần</td>
+                            <td><span class="status-badge status-planned"><i class="fas fa-clock"></i> Dự Kiến</span></td>
+                        </tr>
+                        <tr>
+                            <td>12</td>
+                            <td><strong>Search & Filters</strong></td>
+                            <td>Advanced search, filters, saved searches, suggestions</td>
+                            <td><span class="status-badge priority-medium">Medium</span></td>
+                            <td>1 tuần</td>
+                            <td><span class="status-badge status-planned"><i class="fas fa-clock"></i> Dự Kiến</span></td>
+                        </tr>
+                        <tr>
+                            <td>13</td>
+                            <td><strong>Reports & Analytics</strong></td>
+                            <td>12 report types, export PDF/Excel, email scheduling</td>
+                            <td><span class="status-badge priority-medium">Medium</span></td>
+                            <td>2 tuần</td>
+                            <td><span class="status-badge status-planned"><i class="fas fa-clock"></i> Dự Kiến</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Timeline -->
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-road"></i>
+                    Lộ Trình Triển Khai Chi Tiết
+                </h2>
+                <div class="timeline">
+                    <!-- Phase 1 -->
+                    <div class="timeline-item">
+                        <div class="timeline-marker">1</div>
+                        <div class="timeline-content" style="border-color: #3b82f6;">
+                            <h3>🚀 Giai Đoạn 1: Core Features</h3>
+                            <div class="duration" style="color: #3b82f6;"><i class="fas fa-spinner fa-spin"></i> ĐANG TRIỂN KHAI</div>
+                            <ul>
+                                <li>✅ Xác thực & phân quyền (JWT + RBAC)</li>
+                                <li>🔨 Quản lý Ticket hoàn chỉnh (in progress)</li>
+                                <li>🔨 Quản lý Task với 3 chiến lược (in progress)</li>
+                                <li>✅ Thông báo FCM & MQTT messaging</li>
+                            </ul>
+                            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border);">
+                                <strong style="color: #3b82f6;">🔨 In Progress:</strong> 3/5 features completed, Ticket & Task management under development
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Phase 2 -->
+                    <div class="timeline-item">
+                        <div class="timeline-marker">2</div>
+                        <div class="timeline-content">
+                            <h3>⚡ Giai Đoạn 2: Advanced Features</h3>
+                            <div class="duration"><i class="fas fa-calendar"></i> Tuần 2-4 (3 tuần)</div>
+                            <ul>
+                                <li><strong>Task Pool:</strong> Implementation, Team Assignment strategy</li>
+                                <li><strong>SLA Management:</strong> Configuration theo priority (Critical 2h, High 4h, Medium 24h, Low 3d)</li>
+                                <li><strong>Monitoring:</strong> Real-time SLA tracking (5-min intervals) với Hangfire</li>
+                                <li><strong>Escalation:</strong> Workflow + Manager approval + candidate suggestion</li>
+                                <li><strong>Dashboard:</strong> 23+ widgets, role-based layout, real-time updates</li>
+                            </ul>
+                            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border);">
+                                <strong>Deliverables:</strong> Task Pool, SLA monitoring tự động, Dashboard nâng cao
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Phase 3 -->
+                    <div class="timeline-item">
+                        <div class="timeline-marker">3</div>
+                        <div class="timeline-content">
+                            <h3>💬 Giai Đoạn 3: Collaboration & Management</h3>
+                            <div class="duration"><i class="fas fa-calendar"></i> Tuần 5-7 (3 tuần)</div>
+                            <ul>
+                                <li><strong>File Management:</strong> Upload/download, local storage, preview images</li>
+                                <li><strong>User & Team Management:</strong> User management, teams, departments, RBAC</li>
+                                <li><strong>Advanced Search:</strong> Filters, saved searches, suggestions</li>
+                                <li><strong>Optimization:</strong> Performance tuning, caching strategies</li>
+                            </ul>
+                            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border);">
+                                <strong>Deliverables:</strong> Tính năng cộng tác đầy đủ, Web App hoàn chỉnh sẵn sàng production
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Phase 4 -->
+                    <div class="timeline-item">
+                        <div class="timeline-marker">4</div>
+                        <div class="timeline-content">
+                            <h3>📱 Giai Đoạn 4: Mobile App & Launch</h3>
+                            <div class="duration"><i class="fas fa-calendar"></i> Tuần 8-10 (3 tuần)</div>
+                            <ul>
+                                <li><strong>React Native:</strong> Setup iOS + Android với 19 mobile screens</li>
+                                <li><strong>Core Features:</strong> Task management, Ticket creation, Dashboard mobile</li>
+                                <li><strong>Offline Mode:</strong> Local storage + background sync</li>
+                                <li><strong>Device Features:</strong> Camera integration, Biometric auth, QR scanner</li>
+                                <li><strong>Push Notifications:</strong> FCM integration (infrastructure sẵn sàng)</li>
+                                <li><strong>Reports:</strong> 12 report types, export PDF/Excel</li>
+                                <li><strong>Testing & Launch:</strong> Full QA, bug fixes, App Store/Play Store submission</li>
+                            </ul>
+                            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border);">
+                                <strong>Deliverables:</strong> App iOS + Android hoàn chỉnh, Reports module, hệ thống production-ready
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cost Estimate -->
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-calculator"></i>
+                    Ước Tính Chi Phí & Nguồn Lực
+                </h2>
+                <div class="cost-section">
+                    <h3 style="color: var(--primary); margin-bottom: 20px; text-align: center;">
+                        <i class="fas fa-chart-line"></i> Tổng Quan Dự Án
+                    </h3>
+                    <div class="cost-grid">
+                        <div class="cost-item">
+                            <div class="label">Tổng Thời Gian</div>
+                            <div class="value">10 tuần</div>
+                        </div>
+                        <div class="cost-item">
+                            <div class="label">Team Size</div>
+                            <div class="value">8 người</div>
+                        </div>
+                        <div class="cost-item">
+                            <div class="label">Giai Đoạn</div>
+                            <div class="value">4 phases</div>
+                        </div>
+                        <div class="cost-item">
+                            <div class="label">Màn Hình</div>
+                            <div class="value">45+</div>
+                        </div>
+                    </div>
+
+                    <h4 style="margin-top: 30px; margin-bottom: 15px; color: var(--dark);">
+                        <i class="fas fa-users"></i> Đội Ngũ Phát Triển (8 người)
+                    </h4>
+                    <table class="feature-table" style="margin-bottom: 20px;">
+                        <thead>
+                            <tr>
+                                <th>Vai Trò</th>
+                                <th>Số Lượng</th>
+                                <th>Công Việc Chính</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Solution Architect</strong></td>
+                                <td>1</td>
+                                <td>Thiết kế hệ thống, tech decisions, code review</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Backend Developer</strong></td>
+                                <td>2</td>
+                                <td>C# ASP.NET Core 8, PostgreSQL, MQTT, REST APIs</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Frontend Developer</strong></td>
+                                <td>1</td>
+                                <td>React 18 + TypeScript, UI components</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Mobile Developer</strong></td>
+                                <td>2</td>
+                                <td>React Native (iOS + Android)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>QA Engineer</strong></td>
+                                <td>2</td>
+                                <td>Testing, automation, quality assurance</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                        <h4 style="color: var(--primary); margin-bottom: 15px;">
+                            <i class="fas fa-rocket"></i> Chiến Lược Release
+                        </h4>
+                        <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; border-left: 4px solid #3b82f6; margin-bottom: 15px;">
+                            <p style="color: #1e40af; font-weight: 600; margin-bottom: 10px;">
+                                <i class="fas fa-desktop"></i> Phase 1-3: Web App (Real-time Features)
+                            </p>
+                            <ul style="color: #4b5563; margin-left: 20px;">
+                                <li>Triển khai Web App với toàn bộ tính năng real-time trước</li>
+                                <li>Test và ổn định hệ thống web</li>
+                                <li>Thu thập feedback từ người dùng</li>
+                            </ul>
+                        </div>
+                        <div style="background: #f0fdf4; padding: 15px; border-radius: 8px; border-left: 4px solid #10b981;">
+                            <p style="color: #065f46; font-weight: 600; margin-bottom: 10px;">
+                                <i class="fas fa-mobile-alt"></i> Phase 4: Mobile App (iOS + Android)
+                            </p>
+                            <ul style="color: #4b5563; margin-left: 20px;">
+                                <li>Phát triển Mobile App dựa trên Web APIs đã ổn định</li>
+                                <li>Offline mode và sync data</li>
+                                <li>Submit lên App Store và Google Play</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                        <h4 style="color: var(--primary); margin-bottom: 15px;">
+                            <i class="fas fa-info-circle"></i> Ghi Chú
+                        </h4>
+                        <ul style="line-height: 1.8; color: #4b5563;">
+                            <li><strong>Đã hoàn thành:</strong> Authentication, Authorization (RBAC), Notifications (FCM), MQTT Messaging</li>
+                            <li><strong>Đang phát triển:</strong> Ticket Management, Task Management (3 strategies)</li>
+                            <li><strong>Infrastructure:</strong> PostgreSQL database, Redis cache, MQTT broker</li>
+                            <li><strong>Design:</strong> 34 màn hình mockup đã được thiết kế chi tiết (15 Web + 19 Mobile)</li>
+                            <li><strong>Documentation:</strong> Specifications hoàn chỉnh cho 7/13 modules</li>
+                            <li><strong>Timeline:</strong> 10 tuần tập trung phát triển, Web trước sau đó Mobile</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technical Stack -->
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-code-branch"></i>
+                    Công Nghệ Sử Dụng
+                </h2>
+                <table class="feature-table">
+                    <thead>
+                        <tr>
+                            <th>Layer</th>
+                            <th>Công Nghệ</th>
+                            <th>Mô Tả</th>
+                            <th>Trạng Thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Frontend Web</strong></td>
+                            <td>React 18 + TypeScript</td>
+                            <td>Modern UI với type safety</td>
+                            <td><span class="status-badge status-in-progress">Đang Làm</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mobile</strong></td>
+                            <td>React Native</td>
+                            <td>iOS + Android native apps</td>
+                            <td><span class="status-badge status-planned">Dự Kiến</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Backend API</strong></td>
+                            <td>C# ASP.NET Core 8</td>
+                            <td>RESTful APIs, Clean Architecture</td>
+                            <td><span class="status-badge status-in-progress">Đang Làm</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Database</strong></td>
+                            <td>PostgreSQL</td>
+                            <td>Relational database, EF Core 8</td>
+                            <td><span class="status-badge status-completed">Hoàn Thành</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Real-time Messaging</strong></td>
+                            <td>MQTT</td>
+                            <td>Real-time chat & notifications</td>
+                            <td><span class="status-badge status-completed">Hoàn Thành</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Notifications</strong></td>
+                            <td>Firebase FCM</td>
+                            <td>Push notifications (iOS + Android)</td>
+                            <td><span class="status-badge status-completed">Hoàn Thành</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cache</strong></td>
+                            <td>Redis</td>
+                            <td>Session, caching, real-time data</td>
+                            <td><span class="status-badge status-in-progress">Đang Làm</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Storage</strong></td>
+                            <td>Local File System</td>
+                            <td>File storage, attachments, images</td>
+                            <td><span class="status-badge status-in-progress">Đang Làm</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Background Jobs</strong></td>
+                            <td>Hangfire</td>
+                            <td>SLA monitoring, scheduled tasks</td>
+                            <td><span class="status-badge status-planned">Dự Kiến</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- CTA -->
+            <div class="cta-section">
+                <h2><i class="fas fa-rocket"></i> Tiếp Tục Phát Triển Các Tính Năng Còn Lại</h2>
+                <p><strong>✅ 3 tính năng đã hoàn thành</strong> - Auth, Notifications, Chat đang hoạt động tốt!<br>
+                <strong>🔨 2 tính năng đang phát triển</strong> - Ticket & Task Management đang triển khai<br>
+                Hãy xem xét và phê duyệt để tiếp tục phát triển 8 modules còn lại theo lộ trình.</p>
+
+                <!-- Leadership Approval Section -->
+                <div style="background: white; padding: 30px; border-radius: 12px; margin: 30px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                    <h3 style="color: var(--primary); margin-bottom: 20px; text-align: center;">
+                        <i class="fas fa-pen-fancy"></i> Ý Kiến Lãnh Đạo
+                    </h3>
+                    <div style="border: 2px solid #e5e7eb; border-radius: 8px; padding: 20px; min-height: 120px; background: #fafafa;">
+                        <p style="color: #6b7280; font-style: italic; margin-bottom: 60px;">
+                            (Vui lòng ghi ý kiến và ký duyệt)
+                        </p>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 40px;">
+                            <div>
+                                <div style="border-bottom: 1px solid #000; padding-bottom: 5px; margin-bottom: 5px;">
+                                    <span style="color: #6b7280; font-size: 0.9rem;">Họ tên:</span>
+                                </div>
+                                <div style="border-bottom: 1px solid #000; padding-bottom: 5px; margin-top: 20px;">
+                                    <span style="color: #6b7280; font-size: 0.9rem;">Chức vụ:</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="border-bottom: 1px solid #000; padding-bottom: 5px; margin-bottom: 5px;">
+                                    <span style="color: #6b7280; font-size: 0.9rem;">Ngày:</span>
+                                </div>
+                                <div style="border-bottom: 1px solid #000; padding-bottom: 5px; margin-top: 20px;">
+                                    <span style="color: #6b7280; font-size: 0.9rem;">Chữ ký:</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cta-buttons">
+                    <a href="index.html" class="btn btn-primary">
+                        <i class="fas fa-eye"></i>
+                        Xem Demo Chi Tiết
+                    </a>
+                    <a href="app-demo.html" class="btn btn-primary">
+                        <i class="fas fa-mobile-alt"></i>
+                        Xem 34 Màn Hình
+                    </a>
+                </div>
+                <div style="margin-top: 25px; padding-top: 25px; border-top: 1px solid rgba(255,255,255,0.3);">
+                    <p style="font-size: 0.95rem; opacity: 0.9;">
+                        <i class="fas fa-phone"></i> Liên hệ: contact@linm-soft.com | 
+                        <i class="fas fa-clock"></i> Phản hồi trong 24h
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>BUILD WITH LINM-SOFT</strong> ❤️</p>
+            <p>Hệ Thống Quản Lý Công Việc Y Khoa - Phiên bản 1.0.0</p>
+            <p>© 2026 LINM-SOFT. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        // Print functionality
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                window.print();
+            }
+        });
+
+        // Smooth scroll for anchors
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

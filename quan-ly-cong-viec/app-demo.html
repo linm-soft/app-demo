@@ -1,0 +1,3276 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Màn Hình Demo - QLCV</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --border: #e5e7eb;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Container adjustments for tabs */
+        #webapp-tab .screens-grid {
+            max-width: 100%;
+        }
+        
+        #mobile-tab {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        /* Tab Navigation */
+        .tab-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 15px 40px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        
+        .tab-btn.active {
+            background: white;
+            color: var(--primary);
+            border-color: white;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+        
+        .tab-btn i {
+            font-size: 1.3rem;
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .screens-section {
+            margin-bottom: 50px;
+        }
+        
+        .section-title {
+            color: white;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        /* Web App Grid - Full Width */
+        .screens-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            max-width: 100%;
+        }
+        
+        /* For large screens, allow up to 3 columns */
+        @media (min-width: 1800px) {
+            .screens-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (min-width: 1200px) and (max-width: 1799px) {
+            .screens-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Mobile App Grid - iPhone 17 Size */
+        .mobile-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+        
+        .mobile-grid .mobile-screen {
+            flex: 0 0 auto;
+        }
+        
+        /* Web App Screen Mockup */
+        .screen-mockup {
+            background: #f9fafb;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .screen-mockup:hover {
+            transform: translateY(-10px);
+        }
+        
+        .screen-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .screen-content {
+            padding: 20px;
+            background: white;
+            min-height: 400px;
+        }
+        
+        /* Mobile Screen - iPhone 17 Standard Size */
+        .mobile-screen {
+            width: 390px;
+            margin: 0 auto;
+            background: #000;
+            border-radius: 40px;
+            padding: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        
+        .mobile-screen::before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+        
+        .mobile-screen-inner {
+            background: white;
+            border-radius: 30px;
+            overflow: hidden;
+            height: 844px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .mobile-status-bar {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 30px 15px 10px;
+            font-size: 0.7rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .mobile-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .mobile-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: var(--light);
+        }
+        
+        .mobile-nav {
+            display: flex;
+            background: white;
+            border-top: 2px solid var(--border);
+            padding: 10px 0;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+        }
+        
+        .mobile-nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            color: #6b7280;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .mobile-nav-item:hover,
+        .mobile-nav-item.active {
+            color: var(--primary);
+        }
+        
+        .mobile-nav-item i {
+            display: block;
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+        }
+        
+        /* UI Components */
+        .app-header {
+            background: var(--light);
+            padding: 20px;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .app-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--dark);
+        }
+        
+        .app-logo i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+        
+        .app-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .searchbar {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 300px;
+        }
+        
+        .searchbar i {
+            color: var(--primary);
+        }
+        
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        
+        .btn-success {
+            background: var(--success);
+        }
+        
+        .btn-success:hover {
+            background: #059669;
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .avatar:hover {
+            transform: scale(1.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-box {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid var(--border);
+            transition: all 0.2s;
+        }
+        
+        .stat-box:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--dark);
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+        
+        .card {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.2s;
+        }
+        
+        .card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-KHẨN CẤP {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .badge-high {
+            background: #fed7aa;
+            color: #ea580c;
+        }
+        
+        .badge-medium {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        
+        .badge-low {
+            background: #d1fae5;
+            color: #059669;
+        }
+        
+        .badge-open {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+        
+        .badge-progress {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        
+        .badge-closed {
+            background: #d1fae5;
+            color: #059669;
+        }
+        
+        .list-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .list-item:hover {
+            background: var(--light);
+        }
+        
+        .list-item:last-child {
+            border-bottom: none;
+        }
+        
+        .list-item-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .list-item-content {
+            flex: 1;
+        }
+        
+        .list-item-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+        
+        .list-item-meta {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: var(--border);
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            font-size: 0.85rem;
+        }
+        
+        .kanban-column {
+            background: var(--light);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        
+        .kanban-header {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .kanban-count {
+            background: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+        }
+        
+        .kanban-card {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: move;
+            transition: all 0.2s;
+        }
+        
+        .kanban-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .chat-message {
+            padding: 12px;
+            border-radius: 12px;
+            max-width: 75%;
+            font-size: 0.9rem;
+        }
+        
+        .chat-message.sent {
+            background: var(--primary);
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .chat-message.received {
+            background: var(--light);
+            color: var(--dark);
+            border-bottom-left-radius: 4px;
+        }
+        
+        .chat-meta {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        
+        .chat-input {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background: white;
+            border-top: 2px solid var(--border);
+        }
+        
+        .chat-input input {
+            flex: 1;
+        }
+        
+        .mobile-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .mobile-stat-box {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .mobile-stat-icon {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+        
+        .mobile-stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--dark);
+            display: block;
+        }
+        
+        .mobile-stat-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        
+        .mobile-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .quick-action {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .quick-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .quick-action i {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        
+        .quick-action-label {
+            font-size: 0.75rem;
+            color: var(--dark);
+            font-weight: 600;
+        }
+        
+        @media (max-width: 1400px) {
+            .screens-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .kanban-board {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Back to Main Demo -->
+        <div style="text-align: center; margin-bottom: 20px;">
+            <a href="index.html" style="display: inline-flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.2); color: white; padding: 12px 30px; border-radius: 50px; text-decoration: none; font-weight: 600; border: 2px solid rgba(255, 255, 255, 0.3); transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'; this.style.transform='translateY(0)';">
+                <i class="fas fa-arrow-left"></i>
+                Quay Lại Trang Chủ (Workflows & Tech Stack)
+            </a>
+        </div>
+        
+        <h1><i class="fas fa-hospital"></i> Toàn Bộ Màn Hình Demo - 34 Screens</h1>
+        <p style="text-align: center; color: white; font-size: 1.1rem; margin-bottom: 30px; opacity: 0.95;">
+            ✨ 15 Web App Screens • 📱 19 Mobile App Screens • 💻 Full Workflow Visualization
+        </p>
+        
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-btn active" onclick="switchTab('webapp')">
+                <i class="fas fa-desktop"></i>
+                Web App
+            </button>
+            <button class="tab-btn" onclick="switchTab('mobile')">
+                <i class="fas fa-mobile-alt"></i>
+                Mobile App
+            </button>
+        </div>
+        
+        <!-- Web App Tab Content -->
+        <div id="webapp-tab" class="tab-content active">
+        <!-- Web App Screens -->
+        <div class="screens-section">
+            <h2 class="section-title">
+                <i class="fas fa-desktop"></i>
+                Màn Hình Web App
+            </h2>
+            
+            <div class="screens-grid">
+                <!-- Dashboard -->
+                <div class="screen-mockup">
+                    <div class="screen-header">
+                        <i class="fas fa-chart-line"></i>
+                        Dashboard - Tổng Quan
+                    </div>
+                    <div class="screen-content">
+                        <div class="app-header">
+                            <div class="app-logo">
+                                <i class="fas fa-hospital"></i>
+                                <span>QLCV Y Khoa</span>
+                            </div>
+                            <div class="app-actions">
+                                <div class="searchbar">
+                                    <i class="fas fa-search"></i>
+                                    <span>Tìm kiếm...</span>
+                                </div>
+                                <i class="fas fa-bell" style="font-size: 1.3rem; color: var(--primary); cursor: pointer;"></i>
+                                <div class="avatar">ĐBL</div>
+                            </div>
+                        </div>
+                        
+                        <div style="padding: 20px;">
+                            <div class="stats-grid">
+                                <div class="stat-box">
+                                    <div class="stat-icon" style="color: #3b82f6;">
+                                        <i class="fas fa-ticket-alt"></i>
+                                    </div>
+                                    <span class="stat-number">12</span>
+                                    <div class="stat-label">Tickets Mở</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-icon" style="color: #8b5cf6;">
+                                        <i class="fas fa-tasks"></i>
+                                    </div>
+                                    <span class="stat-number">8</span>
+                                    <div class="stat-label">Tasks Pending</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-icon" style="color: #f59e0b;">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <span class="stat-number">15</span>
+                                    <div class="stat-label">Đang Xử Lý</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-icon" style="color: #10b981;">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <span class="stat-number">92%</span>
+                                    <div class="stat-label">SLA Tuân Thủ</div>
+                                </div>
+                            </div>
+                            
+                            <h3 style="margin-bottom: 15px; color: var(--dark);">Hoạt Động Gần Đây</h3>
+                            <div class="card">
+                                <div class="list-item">
+                                    <div class="list-item-avatar">ĐBL</div>
+                                    <div class="list-item-content">
+                                        <div class="list-item-title">TKT-001 được gán cho Đinh Bộ Lĩnh</div>
+                                        <div class="list-item-meta">5 phút trước • Khẩn Cấp</div>
+                                    </div>
+                                    <span class="badge badge-KHẨN CẤP">Khẩn Cấp</span>
+                                </div>
+                                <div class="list-item">
+                                    <div class="list-item-avatar">ĐBL</div>
+                                    <div class="list-item-content">
+                                        <div class="list-item-title">TSK-456 đã hoàn thành</div>
+                                        <div class="list-item-meta">1 giờ trước • Development</div>
+                                    </div>
+                                    <i class="fas fa-check-circle" style="color: var(--success); font-size: 1.5rem;"></i>
+                                </div>
+                                <div class="list-item">
+                                    <div class="list-item-avatar" style="background: var(--warning);">⚠️</div>
+                                    <div class="list-item-content">
+                                        <div class="list-item-title">Cảnh báo SLA cho TKT-002</div>
+                                        <div class="list-item-meta">2 giờ trước • Cao</div>
+                                    </div>
+                                    <span class="badge badge-high">Cao</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tickets List -->
+                <div class="screen-mockup">
+                    <div class="screen-header">
+                        <i class="fas fa-ticket-alt"></i>
+                        Danh Sách Tickets
+                    </div>
+                    <div class="screen-content">
+                        <div class="app-header">
+                            <div style="display: flex; gap: 15px; align-items: center;">
+                                <h2 style="margin: 0; color: var(--dark);">Tickets</h2>
+                                <span class="badge badge-open">12 Mở</span>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <div class="searchbar" style="min-width: 200px;">
+                                    <i class="fas fa-search"></i>
+                                    <span>Lọc...</span>
+                                </div>
+                                <button class="btn">
+                                    <i class="fas fa-plus"></i>
+                                    Tạo Ticket
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div style="padding: 20px;">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div>
+                                        <div style="font-size: 1.1rem; font-weight: bold; color: var(--dark);">TKT-001</div>
+                                        <div style="font-size: 0.9rem; color: #6b7280; margin-top: 4px;">Máy in ER bị hỏng</div>
+                                    </div>
+                                    <span class="badge badge-KHẨN CẤP">Khẩn Cấp</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 20px; font-size: 0.85rem; color: #6b7280;">
+                                    <div><i class="fas fa-user"></i> Đinh Bộ Lĩnh</div>
+                                    <div><i class="fas fa-clock"></i> 2h còn lại</div>
+                                    <div><i class="fas fa-map-marker-alt"></i> Phòng 205</div>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 65%;"></div>
+                                </div>
+                                <div style="font-size: 0.8rem; color: #6b7280; margin-top: 5px;">Đang xử lý - 65%</div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header">
+                                    <div>
+                                        <div style="font-size: 1.1rem; font-weight: bold; color: var(--dark);">TKT-002</div>
+                                        <div style="font-size: 0.9rem; color: #6b7280; margin-top: 4px;">Cập nhật phần mềm</div>
+                                    </div>
+                                    <span class="badge badge-high">Cao</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 20px; font-size: 0.85rem; color: #6b7280;">
+                                    <div><i class="fas fa-user"></i> Đinh Bộ Lĩnh</div>
+                                    <div><i class="fas fa-clock"></i> 8h còn lại</div>
+                                    <div><i class="fas fa-laptop"></i> IT Department</div>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 30%;"></div>
+                                </div>
+                                <div style="font-size: 0.8rem; color: #6b7280; margin-top: 5px;">Mới bắt đầu - 30%</div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header">
+                                    <div>
+                                        <div style="font-size: 1.1rem; font-weight: bold; color: var(--dark);">TKT-003</div>
+                                        <div style="font-size: 0.9rem; color: #6b7280; margin-top: 4px;">Cấu hình mạng</div>
+                                    </div>
+                                    <span class="badge badge-medium">Trung Bình</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 20px; font-size: 0.85rem; color: #6b7280;">
+                                    <div><i class="fas fa-user"></i> Đinh Bộ Lĩnh</div>
+                                    <div><i class="fas fa-clock"></i> 2 ngày còn lại</div>
+                                    <div><i class="fas fa-network-wired"></i> Network</div>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%;"></div>
+                                </div>
+                                <div style="font-size: 0.8rem; color: #6b7280; margin-top: 5px;">Chưa bắt đầu</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Task Board Kanban -->
+                <div class="screen-mockup">
+                    <div class="screen-header">
+                        <i class="fas fa-columns"></i>
+                        Bảng Kanban - Quản Lý Tasks
+                    </div>
+                    <div class="screen-content">
+                        <div class="app-header">
+                            <h2 style="margin: 0; color: var(--dark);">Task Board</h2>
+                            <button class="btn btn-success">
+                                <i class="fas fa-plus"></i>
+                                Tạo Task
+                            </button>
+                        </div>
+                        
+                        <div style="padding: 20px;">
+                            <div class="kanban-board">
+                                <div class="kanban-column">
+                                    <div class="kanban-header">
+                                        <span>📝 MỚI TẠO</span>
+                                        <span class="kanban-count">3</span>
+                                    </div>
+                                    <div class="kanban-card">
+                                        <div style="font-weight: 600; margin-bottom: 5px;">TSK-101</div>
+                                        <div style="font-size: 0.8rem; color: #6b7280; margin-bottom: 8px;">Fix login bug</div>
+                                        <span class="badge badge-high">Cao</span>
+                                    </div>
+                                    <div class="kanban-card">
+                                        <div style="font-weight: 600; margin-bottom: 5px;">TSK-102</div>
+                                        <div style="font-size: 0.8rem; color: #6b7280; margin-bottom: 8px;">Update docs</div>
+                                        <span class="badge badge-low">Thấp</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="kanban-column">
+                                    <div class="kanban-header">
+                                        <span>👤 ĐÃ GIAO</span>
+                                        <span class="kanban-count">2</span>
+                                    </div>
+                                    <div class="kanban-card">
+                                        <div style="font-weight: 600; margin-bottom: 5px;">TSK-456</div>
+                                        <div style="font-size: 0.8rem; color: #6b7280; margin-bottom: 8px;">DB Migration</div>
+                                        <span class="badge badge-KHẨN CẤP">Khẩn Cấp</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="kanban-column">
+                                    <div class="kanban-header">
+                                        <span>⚡ IN PROGRESS</span>
+                                        <span class="kanban-count">4</span>
+                                    </div>
+                                    <div class="kanban-card">
+                                        <div style="font-weight: 600; margin-bottom: 5px;">TSK-789</div>
+                                        <div style="font-size: 0.8rem; color: #6b7280; margin-bottom: 8px;">API Updates</div>
+                                        <div class="progress-bar" style="height: 6px; margin-top: 8px;">
+                                            <div class="progress-fill" style="width: 75%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="kanban-column">
+                                    <div class="kanban-header">
+                                        <span>👁️ REVIEW</span>
+                                        <span class="kanban-count">2</span>
+                                    </div>
+                                    <div class="kanban-card">
+                                        <div style="font-weight: 600; margin-bottom: 5px;">TSK-321</div>
+                                        <div style="font-size: 0.8rem; color: #6b7280; margin-bottom: 8px;">Code review</div>
+                                        <span class="badge badge-medium">Trung Bình</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="kanban-column">
+                                    <div class="kanban-header">
+                                        <span>✅ DONE</span>
+                                        <span class="kanban-count">15</span>
+                                    </div>
+                                    <div class="kanban-card">
+                                        <div style="font-weight: 600; margin-bottom: 5px;">TSK-111</div>
+                                        <div style="font-size: 0.8rem; color: #6b7280; margin-bottom: 8px;">Setup CI/CD</div>
+                                        <span class="badge badge-closed">Hoàn Thành</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chat/Messages -->
+                <div class="screen-mockup">
+                    <div class="screen-header">
+                        <i class="fas fa-comments"></i>
+                        Chat - TKT-001
+                    </div>
+                    <div class="screen-content" style="display: flex; flex-direction: column; padding: 0; min-height: 500px;">
+                        <div class="app-header" style="border-bottom: 2px solid var(--border);">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div class="avatar" style="width: 45px; height: 45px;">SJ</div>
+                                <div>
+                                    <div style="font-weight: 600; color: var(--dark);">Ticket #TKT-001</div>
+                                    <div style="font-size: 0.8rem; color: #6b7280;">Máy in ER bị hỏng</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 15px;">
+                                <i class="fas fa-paperclip" style="font-size: 1.2rem; color: var(--primary); cursor: pointer;"></i>
+                            </div>
+                        </div>
+                        
+                        <div style="flex: 1; padding: 20px; overflow-y: auto;">
+                            <div class="chat-container">
+                                <div class="chat-message received">
+                                    <div style="font-weight: 600; margin-bottom: 5px;">Đinh Bộ Lĩnh</div>
+                                    Máy in ở phòng ER không hoạt động. Phòng 205 cần in đơn thuốc gấp!
+                                    <div class="chat-meta">10:30 AM</div>
+                                </div>
+                                
+                                <div class="chat-message sent">
+                                    Tôi đang trên đường đến. Dự kiến 5 phút nữa sẽ tới!
+                                    <div class="chat-meta">10:35 AM ✓✓</div>
+                                </div>
+                                
+                                <div class="chat-message received">
+                                    <div style="font-weight: 600; margin-bottom: 5px;">Đinh Bộ Lĩnh</div>
+                                    Cảm ơn bạn! Tình huống khẩn cấp 🔴
+                                    <div class="chat-meta">10:36 AM</div>
+                                </div>
+                                
+                                <div class="chat-message sent">
+                                    @Đinh Đã sửa xong! Vấn đề là cạn mực. Đã thay mực mới rồi ✅
+                                    <div class="chat-meta">10:50 AM ✓✓</div>
+                                </div>
+                                
+                                <div class="chat-message received">
+                                    <div style="font-weight: 600; margin-bottom: 5px;">Đinh Bộ Lĩnh</div>
+                                    Tuyệt vời! Máy in đã hoạt động trở lại. Cảm ơn bạn rất nhiều! 👍
+                                    <div class="chat-meta">10:52 AM</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-input">
+                            <input type="text" class="form-input" placeholder="Nhập tin nhắn..." style="margin: 0;">
+                            <button class="btn" style="padding: 10px 15px;">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                            <button class="btn" style="padding: 10px 20px;">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Row 2: More Web App Screens -->
+            <div class="screens-grid">
+                <!-- Manager Dashboard -->
+                <div class="screen-mockup">
+                    <div class="screen-header">
+                        <i class="fas fa-user-tie"></i>
+                        Manager Dashboard
+                    </div>
+                    <div class="screen-content">
+                        <div style="background: #fee2e2; border-left: 4px solid var(--danger); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                            <h3 style="color: var(--danger); margin-bottom: 10px;">⚠️ SLA Breach Alerts (3)</h3>
+                            <div class="card" style="margin-bottom: 10px; background: white;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                    <div>
+                                        <div style="font-weight: 600;">🔴 TKT-001 Vi phạm 30 phút</div>
+                                        <div style="font-size: 0.85rem; color: #6b7280;">Người gợi ý: Đinh Bộ Lĩnh (4.8⭐)</div>
+                                    </div>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button class="btn" style="padding: 8px 15px; font-size: 0.85rem;">Giữ nguyên</button>
+                                        <button class="btn btn-success" style="padding: 8px 15px; font-size: 0.85rem;">Phân công lại</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h3 style="margin-bottom: 15px;">📊 Khối Lượng Công Việc Nhóm</h3>
+                        <div style="display: grid; gap: 12px; margin-bottom: 20px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div class="avatar">ĐBL</div>
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                        <span style="font-weight: 600;">Đinh Bộ Lĩnh</span>
+                                        <span style="font-size: 0.85rem; color: #6b7280;">8 tasks</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 80%; background: var(--warning);"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div class="avatar">ĐBL</div>
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                        <span style="font-weight: 600;">Đinh Bộ Lĩnh</span>
+                                        <span style="font-size: 0.85rem; color: #6b7280;">5 tasks</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 50%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h3 style="margin-bottom: 15px;">✅ Phê Duyệt Đang Chờ (2)</h3>
+                        <div class="list-item">
+                            <div class="list-item-content">
+                                <div class="list-item-title">TSK-456 - Database Update</div>
+                                <div class="list-item-meta">Gửi bởi: Đinh Bộ Lĩnh | 16h hoàn thành</div>
+                            </div>
+                            <button class="btn" style="padding: 8px 15px; font-size: 0.85rem;">Xem Xét</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Task Pool -->
+                <div class="screen-mockup">
+                    <div class="screen-header">
+                        <i class="fas fa-swimming-pool"></i>
+                        Task Pool
+                    </div>
+                    <div class="screen-content">
+                        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                            <input type="text" class="form-input" placeholder="Tìm task..." style="margin: 0;">
+                            <button class="btn">
+                                <i class="fas fa-filter"></i>
+                                Lọc
+                            </button>
+                        </div>
+                        
+                        <div class="card" style="border-left: 4px solid var(--danger);">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                <div>
+                                    <h4 style="color: var(--dark); margin-bottom: 5px;">🟠 Cập Nhật Hồ Sơ Bệnh Nhân</h4>
+                                    <div style="font-size: 0.85rem; color: #6b7280;">Ước tính: 16h | Deadline: Mar 30</div>
+                                </div>
+                                <span class="badge badge-high">CAO</span>
+                            </div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+                                <span class="badge badge-info" style="background: #dbeafe; color: #1e40af;">SQL</span>
+                                <span class="badge badge-info" style="background: #dbeafe; color: #1e40af;">Database</span>
+                            </div>
+                            <div style="font-size: 0.85rem; color: #6b7280; margin-bottom: 12px;">
+                                📍 Khoa: IT | 👥 Cần: 1 người
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn" style="flex: 1;">
+                                    <i class="fas fa-info-circle"></i>
+                                    Chi Tiết
+                                </button>
+                                <button class="btn btn-success" style="flex: 1;">
+                                    <i class="fas fa-hand-paper"></i>
+                                    Nhận Task
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="card" style="border-left: 4px solid var(--warning);">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                <div>
+                                    <h4 style="color: var(--dark); margin-bottom: 5px;">🟡 Sửa Lỗi Đăng Nhập</h4>
+                                    <div style="font-size: 0.85rem; color: #6b7280;">Ước tính: 4h | Deadline: Mar 25</div>
+                                </div>
+                                <span class="badge badge-medium">TRUNG BÌNH</span>
+                            </div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+                                <span class="badge badge-info" style="background: #dbeafe; color: #1e40af;">React</span>
+                                <span class="badge badge-info" style="background: #dbeafe; color: #1e40af;">TypeScript</span>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn" style="flex: 1;">Chi Tiết</button>
+                                <button class="btn btn-success" style="flex: 1;">Nhận Task</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Reports Dashboard -->
+                <div class="screen-mockup">
+                    <div class="screen-header">
+                        <i class="fas fa-chart-line"></i>
+                        Báo Cáo & Phân Tích
+                    </div>
+                    <div class="screen-content">
+                        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                            <button class="btn">
+                                <i class="fas fa-file-pdf"></i>
+                                Xuất PDF
+                            </button>
+                            <button class="btn btn-success">
+                                <i class="fas fa-file-excel"></i>
+                                Xuất Excel
+                            </button>
+                        </div>
+                        
+                        <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+                            <div class="stat-box">
+                                <div class="stat-icon">🎫</div>
+                                <span class="stat-number">145</span>
+                                <div class="stat-label">Tổng Tickets</div>
+                                <div style="font-size: 0.75rem; color: var(--success); margin-top: 5px;">
+                                    ↑ 12% so với tháng trước
+                                </div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-icon">✅</div>
+                                <span class="stat-number">82.7%</span>
+                                <div class="stat-label">Tỷ Lệ Giải Quyết</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-icon">⏰</div>
+                                <span class="stat-number">4.5h</span>
+                                <div class="stat-label">Thời Gian TB</div>
+                            </div>
+                        </div>
+                        
+                        <h3 style="margin: 20px 0 15px;">📊 Tuân Thủ SLA</h3>
+                        <div class="card">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <span>Tổng Quan</span>
+                                <span style="font-size: 1.5rem; font-weight: bold; color: var(--success);">94.2% ✅</span>
+                            </div>
+                            <div class="progress-bar" style="height: 12px;">
+                                <div class="progress-fill" style="width: 94.2%; background: var(--success);"></div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px;">
+                            <div class="card">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span style="font-size: 0.9rem;">🔴 KHẨN CẤP</span>
+                                    <span style="font-weight: bold; color: var(--warning);">88% 🟡</span>
+                                </div>
+                                <div class="progress-bar" style="height: 8px;">
+                                    <div class="progress-fill" style="width: 88%; background: var(--warning);"></div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span style="font-size: 0.9rem;">🟠 High</span>
+                                    <span style="font-weight: bold; color: var(--success);">92% ✅</span>
+                                </div>
+                                <div class="progress-bar" style="height: 8px;">
+                                    <div class="progress-fill" style="width: 92%; background: var(--success);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Row 3: Additional Web App Screens -->
+            <div class="screens-grid">
+                <!-- Team Management -->
+                <div class="screen-mockup">
+                    <div class="screen-header">
+                        <i class="fas fa-users"></i>
+                        Quản Lý Nhóm
+                    </div>
+                    <div class="screen-content">
+                        <div style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center;">
+                            <input type="text" class="form-input" placeholder="Tìm kiếm thành viên..." style="margin: 0; flex: 1;">
+                            <button class="btn btn-success">
+                                <i class="fas fa-user-plus"></i>
+                                Thêm
+                            </button>
+                        </div>
+                        
+                        <h3 style="margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
+                            <span>💻 IT Department (15 thành viên)</span>
+                            <span style="font-size: 0.85rem; color: #6b7280;">SLA: 94% ✅</span>
+                        </h3>
+                        
+                        <div class="list-item">
+                            <div class="list-item-avatar">ĐBL</div>
+                            <div class="list-item-content">
+                                <div class="list-item-title">
+                                    Đinh Bộ Lĩnh (Manager)
+                                    <span class="badge badge-success" style="margin-left: 8px; font-size: 0.7rem;">HOẠT ĐỘNG</span>
+                                </div>
+                                <div class="list-item-meta">
+                                    <span>8 tickets đang mở | </span>
+                                    <span>Skills: Network, Hardware, Software</span>
+                                </div>
+                                <div style="margin-top: 5px;">
+                                    <span class="badge badge-info" style="background: #dbeafe; color: #1e40af; font-size: 0.7rem;">Network</span>
+                                    <span class="badge badge-info" style="background: #dbeafe; color: #1e40af; font-size: 0.7rem; margin-left: 5px;">Hardware</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn" style="padding: 8px 15px; font-size: 0.85rem;">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn" style="padding: 8px 15px; font-size: 0.85rem;">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="list-item">
+                            <div class="list-item-avatar">ĐBL</div>
+                            <div class="list-item-content">
+                                <div class="list-item-title">
+                                    Đinh Bộ Lĩnh (Staff)
+                                    <span class="badge badge-success" style="margin-left: 8px; font-size: 0.7rem;">HOẠT ĐỘNG</span>
+                                </div>
+                                <div class="list-item-meta">5 tickets đang mở | Skills: Software, Debugging</div>
+                                <div style="margin-top: 5px;">
+                                    <span class="badge badge-info" style="background: #dbeafe; color: #1e40af; font-size: 0.7rem;">Software</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn" style="padding: 8px 15px; font-size: 0.85rem;"><i class="fas fa-eye"></i></button>
+                                <button class="btn" style="padding: 8px 15px; font-size: 0.85rem;"><i class="fas fa-edit"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!--Settings -->
+                <div class="screen-mockup">
+                    <div class="screen-header">
+                        <i class="fas fa-cog"></i>
+                        Cài Đặt Hệ Thống
+                    </div>
+                    <div class="screen-content" style="display: flex; gap: 20px;">
+                        <div style="width: 200px; border-right: 2px solid var(--border); padding-right: 20px;">
+                            <div class="list-item" style="border: none; background: var(--light); border-radius: 8px; padding: 12px;">
+                                <i class="fas fa-user" style="color: var(--primary);"></i>
+                                <div class="list-item-content">
+                                    <div class="list-item-title" style="font-size: 0.9rem;">Tài Khoản</div>
+                                </div>
+                            </div>
+                            <div class="list-item" style="border: none; padding: 12px;">
+                                <i class="fas fa-bell"></i>
+                                <div class="list-item-content">
+                                    <div style="font-size: 0.9rem; color: var(--dark);">Thông Báo</div>
+                                </div>
+                            </div>
+                            <div class="list-item" style="border: none; padding: 12px;">
+                                <i class="fas fa-shield-alt"></i>
+                                <div class="list-item-content">
+                                    <div style="font-size: 0.9rem; color: var(--dark);">Bảo Mật</div>
+                                </div>
+                            </div>
+                            <div class="list-item" style="border: none; padding: 12px;">
+                                <i class="fas fa-building"></i>
+                                <div class="list-item-content">
+                                    <div style="font-size: 0.9rem; color: var(--dark);">Phòng Ban</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 20px;">👤 Thông Tin Tài Khoản</h3>
+                            <div class="form-group">
+                                <label class="form-label">Họ Tên</label>
+                                <input type="text" class="form-input" value="Đinh Bộ Lĩnh">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-input" value="dinhlinhbo@hospital.vn">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Số Điện Thoại</label>
+                                <input type="tel" class="form-input" value="+84 123456789">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Phòng Ban</label>
+                                <input type="text" class="form-input" value="IT Department" disabled>
+                            </div>
+                            <button class="btn btn-success">
+                                <i class="fas fa-save"></i>
+                                Lưu Thay Đổi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Calendar View -->
+                <div class="screen-mockup">
+                    <div class="screen-header">
+                        <i class="fas fa-calendar"></i>
+                        Lịch Công Việc
+                    </div>
+                    <div class="screen-content">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3>Tháng 3, 2026</h3>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn" style="padding: 8px 15px;">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button class="btn" style="padding: 8px 15px;">Hôm Nay</button>
+                                <button class="btn" style="padding: 8px 15px;">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 20px;">
+                            <div style="text-align: center; font-weight: 600; padding: 10px; font-size: 0.85rem;">CN</div>
+                            <div style="text-align: center; font-weight: 600; padding: 10px; font-size: 0.85rem;">T2</div>
+                            <div style="text-align: center; font-weight: 600; padding: 10px; font-size: 0.85rem;">T3</div>
+                            <div style="text-align: center; font-weight: 600; padding: 10px; font-size: 0.85rem;">T4</div>
+                            <div style="text-align: center; font-weight: 600; padding: 10px; font-size: 0.85rem;">T5</div>
+                            <div style="text-align: center; font-weight: 600; padding: 10px; font-size: 0.85rem;">T6</div>
+                            <div style="text-align: center; font-weight: 600; padding: 10px; font-size: 0.85rem;">T7</div>
+                            
+                            <div style="text-align: center; padding: 10px; color: #9ca3af; font-size: 0.85rem;">25</div>
+                            <div style="text-align: center; padding: 10px; color: #9ca3af; font-size: 0.85rem;">26</div>
+                            <div style="text-align: center; padding: 10px; color: #9ca3af; font-size: 0.85rem;">27</div>
+                            <div style="text-align: center; padding: 10px; color: #9ca3af; font-size: 0.85rem;">28</div>
+                            <div style="text-align: center; padding: 10px; color: #9ca3af; font-size: 0.85rem;">29</div>
+                            <div style="text-align: center; padding: 10px; font-size: 0.85rem;">1</div>
+                            <div style="text-align: center; padding: 10px; font-size: 0.85rem;">2</div>
+                            
+                            <div style="text-align: center; padding: 10px; font-size: 0.85rem;">3</div>
+                            <div style="text-align: center; padding: 10px; font-size: 0.85rem;">4</div>
+                            <div style="text-align: center; padding: 10px; font-size: 0.85rem;">5</div>
+                            <div style="text-align: center; padding: 10px; font-size: 0.85rem;">6</div>
+                            <div style="text-align: center; padding: 10px; font-size: 0.85rem;">7</div>
+                            <div style="text-align: center; padding: 10px; font-size: 0.85rem;">8</div>
+                            <div style="text-align: center; padding: 10px; font-size: 0.85rem;">9</div>
+                            
+                            <div style="text-align: center; padding: 10px; background: var(--light); border-radius: 8px; font-weight: 600;">
+                                <div>24 ⭐</div>
+                                <div style="font-size: 0.6rem; color: var(--danger); margin-top: 2px;">3 events</div>
+                            </div>
+                        </div>
+                        
+                        <h3 style="margin-bottom: 15px;">📅 Hôm Nay - 24 Tháng 3</h3>
+                        <div class="list-item" style="border-left: 4px solid var(--danger);">
+                            <div class="list-item-content">
+                                <div class="list-item-title">09:00 - 🔴 TKT-001 Deadline</div>
+                                <div class="list-item-meta">Máy in ER cần sửa khẩn cấp</div>
+                            </div>
+                        </div>
+                        <div class="list-item" style="border-left: 4px solid var(--warning);">
+                            <div class="list-item-content">
+                                <div class="list-item-title">14:00 - 🟢 Họp team hàng tuần</div>
+                                <div class="list-item-meta">Phòng họp A</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Row 4: Final Web App Screens -->
+            <div class="screens-grid">
+                <!-- Advanced Search -->
+                <div class="screen-mockup">
+                    <div class="screen-header">
+                        <i class="fas fa-search"></i>
+                        Tìm Kiếm Nâng Cao
+                    </div>
+                    <div class="screen-content">
+                        <div class="form-group">
+                            <label class="form-label">Từ Khóa</label>
+                            <input type="text" class="form-input" placeholder="Nhập từ khóa tìm kiếm..." value="máy in">
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                            <div class="form-group">
+                                <label class="form-label">Loại</label>
+                                <div style="display: flex; gap: 15px;">
+                                    <label style="display: flex; align-items: center; gap: 5px;">
+                                        <input type="checkbox" checked> Tickets
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 5px;">
+                                        <input type="checkbox" checked> Tasks
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Trạng Thái</label>
+                                <select class="form-input">
+                                    <option>Tất cả</option>
+                                    <option>Đang mở</option>
+                                    <option>Đang xử lý</option>
+                                    <option>Đã đóng</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Độ Ưu Tiên</label>
+                                <select class="form-input">
+                                    <option>Tất cả</option>
+                                    <option>Khẩn Cấp</option>
+                                    <option>Cao</option>
+                                    <option>Trung Bình</option>
+                                    <option>Thấp</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Phòng Ban</label>
+                                <select class="form-input">
+                                    <option>Tất cả</option>
+                                    <option>IT Department</option>
+                                    <option>Medical Equipment</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; margin-top: 20px;">
+                            <button class="btn" style="flex: 1;">
+                                <i class="fas fa-times"></i>
+                                Xóa Bộ Lọc
+                            </button>
+                            <button class="btn btn-success" style="flex: 1;">
+                                <i class="fas fa-search"></i>
+                                Tìm Kiếm
+                            </button>
+                        </div>
+                        
+                        <h3 style="margin: 20px 0 15px; padding-top: 20px; border-top: 2px solid var(--border);">
+                            Kết Quả: 12 items
+                        </h3>
+                        <div class="list-item">
+                            <div class="list-item-content">
+                                <div class="list-item-title">TKT-001: Máy in ER bị hỏng 🔴</div>
+                                <div class="list-item-meta">Gửi: Mar 24 | Đinh Bộ Lĩnh | KHẨN CẤP</div>
+                            </div>
+                            <span class="badge badge-KHẨN CẤP">KHẨN CẤP</span>
+                        </div>
+                        <div class="list-item">
+                            <div class="list-item-content">
+                                <div class="list-item-title">TSK-123: Lắp đặt máy in mới 🟡</div>
+                                <div class="list-item-meta">Tạo: Mar 20 | IT Department</div>
+                            </div>
+                            <span class="badge badge-medium">Trung Bình</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Approval Queue -->
+                <div class="screen-mockup">
+                    <div class="screen-header">
+                        <i class="fas fa-check-double"></i>
+                        Hàng Đợi Phê Duyệt
+                    </div>
+                    <div class="screen-content">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3>✅ Đang Chờ Phê Duyệt (5)</h3>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn" style="padding: 8px 15px; font-size: 0.85rem;">
+                                    <i class="fas fa-filter"></i>
+                                    Lọc
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="card" style="border-left: 4px solid var(--primary);">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                                <div>
+                                    <h4 style="color: var(--dark); margin-bottom: 5px;">TSK-456: Database Update</h4>
+                                    <div style="font-size: 0.85rem; color: #6b7280;">
+                                        Gửi bởi: Đinh Bộ Lĩnh | Mar 24, 14:30
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin: 12px 0;">
+                                <div style="font-size: 0.85rem; margin-bottom: 8px;">
+                                    ✅ Mô tả: Đã hoàn thành migration database với 16h làm việc
+                                </div>
+                                <div style="display: flex; gap: 15px; font-size: 0.85rem; color: var(--success);">
+                                    <span>✅ Tất cả subtasks hoàn thành</span>
+                                    <span>✅ Code reviewed</span>
+                                    <span>✅ Tests passed</span>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                                <button class="btn" style="flex: 1;">
+                                    <i class="fas fa-eye"></i>
+                                    Chi Tiết
+                                </button>
+                                <button class="btn btn-success" style="flex: 1;">
+                                    <i class="fas fa-check"></i>
+                                    Phê Duyệt
+                                </button>
+                                <button class="btn" style="flex: 1; background: var(--danger);">
+                                    <i class="fas fa-times"></i>
+                                    Từ Chối
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="card" style="border-left: 4px solid var(--warning);">
+                            <h4 style="color: var(--dark); margin-bottom: 5px;">TSK-789: System Maintenance</h4>
+                            <div style="font-size: 0.85rem; color: #6b7280; margin-bottom: 12px;">
+                                Gửi bởi: Đinh Bộ Lĩnh | Mar 24, 11:00
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn" style="flex: 1;">Chi Tiết</button>
+                                <button class="btn btn-success" style="flex: 1;">Phê Duyệt</button>
+                                <button class="btn" style="flex: 1; background: var(--danger);">Từ Chối</button>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--border);">
+                            <a href="#" style="color: var(--primary); text-decoration: none;">
+                                <i class="fas fa-history"></i>
+                                Xem lịch sử phê duyệt (45 đã phê duyệt)
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Audit Logs -->
+                <div class="screen-mockup">
+                    <div class="screen-header">
+                        <i class="fas fa-clipboard-list"></i>
+                        Nhật Ký Hoạt Động
+                    </div>
+                    <div class="screen-content">
+                        <div style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center;">
+                            <input type="date" class="form-input" style="margin: 0; flex: 1;" value="2026-03-24">
+                            <button class="btn">
+                                <i class="fas fa-filter"></i>
+                                Lọc
+                            </button>
+                            <button class="btn btn-success">
+                                <i class="fas fa-download"></i>
+                                Xuất
+                            </button>
+                        </div>
+                        
+                        <h3 style="margin-bottom: 15px;">Hôm Nay - 24 Tháng 3, 2026</h3>
+                        
+                        <div class="list-item">
+                            <div style="min-width: 60px; font-size: 0.8rem; color: #6b7280;">16:30</div>
+                            <div class="list-item-avatar">ĐBL</div>
+                            <div class="list-item-content">
+                                <div class="list-item-title">
+                                    <span style="font-weight: 600;">Đinh Bộ Lĩnh</span>
+                                    <span style="font-weight: normal;"> đã cập nhật trạng thái TKT-001</span>
+                                </div>
+                                <div class="list-item-meta">
+                                    ✏️ ĐANG XỬ LÝ → ĐÃ GIẢI QUYẾT
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="list-item">
+                            <div style="min-width: 60px; font-size: 0.8rem; color: #6b7280;">15:45</div>
+                            <div class="list-item-avatar" style="background: var(--success);">M</div>
+                            <div class="list-item-content">
+                                <div class="list-item-title">
+                                    <span style="font-weight: 600;">Manager</span>
+                                    <span style="font-weight: normal;"> đã phê duyệt TSK-456</span>
+                                </div>
+                                <div class="list-item-meta">✅ Task hoàn thành</div>
+                            </div>
+                        </div>
+                        
+                        <div class="list-item">
+                            <div style="min-width: 60px; font-size: 0.8rem; color: #6b7280;">14:20</div>
+                            <div class="list-item-avatar">ĐBL</div>
+                            <div class="list-item-content">
+                                <div class="list-item-title">
+                                    <span style="font-weight: 600;">Đinh Bộ Lĩnh</span>
+                                    <span style="font-weight: normal;"> đã thêm bình luận vào TKT-001</span>
+                                </div>
+                                <div class="list-item-meta">💬 "Đã sửa xong máy in"</div>
+                            </div>
+                        </div>
+                        
+                        <div class="list-item">
+                            <div style="min-width: 60px; font-size: 0.8rem; color: #6b7280;">12:10</div>
+                            <div class="list-item-avatar" style="background: var(--danger);">
+                                <i class="fas fa-robot" style="color: white;"></i>
+                            </div>
+                            <div class="list-item-content">
+                                <div class="list-item-title">
+                                    <span style="font-weight: 600;">Hệ Thống</span>
+                                    <span style="font-weight: normal;"> đã gửi cảnh báo SLA</span>
+                                </div>
+                                <div class="list-item-meta">⚠️ TKT-002 sắp vi phạm SLA</div>
+                            </div>
+                        </div>
+                        
+                        <div class="list-item">
+                            <div style="min-width: 60px; font-size: 0.8rem; color: #6b7280;">10:30</div>
+                            <div class="list-item-avatar">ĐBL</div>
+                            <div class="list-item-content">
+                                <div class="list-item-title">
+                                    <span style="font-weight: 600;">Đinh Bộ Lĩnh</span>
+                                    <span style="font-weight: normal;"> đã tạo ticket mới</span>
+                                </div>
+                                <div class="list-item-meta">➕ TKT-001 | Độ Ưu Tiên: KHẨN CẤP</div>
+                            </div>
+                        </div>
+                        
+                        <div class="list-item">
+                            <div style="min-width: 60px; font-size: 0.8rem; color: #6b7280;">09:15</div>
+                            <div class="list-item-avatar">ĐBL</div>
+                            <div class="list-item-content">
+                                <div class="list-item-title">
+                                    <span style="font-weight: 600;">Đinh Bộ Lĩnh</span>
+                                    <span style="font-weight: normal;"> đã đăng nhập</span>
+                                </div>
+                                <div class="list-item-meta">🔐 Biometric | IP: 192.168.1.100</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Row 5: File Management Screen -->
+            <div class="screens-grid">
+                <!-- File Management -->
+                <div class="screen-mockup">
+                    <div class="screen-header">
+                        <i class="fas fa-folder"></i>
+                        Quản Lý Files & Attachments
+                    </div>
+                    <div class="screen-content" style="display: flex; gap: 20px; padding: 0;">
+                        <!-- Left sidebar - Folder tree -->
+                        <div style="width: 250px; border-right: 2px solid var(--border); padding: 20px;">
+                            <button class="btn btn-success" style="width: 100%; margin-bottom: 15px;">
+                                <i class="fas fa-upload"></i>
+                                Upload File
+                            </button>
+                            
+                            <div style="font-size: 0.85rem;">
+                                <div style="margin-bottom: 10px; font-weight: 600; color: #6b7280;">📁 PATH</div>
+                                <div style="padding-left: 0px; margin-bottom: 5px;">
+                                    <div style="cursor: pointer; padding: 5px; border-radius: 4px;">
+                                        📁 <span style="margin-left: 5px;">Tickets (156 files)</span>
+                                    </div>
+                                    <div style="padding-left: 15px;">
+                                        <div style="cursor: pointer; padding: 5px; background: var(--light); border-radius: 4px; font-weight: 600;">
+                                            📁 <span style="margin-left: 5px;">TKT-001 (3 files)</span>
+                                        </div>
+                                        <div style="cursor: pointer; padding: 5px; padding-left: 20px;">
+                                            📁 <span style="margin-left: 5px;">TKT-002 (2 files)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="padding-left: 0px;">
+                                    <div style="cursor: pointer; padding: 5px;">
+                                        📁 <span style="margin-left: 5px;">Tasks (89 files)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Main content area -->
+                        <div style="flex: 1; padding: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <div>
+                                    <h3 style="margin-bottom: 5px;">Tickets / TKT-001</h3>
+                                    <div style="font-size: 0.85rem; color: #6b7280;">3 files • 4.35 MB</div>
+                                </div>
+                                <div style="display: flex; gap: 10px;">
+                                    <button class="btn" style="padding: 8px 15px; font-size: 0.85rem;">
+                                        <i class="fas fa-th"></i>
+                                    </button>
+                                    <button class="btn" style="padding: 8px 15px; font-size: 0.85rem;">
+                                        <i class="fas fa-list"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="list-item">
+                                <div style="font-size: 3rem;">📷</div>
+                                <div class="list-item-content">
+                                    <div class="list-item-title">printer_photo.jpg</div>
+                                    <div class="list-item-meta">2.4 MB | Upload: Mar 24, 10:35 AM</div>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn" style="padding: 8px 15px; font-size: 0.85rem;">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-success" style="padding: 8px 15px; font-size: 0.85rem;">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <button class="btn" style="padding: 8px 15px; font-size: 0.85rem; background: var(--danger);">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="list-item">
+                                <div style="font-size: 3rem;">📄</div>
+                                <div class="list-item-content">
+                                    <div class="list-item-title">report.pdf</div>
+                                    <div class="list-item-meta">850 KB | Upload: Mar 24, 11:20 AM</div>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn" style="padding: 8px 15px; font-size: 0.85rem;"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-success" style="padding: 8px 15px; font-size: 0.85rem;"><i class="fas fa-download"></i></button>
+                                    <button class="btn" style="padding: 8px 15px; font-size: 0.85rem; background: var(--danger);"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 20px; padding: 20px; background: var(--light); border-radius: 8px; text-align: center;">
+                                <div style="margin-bottom: 10px; color: #6b7280;">
+                                    <i class="fas fa-database" style="font-size: 2rem;"></i>
+                                </div>
+                                <div style="font-size: 0.9rem; color: var(--dark); margin-bottom: 5px;">
+                                    Dung Lượng Đã Sử Dụng
+                                </div>
+                                <div style="font-size: 1.2rem; font-weight: bold; color: var(--primary);">
+                                    245 MB / 10 GB
+                                </div>
+                                <div class="progress-bar" style="margin-top: 10px; max-width: 300px; margin-left: auto; margin-right: auto;">
+                                    <div class="progress-fill" style="width: 2.45%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        <!-- End Web App Tab -->
+        
+        <!-- Mobile App Tab Content -->
+        <div id="mobile-tab" class="tab-content">
+        <!-- Mobile App Screens -->
+        <div class="screens-section">
+            <h2 class="section-title">
+                <i class="fas fa-mobile-alt"></i>
+                Màn Hình Mobile App - iPhone 17
+            </h2>
+            <p style="text-align: center; color: white; margin-bottom: 30px; font-size: 0.9rem; opacity: 0.9;">
+                📱 Device: iPhone 17 Standard • Screen: 6.1" • Resolution: 390 x 844px • iOS 20
+            </p>
+            
+            <div class="screens-grid mobile-grid">
+                <!-- Mobile Home -->
+                <div class="mobile-screen">
+                    <div class="mobile-screen-inner">
+                        <div class="mobile-status-bar">
+                            <span>9:41</span>
+                            <span>●●●● <i class="fas fa-wifi"></i> <i class="fas fa-battery-full"></i></span>
+                        </div>
+                        
+                        <div class="mobile-header">
+                            <div>
+                                <div style="font-size: 0.9rem; font-weight: 600;">👋 Xin chào, Bộ Lĩnh</div>
+                                <div style="font-size: 0.75rem; opacity: 0.9;">IT Department</div>
+                            </div>
+                            <i class="fas fa-bell" style="font-size: 1.3rem;"></i>
+                        </div>
+                        
+                        <div class="mobile-content">
+                            <div class="mobile-stats">
+                                <div class="mobile-stat-box">
+                                    <div class="mobile-stat-icon">🎫</div>
+                                    <span class="mobile-stat-number">12</span>
+                                    <div class="mobile-stat-label">Tickets Mở</div>
+                                </div>
+                                <div class="mobile-stat-box">
+                                    <div class="mobile-stat-icon">📋</div>
+                                    <span class="mobile-stat-number">8</span>
+                                    <div class="mobile-stat-label">Tasks</div>
+                                </div>
+                                <div class="mobile-stat-box">
+                                    <div class="mobile-stat-icon">⚠️</div>
+                                    <span class="mobile-stat-number">3</span>
+                                    <div class="mobile-stat-label">Cảnh Báo</div>
+                                </div>
+                                <div class="mobile-stat-box">
+                                    <div class="mobile-stat-icon">✅</div>
+                                    <span class="mobile-stat-number">92%</span>
+                                    <div class="mobile-stat-label">SLA</div>
+                                </div>
+                            </div>
+                            
+                            <h3 style="margin: 20px 0 12px 0; color: var(--dark); font-size: 0.9rem;">Hành Động Nhanh</h3>
+                            <div class="quick-actions">
+                                <div class="quick-action">
+                                    <i class="fas fa-plus-circle"></i>
+                                    <div class="quick-action-label">Tạo Ticket</div>
+                                </div>
+                                <div class="quick-action">
+                                    <i class="fas fa-search"></i>
+                                    <div class="quick-action-label">Task Pool</div>
+                                </div>
+                                <div class="quick-action">
+                                    <i class="fas fa-qrcode"></i>
+                                    <div class="quick-action-label">Scan QR</div>
+                                </div>
+                            </div>
+                            
+                            <h3 style="margin: 20px 0 12px 0; color: var(--dark); font-size: 0.9rem;">Hoạt Động Gần Đây</h3>
+                            <div class="mobile-card">
+                                <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 5px;">TKT-001 được gán</div>
+                                <div style="font-size: 0.75rem; color: #6b7280;">5 phút trước</div>
+                            </div>
+                            <div class="mobile-card">
+                                <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 5px;">TSK-456 hoàn thành ✅</div>
+                                <div style="font-size: 0.75rem; color: #6b7280;">1 giờ trước</div>
+                            </div>
+                            <div class="mobile-card">
+                                <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 5px;">Cảnh báo SLA ⚠️</div>
+                                <div style="font-size: 0.75rem; color: #6b7280;">2 giờ trước</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mobile-nav">
+                            <div class="mobile-nav-item active">
+                                <i class="fas fa-home"></i>
+                                <div>Trang Chủ</div>
+                            </div>
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-ticket-alt"></i>
+                                <div>Tickets</div>
+                            </div>
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-tasks"></i>
+                                <div>Tasks</div>
+                            </div>
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-user"></i>
+                                <div>Profile</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile Ticket Detail -->
+                <div class="mobile-screen">
+                    <div class="mobile-screen-inner">
+                        <div class="mobile-status-bar">
+                            <span>9:41</span>
+                            <span>●●●● <i class="fas fa-wifi"></i> <i class="fas fa-battery-full"></i></span>
+                        </div>
+                        
+                        <div class="mobile-header">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fas fa-arrow-left" style="cursor: pointer;"></i>
+                                <span style="font-weight: 600;">TKT-001</span>
+                            </div>
+                            <i class="fas fa-ellipsis-v" style="cursor: pointer;"></i>
+                        </div>
+                        
+                        <div class="mobile-content">
+                            <div class="mobile-card">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                    <h2 style="font-size: 1.1rem; color: var(--dark); margin: 0;">Máy in ER bị hỏng</h2>
+                                    <span class="badge badge-KHẨN CẤP">Khẩn Cấp</span>
+                                </div>
+                                
+                                <div style="display: grid; gap: 12px; font-size: 0.85rem;">
+                                    <div>
+                                        <div style="color: #6b7280; margin-bottom: 4px;">👤 Người phụ trách:</div>
+                                        <div style="font-weight: 600;">Đinh Bộ Lĩnh</div>
+                                    </div>
+                                    <div>
+                                        <div style="color: #6b7280; margin-bottom: 4px;">🕐 Tạo lúc:</div>
+                                        <div style="font-weight: 600;">Mar 24, 10:30 AM</div>
+                                    </div>
+                                    <div>
+                                        <div style="color: #6b7280; margin-bottom: 4px;">⏰ SLA:</div>
+                                        <div style="font-weight: 600; color: var(--warning);">🟡 1h 45m còn lại</div>
+                                    </div>
+                                    <div>
+                                        <div style="color: #6b7280; margin-bottom: 4px;">📍 Vị trí:</div>
+                                        <div style="font-weight: 600;">Phòng 205 - ER</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-top: 15px;">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 65%;"></div>
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: #6b7280; margin-top: 5px;">Đang xử lý - 65%</div>
+                                </div>
+                            </div>
+                            
+                            <h3 style="margin: 20px 0 12px 0; color: var(--dark); font-size: 0.9rem;">💬 Chat (3 tin nhắn)</h3>
+                            <div class="mobile-card" style="padding: 12px;">
+                                <div class="chat-container">
+                                    <div class="chat-message received" style="font-size: 0.8rem; padding: 10px;">
+                                        <div style="font-weight: 600; margin-bottom: 3px;">Bộ Lĩnh</div>
+                                        Máy in không hoạt động
+                                        <div class="chat-meta" style="font-size: 0.7rem;">10:30</div>
+                                    </div>
+                                    
+                                    <div class="chat-message sent" style="font-size: 0.8rem; padding: 10px;">
+                                        Đang đến! 
+                                        <div class="chat-meta" style="font-size: 0.7rem;">10:35 ✓✓</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h3 style="margin: 20px 0 12px 0; color: var(--dark); font-size: 0.9rem;">Hành Động Nhanh</h3>
+                            <div class="quick-actions" style="grid-template-columns: 1fr 1fr;">
+                                <div class="quick-action">
+                                    <i class="fas fa-camera"></i>
+                                    <div class="quick-action-label">Chụp Ảnh</div>
+                                </div>
+                                <div class="quick-action">
+                                    <i class="fas fa-check-circle"></i>
+                                    <div class="quick-action-label">Giải Quyết</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mobile-nav">
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-edit"></i>
+                                <div>Chỉnh Sửa</div>
+                            </div>
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-user-plus"></i>
+                                <div>Phân Công</div>
+                            </div>
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-share-alt"></i>
+                                <div>Chia Sẻ</div>
+                            </div>
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-ellipsis-h"></i>
+                                <div>Thêm</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile Create Ticket -->
+                <div class="mobile-screen">
+                    <div class="mobile-screen-inner">
+                        <div class="mobile-status-bar">
+                            <span>9:41</span>
+                            <span>●●●● <i class="fas fa-wifi"></i> <i class="fas fa-battery-full"></i></span>
+                        </div>
+                        
+                        <div class="mobile-header">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fas fa-arrow-left" style="cursor: pointer;"></i>
+                                <span style="font-weight: 600;">Tạo Ticket Mới</span>
+                            </div>
+                            <i class="fas fa-check" style="cursor: pointer;"></i>
+                        </div>
+                        
+                        <div class="mobile-content">
+                            <div class="form-group">
+                                <label class="form-label">Tiêu Đề *</label>
+                                <input type="text" class="form-input" placeholder="VD: Máy in bị hỏng">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Mô Tả</label>
+                                <textarea class="form-input" rows="4" placeholder="Mô tả chi tiết vấn đề..."></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Độ Ưu Tiên *</label>
+                                <div style="display: grid; gap: 10px;">
+                                    <div class="mobile-card" style="padding: 12px; border: 2px solid var(--danger);">
+                                        <input type="radio" name="priority" checked> <strong>🔴 Khẩn Cấp</strong> - Khẩn cấp
+                                    </div>
+                                    <div class="mobile-card" style="padding: 12px; border: 2px solid transparent; cursor: pointer;">
+                                        <input type="radio" name="priority"> <strong>🟠 Cao</strong> - Cao
+                                    </div>
+                                    <div class="mobile-card" style="padding: 12px; border: 2px solid transparent; cursor: pointer;">
+                                        <input type="radio" name="priority"> <strong>🟡 Trung Bình</strong> - Trung bình
+                                    </div>
+                                    <div class="mobile-card" style="padding: 12px; border: 2px solid transparent; cursor: pointer;">
+                                        <input type="radio" name="priority"> <strong>🟢 Thấp</strong> - Thấp
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">📎 Đính Kèm</label>
+                                <div class="quick-actions" style="grid-template-columns: 1fr 1fr;">
+                                    <div class="quick-action">
+                                        <i class="fas fa-camera"></i>
+                                        <div class="quick-action-label">Camera</div>
+                                    </div>
+                                    <div class="quick-action">
+                                        <i class="fas fa-folder"></i>
+                                        <div class="quick-action-label">Tập Tin</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button class="btn" style="width: 100%; padding: 15px; font-size: 1rem; margin-top: 20px;">
+                                <i class="fas fa-paper-plane"></i>
+                                Gửi Ticket
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile Task Progress -->
+                <div class="mobile-screen">
+                    <div class="mobile-screen-inner">
+                        <div class="mobile-status-bar">
+                            <span>9:41</span>
+                            <span>●●●● <i class="fas fa-wifi"></i> <i class="fas fa-battery-full"></i></span>
+                        </div>
+                        
+                        <div class="mobile-header">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fas fa-arrow-left" style="cursor: pointer;"></i>
+                                <span style="font-weight: 600;">TSK-456</span>
+                            </div>
+                            <i class="fas fa-ellipsis-v" style="cursor: pointer;"></i>
+                        </div>
+                        
+                        <div class="mobile-content">
+                            <div class="mobile-card">
+                                <h2 style="font-size: 1.1rem; color: var(--dark); margin-bottom: 15px;">🟡 Database Update</h2>
+                                
+                                <div style="margin-bottom: 15px;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                        <span style="font-size: 0.85rem; font-weight: 600;">Tiến Độ</span>
+                                        <span style="font-size: 0.85rem; font-weight: 600; color: var(--primary);">65%</span>
+                                    </div>
+                                    <div class="progress-bar" style="height: 12px;">
+                                        <div class="progress-fill" style="width: 65%;"></div>
+                                    </div>
+                                </div>
+                                
+                                <button class="btn" style="width: 100%; padding: 10px;">
+                                    <i class="fas fa-edit"></i>
+                                    Cập Nhật Tiến Độ
+                                </button>
+                            </div>
+                            
+                            <h3 style="margin: 20px 0 12px 0; color: var(--dark); font-size: 0.9rem;">☑️ Checklist (3/5)</h3>
+                            <div class="mobile-card">
+                                <div style="display: grid; gap: 12px; font-size: 0.85rem;">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <i class="fas fa-check-square" style="font-size: 1.2rem; color: var(--success);"></i>
+                                        <span style="text-decoration: line-through; color: #6b7280;">Backup database</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <i class="fas fa-check-square" style="font-size: 1.2rem; color: var(--success);"></i>
+                                        <span style="text-decoration: line-through; color: #6b7280;">Test migration script</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <i class="fas fa-check-square" style="font-size: 1.2rem; color: var(--success);"></i>
+                                        <span style="text-decoration: line-through; color: #6b7280;">Run migration</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <i class="far fa-square" style="font-size: 1.2rem; color: var(--border);"></i>
+                                        <span>Verify results</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <i class="far fa-square" style="font-size: 1.2rem; color: var(--border);"></i>
+                                        <span>Update documentation</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h3 style="margin: 20px 0 12px 0; color: var(--dark); font-size: 0.9rem;">⏱️ Thời Gian</h3>
+                            <div class="mobile-card">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <div style="font-size: 0.8rem; color: #6b7280;">Đã Làm</div>
+                                        <div style="font-size: 1.3rem; font-weight: bold; color: var(--primary);">10.5h</div>
+                                    </div>
+                                    <div style="text-align: center;">
+                                        <div style="font-size: 0.8rem; color: #6b7280;">/</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-size: 0.8rem; color: #6b7280;">Ước Tính</div>
+                                        <div style="font-size: 1.3rem; font-weight: bold; color: #6b7280;">16h</div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-success" style="width: 100%; margin-top: 15px; padding: 10px;">
+                                    <i class="fas fa-plus"></i>
+                                    Ghi Nhận Giờ Làm
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mobile-nav">
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-paperclip"></i>
+                                <div>Files (3)</div>
+                            </div>
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-comments"></i>
+                                <div>Chat (5)</div>
+                            </div>
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-history"></i>
+                                <div>Lịch Sử</div>
+                            </div>
+                            <div class="mobile-nav-item active">
+                                <i class="fas fa-tasks"></i>
+                                <div>Chi Tiết</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Additional Mobile Screens Row 2 -->
+            <div class="screens-grid mobile-grid">
+                <!-- Mobile - Notifications -->
+                <div class="mobile-screen">
+                    <div class="mobile-screen-inner">
+                        <div class="mobile-status-bar">
+                            <span>9:41</span>
+                            <span>●●●● <i class="fas fa-wifi"></i> <i class="fas fa-battery-full"></i></span>
+                        </div>
+                        
+                        <div class="mobile-header">
+                            <div style="font-size: 1.2rem; font-weight: 600;">🔔 Thông Báo</div>
+                            <button style="background: none; border: none; color: white; font-size: 0.85rem; cursor: pointer;">Đọc tất cả</button>
+                        </div>
+                        
+                        <div class="mobile-content">
+                            <div class="mobile-card" style="border-left: 4px solid var(--danger);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span style="font-weight: 600; color: var(--dark);">● Phân Công Mới</span>
+                                    <span style="font-size: 0.75rem; color: #6b7280;">5 phút trước</span>
+                                </div>
+                                <div style="font-size: 0.9rem; margin-bottom: 5px;">Ticket TKT-001</div>
+                                <div style="font-size: 0.8rem; color: #6b7280;">Bạn đã được phân công xử lý ticket khẩn cấp</div>
+                            </div>
+                            
+                            <div class="mobile-card" style="border-left: 4px solid var(--warning);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span style="font-weight: 600; color: var(--dark);">● Cảnh Báo SLA</span>
+                                    <span style="font-size: 0.75rem; color: #6b7280;">15 phút trước</span>
+                                </div>
+                                <div style="font-size: 0.9rem; margin-bottom: 5px;">Task TSK-456</div>
+                                <div style="font-size: 0.8rem; color: #6b7280;">SLA sắp hết hạn trong 1 giờ nữa</div>
+                            </div>
+                            
+                            <div class="mobile-card" style="opacity: 0.7;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span style="font-weight: 600; color: var(--dark);">○ Bình Luận Mới</span>
+                                    <span style="font-size: 0.75rem; color: #6b7280;">1 giờ trước</span>
+                                </div>
+                                <div style="font-size: 0.9rem; margin-bottom: 5px;">@Đinh Bộ Lĩnh nhắc bạn</div>
+                                <div style="font-size: 0.8rem; color: #6b7280;">Trong ticket TKT-002</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mobile-nav">
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-home"></i>
+                                <div>Home</div>
+                            </div>
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-ticket-alt"></i>
+                                <div>Tickets</div>
+                            </div>
+                            <div class="mobile-nav-item active">
+                                <i class="fas fa-bell"></i>
+                                <div>Thông Báo</div>
+                            </div>
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-user"></i>
+                                <div>Tôi</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile - Profile -->
+                <div class="mobile-screen">
+                    <div class="mobile-screen-inner">
+                        <div class="mobile-status-bar">
+                            <span>9:41</span>
+                            <span>●●●● <i class="fas fa-wifi"></i> <i class="fas fa-battery-full"></i></span>
+                        </div>
+                        
+                        <div class="mobile-header" style="flex-direction: column; align-items: center; padding: 30px 15px 20px;">
+                            <div class="avatar" style="width: 80px; height: 80px; font-size: 2rem; margin-bottom: 12px;">ĐBL</div>
+                            <div style="font-size: 1.2rem; font-weight: 600; margin-bottom: 5px;">Đinh Bộ Lĩnh</div>
+                            <div style="font-size: 0.85rem; opacity: 0.9;">Staff • IT Department</div>
+                        </div>
+                        
+                        <div class="mobile-content">
+                            <div class="mobile-stats">
+                                <div class="mobile-stat-box">
+                                    <div class="mobile-stat-icon">🎫</div>
+                                    <span class="mobile-stat-number">45</span>
+                                    <div class="mobile-stat-label">Tickets</div>
+                                </div>
+                                <div class="mobile-stat-box">
+                                    <div class="mobile-stat-icon">📋</div>
+                                    <span class="mobile-stat-number">32</span>
+                                    <div class="mobile-stat-label">Tasks</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mobile-card">
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1.5rem; color: var(--warning);">
+                                    ⭐⭐⭐⭐⭐
+                                </div>
+                                <div style="text-align: center; margin-top: 5px; font-size: 0.85rem; color: #6b7280;">
+                                    Đánh giá trung bình: 4.8/5.0
+                                </div>
+                            </div>
+                            
+                            <h3 style="margin: 15px 0 10px 0; font-size: 0.9rem; color: var(--dark);">Menu</h3>
+                            
+                            <div class="mobile-card">
+                                <div class="list-item" style="padding: 10px 0; border: none;">
+                                    <i class="fas fa-ticket-alt" style="color: var(--primary); font-size: 1.2rem;"></i>
+                                    <div class="list-item-content">
+                                        <div style="font-size: 0.9rem; font-weight: 600;">Tickets Của Tôi</div>
+                                    </div>
+                                    <i class="fas fa-chevron-right" style="color: #9ca3af;"></i>
+                                </div>
+                                <div class="list-item" style="padding: 10px 0; border: none;">
+                                    <i class="fas fa-tasks" style="color: var(--primary); font-size: 1.2rem;"></i>
+                                    <div class="list-item-content">
+                                        <div style="font-size: 0.9rem; font-weight: 600;">Tasks Của Tôi</div>
+                                    </div>
+                                    <i class="fas fa-chevron-right" style="color: #9ca3af;"></i>
+                                </div>
+                                <div class="list-item" style="padding: 10px 0; border: none;">
+                                    <i class="fas fa-cog" style="color: var(--primary); font-size: 1.2rem;"></i>
+                                    <div class="list-item-content">
+                                        <div style="font-size: 0.9rem; font-weight: 600;">Cài Đặt</div>
+                                    </div>
+                                    <i class="fas fa-chevron-right" style="color: #9ca3af;"></i>
+                                </div>
+                                <div class="list-item" style="padding: 10px 0; border: none;">
+                                    <i class="fas fa-sign-out-alt" style="color: var(--danger); font-size: 1.2rem;"></i>
+                                    <div class="list-item-content">
+                                        <div style="font-size: 0.9rem; font-weight: 600; color: var(--danger);">Đăng Xuất</div>
+                                    </div>
+                                    <i class="fas fa-chevron-right" style="color: #9ca3af;"></i>
+                                </div>
+                            </div>
+                            
+                            <div style="text-align: center; margin-top: 20px; font-size: 0.75rem; color: #9ca3af;">
+                                Version 1.0.0 (Build 123)
+                            </div>
+                        </div>
+                        
+                        <div class="mobile-nav">
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-home"></i>
+                                <div>Home</div>
+                            </div>
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-ticket-alt"></i>
+                                <div>Tickets</div>
+                            </div>
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-tasks"></i>
+                                <div>Tasks</div>
+                            </div>
+                            <div class="mobile-nav-item active">
+                                <i class="fas fa-user"></i>
+                                <div>Tôi</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile - Login/Biometric -->
+                <div class="mobile-screen">
+                    <div class="mobile-screen-inner">
+                        <div class="mobile-status-bar" style="background: linear-gradient(135deg, var(--primary), var(--secondary));">
+                            <span>9:41</span>
+                            <span>●●●● <i class="fas fa-wifi"></i> <i class="fas fa-battery-full"></i></span>
+                        </div>
+                        
+                        <div class="mobile-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 25px; text-align: center;">
+                            <div style="font-size: 3rem; margin-bottom: 15px;">🏥</div>
+                            <h2 style="color: var(--dark); font-size: 1.5rem; margin-bottom: 5px;">Hospital Task Manager</h2>
+                            <div style="font-size: 0.9rem; color: #6b7280; margin-bottom: 40px;">Hệ Thống Quản Lý Công Việc</div>
+                            
+                            <div class="form-group" style="width: 100%; text-align: left;">
+                                <label class="form-label">Email / Username</label>
+                                <input type="text" class="form-input" placeholder="Nhập email hoặc username" value="dinhlinhbo@hospital.vn">
+                            </div>
+                            
+                            <div class="form-group" style="width: 100%; text-align: left;">
+                                <label class="form-label">Mật Khẩu</label>
+                                <input type="password" class="form-input" placeholder="Nhập mật khẩu" value="●●●●●●●●">
+                            </div>
+                            
+                            <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px; font-size: 0.85rem;">
+                                <input type="checkbox" checked>
+                                <span>Ghi nhớ đăng nhập</span>
+                            </label>
+                            
+                            <button class="btn btn-success" style="width: 100%; padding: 15px; font-size: 1rem; margin-bottom: 20px;">
+                                <i class="fas fa-sign-in-alt"></i>
+                                Đăng Nhập
+                            </button>
+                            
+                            <div style="width: 100%; text-align: center; margin: 20px 0; color: #9ca3af; position: relative;">
+                                <div style="border-top: 1px solid var(--border); position: absolute; width: 100%; top: 50%; z-index: 0;"></div>
+                                <span style="background: var(--light); padding: 0 15px; position: relative; z-index: 1; font-size: 0.85rem;">HOẶC</span>
+                            </div>
+                            
+                            <button className="btn" style="width: 100%; padding: 15px; background: white; color: var(--primary); border: 2px solid var(--primary);">
+                                <i class="fas fa-fingerprint" style="font-size: 1.5rem;"></i>
+                                <div style="margin-top: 5px; font-size: 0.85rem;">Đăng Nhập Bằng Sinh Trắc Học</div>
+                                <div style="font-size: 0.75rem; opacity: 0.7;">Face ID / Touch ID</div>
+                            </button>
+                            
+                            <div style="margin-top: 30px;">
+                                <a href="#" style="color: var(--primary); font-size: 0.85rem; text-decoration: none;">Quên mật khẩu?</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Additional Mobile Screens Row 3 -->
+            <div class="screens-grid mobile-grid">
+                <!-- Mobile - Tickets List -->
+                <div class="mobile-screen">
+                    <div class="mobile-screen-inner">
+                        <div class="mobile-status-bar">
+                            <span>9:41</span>
+                            <span>●●●● <i class="fas fa-wifi"></i> <i class="fas fa-battery-full"></i></span>
+                        </div>
+                        
+                        <div class="mobile-header">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-ticket-alt"></i>
+                                <div style="font-size: 1.2rem; font-weight: 600;">Tickets Của Tôi</div>
+                            </div>
+                            <button style="background: white; color: var(--primary); border: none; padding: 8px 12px; border-radius: 8px; font-weight: 600;">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="mobile-content">
+                            <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+                                <input type="text" class="form-input" placeholder="Tìm kiếm..." style="margin: 0; flex: 1; padding: 10px;">
+                                <button className="btn" style="padding: 10px 15px;">
+                                    <i class="fas fa-filter"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="mobile-card" style="border-left: 4px solid var(--danger);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span class="badge badge-KHẨN CẤP" style="font-size: 0.7rem;">KHẨN CẤP</span>
+                                    <span style="font-size: 0.75rem; color: #6b7280;">⏰ 1h left</span>
+                                </div>
+                                <h4 style="font-size: 0.95rem; margin-bottom: 5px; color: var(--dark);">🔴 TKT-001</h4>
+                                <div style="font-size: 0.85rem; color: #6b7280; margin-bottom: 8px;">Máy in ER bị hỏng</div>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #6b7280;">
+                                    <span>👤 Đinh Bộ Lĩnh</span>
+                                    <span>ĐANG XỬ LÝ</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mobile-card" style="border-left: 4px solid var(--warning);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span class="badge badge-medium" style="font-size: 0.7rem;">TRUNG BÌNH</span>
+                                    <span style="font-size: 0.75rem; color: #6b7280;">⏰ 8h left</span>
+                                </div>
+                                <h4 style="font-size: 0.95rem; margin-bottom: 5px; color: var(--dark);">🟡 TKT-002</h4>
+                                <div style="font-size: 0.85rem; color: #6b7280; margin-bottom: 8px;">Cập nhật phần mềm</div>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #6b7280;">
+                                    <span>👤 Đinh Bộ Lĩnh</span>
+                                    <span>ĐÃ GIAO</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mobile-card" style="border-left: 4px solid var(--success); opacity: 0.7;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span class="badge badge-low" style="font-size: 0.7rem;">THẤP</span>
+                                    <span style="font-size: 0.75rem; color: var(--success);">✅ Hoàn Thành</span>
+                                </div>
+                                <h4 style="font-size: 0.95rem; margin-bottom: 5px; color: var(--dark);">🟢 TKT-004</h4>
+                                <div style="font-size: 0.85rem; color: #6b7280;">Yêu cầu thiết bị</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mobile-nav">
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-home"></i>
+                                <div>Home</div>
+                            </div>
+                            <div class="mobile-nav-item active">
+                                <i class="fas fa-ticket-alt"></i>
+                                <div>Tickets</div>
+                            </div>
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-tasks"></i>
+                                <div>Tasks</div>
+                            </div>
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-user"></i>
+                                <div>Tôi</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile - Tasks List -->
+                <div class="mobile-screen">
+                    <div class="mobile-screen-inner">
+                        <div class="mobile-status-bar">
+                            <span>9:41</span>
+                            <span>●●●● <i class="fas fa-wifi"></i> <i class="fas fa-battery-full"></i></span>
+                        </div>
+                        
+                        <div class="mobile-header">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-tasks"></i>
+                                <div style="font-size: 1.2rem; font-weight: 600;">Tasks Của Tôi</div>
+                            </div>
+                            <button style="background: white; color: var(--primary); border: none; padding: 8px 12px; border-radius: 8px; font-weight: 600;">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="mobile-content">
+                            <h3 style="margin-bottom: 12px; font-size: 0.9rem; color: var(--dark);">Đang Thực Hiện (3)</h3>
+                            
+                            <div class="mobile-card">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <h4 style="font-size: 0.95rem; color: var(--dark);">🟡 TSK-456</h4>
+                                    <span class="badge badge-medium" style="font-size: 0.7rem;">TRUNG BÌNH</span>
+                                </div>
+                                <div style="font-size: 0.85rem; color: #6b7280; margin-bottom: 10px;">Database Update</div>
+                                <div style="margin-bottom: 8px;">
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 4px;">
+                                        <span>Tiến Độ</span>
+                                        <span style="font-weight: 600; color: var(--primary);">65%</span>
+                                    </div>
+                                    <div class="progress-bar" style="height: 8px;">
+                                        <div class="progress-fill" style="width: 65%;"></div>
+                                    </div>
+                                </div>
+                                <div style="font-size: 0.75rem; color: #6b7280;">
+                                    ⏰ Deadline: Mar 26
+                                </div>
+                            </div>
+                            
+                            <div class="mobile-card">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <h4 style="font-size: 0.95rem; color: var(--dark);">🟠 TSK-457</h4>
+                                    <span class="badge badge-high" style="font-size: 0.7rem;">CAO</span>
+                                </div>
+                                <div style="font-size: 0.85rem; color: #6b7280; margin-bottom: 10px;">Sửa lỗi đăng nhập</div>
+                                <div style="margin-bottom: 8px;">
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 4px;">
+                                        <span>Tiến Độ</span>
+                                        <span style="font-weight: 600; color: var(--warning);">30%</span>
+                                    </div>
+                                    <div class="progress-bar" style="height: 8px;">
+                                        <div class="progress-fill" style="width: 30%; background: var(--warning);"></div>
+                                    </div>
+                                </div>
+                                <div style="font-size: 0.75rem; color: #6b7280;">
+                                    ⏰ Deadline: Mar 25
+                                </div>
+                            </div>
+                            
+                            <h3 style="margin: 20px 0 12px 0; font-size: 0.9rem; color: var(--dark);">Hoàn Thành (15)</h3>
+                            <button className="btn" style="width: 100%; padding: 12px;">
+                                <i class="fas fa-eye"></i>
+                                Xem Tất Cả
+                            </button>
+                        </div>
+                        
+                        <div class="mobile-nav">
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-home"></i>
+                                <div>Home</div>
+                            </div>
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-ticket-alt"></i>
+                                <div>Tickets</div>
+                            </div>
+                            <div class="mobile-nav-item active">
+                                <i class="fas fa-tasks"></i>
+                                <div>Tasks</div>
+                            </div>
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-user"></i>
+                                <div>Tôi</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile - Task Pool -->
+                <div class="mobile-screen">
+                    <div class="mobile-screen-inner">
+                        <div class="mobile-status-bar">
+                            <span>9:41</span>
+                            <span>●●●● <i class="fas fa-wifi"></i> <i class="fas fa-battery-full"></i></span>
+                        </div>
+                        
+                        <div class="mobile-header">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-swimming-pool"></i>
+                                <div style="font-size: 1.2rem; font-weight: 600;">Task Pool</div>
+                            </div>
+                            <button style="background: white; color: var(--primary); border: none; padding: 8px 12px; border-radius: 8px; font-weight: 600;">
+                                <i class="fas fa-filter"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="mobile-content">
+                            <div style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: center;">
+                                <div style="font-size: 2rem; font-weight: bold; margin-bottom: 5px;">12</div>
+                                <div style="font-size: 0.85rem; opacity: 0.9;">Tasks có sẵn để nhận</div>
+                            </div>
+                            
+                            <div class="mobile-card" style="border-left: 4px solid var(--danger);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                    <h4 style="font-size: 0.95rem; color: var(--dark);">🟠 Cập Nhật Hồ Sơ</h4>
+                                    <span class="badge badge-high" style="font-size: 0.7rem;">CAO</span>
+                                </div>
+                                <div style="font-size: 0.85rem; color: #6b7280; margin-bottom: 10px;">
+                                    Update patient records in database
+                                </div>
+                                <div style="display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
+                                    <span class="badge badge-info" style="background: #dbeafe; color: #1e40af; font-size: 0.7rem;">SQL</span>
+                                    <span class="badge badge-info" style="background: #dbeafe; color: #1e40af; font-size: 0.7rem;">Database</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #6b7280; margin-bottom: 12px;">
+                                    <span>⏱️ Ước tính: 16h</span>
+                                    <span>⏰ Deadline: Mar 30</span>
+                                </div>
+                                <button className="btn btn-success" style="width: 100%; padding: 12px;">
+                                    <i class="fas fa-hand-paper"></i>
+                                    Nhận Task Này
+                                </button>
+                            </div>
+                            
+                            <div class="mobile-card" style="border-left: 4px solid var(--warning);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                    <h4 style="font-size: 0.95rem; color: var(--dark);">🟡 Sửa Lỗi Login</h4>
+                                    <span class="badge badge-medium" style="font-size: 0.7rem;">TRUNG BÌNH</span>
+                                </div>
+                                <div style="font-size: 0.85rem; color: #6b7280; margin-bottom: 10px;">
+                                    Fix authentication bug in mobile app
+                                </div>
+                                <div style="display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
+                                    <span class="badge badge-info" style="background: #dbeafe; color: #1e40af; font-size: 0.7rem;">React</span>
+                                    <span class="badge badge-info" style="background: #dbeafe; color: #1e40af; font-size: 0.7rem;">TypeScript</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #6b7280; margin-bottom: 12px;">
+                                    <span>⏱️ Ước tính: 4h</span>
+                                    <span>⏰ Deadline: Mar 25</span>
+                                </div>
+                                <button className="btn btn-success" style="width: 100%; padding: 12px;">
+                                    <i class="fas fa-hand-paper"></i>
+                                    Nhận Task Này
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mobile-nav">
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-home"></i>
+                                <div>Home</div>
+                            </div>
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-ticket-alt"></i>
+                                <div>Tickets</div>
+                            </div>
+                            <div class="mobile-nav-item active">
+                                <i class="fas fa-swimming-pool"></i>
+                                <div>Pool</div>
+                            </div>
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-user"></i>
+                                <div>Tôi</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!--Additional Mobile Screens Row 4 - Final Screens -->
+            <div class="screens-grid mobile-grid">
+                <!-- Mobile - Camera Integration -->
+                <div class="mobile-screen">
+                    <div class="mobile-screen-inner">
+                        <div class="mobile-status-bar" style="background: black;">
+                            <span>9:41</span>
+                            <span>●●●● <i class="fas fa-wifi"></i> <i class="fas fa-battery-full"></i></span>
+                        </div>
+                        
+                        <div class="mobile-content" style="padding: 0; background: black; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div style="padding: 15px; display: flex; justify-content: space-between; align-items: center;">
+                                <button style="background: rgba(255,255,255,0.3); color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: 600;">
+                                    <i class="fas fa-arrow-left"></i>
+                                </button>
+                                <button style="background: rgba(255,255,255,0.3); color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: 600;">
+                                    <i class="fas fa-bolt"></i>
+                                </button>
+                            </div>
+                            
+                            <div style="flex: 1; display: flex; align-items: center; justify-content: center; background: #1f2937; margin: 0 20px; border-radius: 15px; position: relative;">
+                                <div style="border: 3px solid white; width: 80%; height: 80%; border-radius: 15px; display: flex; align-items: center; justify-content: center;">
+                                    <div style="text-align: center; color: white;">
+                                        <i class="fas fa-camera" style="font-size: 4rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                                        <div style="font-size: 0.9rem; opacity: 0.7;">CAMERA VIEW</div>
+                                        <div style="font-size: 0.75rem; opacity: 0.5; margin-top: 10px;">Chụp ảnh để đính kèm</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="padding: 30px 15px; display: flex; justify-content: center; align-items: center; gap: 40px;">
+                                <button style="background: white; border: none; padding: 15px; border-radius: 50%; cursor: pointer;">
+                                    <i class="fas fa-images" style="font-size: 1.5rem; color: var(--primary);"></i>
+                                </button>
+                                <button style="background: white; width: 70px; height: 70px; border: 4px solid white; border-radius: 50%; box-shadow: 0 4px 20px rgba(0,0,0,0.5); cursor: pointer;">
+                                    <div style="background: var(--primary); width: 100%; height: 100%; border-radius: 50%;"></div>
+                                </button>
+                                <button style="background: white; border: none; padding: 15px; border-radius: 50%; cursor: pointer;">
+                                    <i class="fas fa-sync-alt" style="font-size: 1.5rem; color: var(--primary);"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile - QR Scanner -->
+                <div class="mobile-screen">
+                    <div class="mobile-screen-inner">
+                        <div class="mobile-status-bar">
+                            <span>9:41</span>
+                            <span>●●●● <i class="fas fa-wifi"></i> <i class="fas fa-battery-full"></i></span>
+                        </div>
+                        
+                        <div class="mobile-header">
+                            <button style="background: none; border: none; color: white; font-size: 1.2rem;">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                            <div style="font-size: 1.1rem; font-weight: 600;">Quét QR Code</div>
+                            <button style="background: white; color: var(--primary); border: none; padding: 8px 12px; border-radius: 8px;">
+                                <i class="fas fa-lightbulb"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="mobile-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px 20px;">
+                            <div style="background: #1f2937; width: 100%; aspect-ratio: 1; border-radius: 15px; margin-bottom: 25px; display: flex; align-items: center; justify-content: center; position: relative;">
+                                <div style="border: 3px solid var(--primary); width: 70%; height: 70%; border-radius: 10px; position: relative;">
+                                    <!-- Corner markers -->
+                                    <div style="position: absolute; top: -3px; left: -3px; width: 20px; height: 20px; border-top: 4px solid var(--primary); border-left: 4px solid var(--primary);"></div>
+                                    <div style="position: absolute; top: -3px; right: -3px; width: 20px; height: 20px; border-top: 4px solid var(--primary); border-right: 4px solid var(--primary);"></div>
+                                    <div style="position: absolute; bottom: -3px; left: -3px; width: 20px; height: 20px; border-bottom: 4px solid var(--primary); border-left: 4px solid var(--primary);"></div>
+                                    <div style="position: absolute; bottom: -3px; right: -3px; width: 20px; height: 20px; border-bottom: 4px solid var(--primary); border-right: 4px solid var(--primary);"></div>
+                                    
+                                    <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                                        <div style="text-align: center;">
+                                            <i class="fas fa-qrcode" style="font-size: 4rem; color: var(--primary); margin-bottom: 10px;"></i>
+                                            <div style="font-size: 0.75rem; color: white;">QR CODE</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="text-align: center; margin-bottom: 25px;">
+                                <div style="font-size: 0.9rem; color: var(--dark); font-weight: 600; margin-bottom: 5px;">
+                                    Căn chỉnh QR code trong khung
+                                </div>
+                                <div style="font-size: 0.8rem; color: #6b7280;">
+                                    Hệ thống sẽ tự động quét
+                                </div>
+                            </div>
+                            
+                            <div class="mobile-card" style="width: 100%;">
+                                <h4 style="font-size: 0.9rem; margin-bottom: 10px; color: var(--dark);">Đã Quét Gần Đây</h4>
+                                <div style="font-size: 0.85rem; color: #6b7280;">
+                                    • TKT-001 - 2 phút trước<br/>
+                                    • TSK-456 - 1 giờ trước
+                                </div>
+                            </div>
+                            
+                            <button className="btn" style="width: 100%; margin-top: 15px; padding: 12px;">
+                                <i class="fas fa-keyboard"></i>
+                                Nhập Mã Thủ Công
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile - Chat/Messages -->
+                <div class="mobile-screen">
+                    <div class="mobile-screen-inner">
+                        <div class="mobile-status-bar">
+                            <span>9:41</span>
+                            <span>●●●● <i class="fas fa-wifi"></i> <i class="fas fa-battery-full"></i></span>
+                        </div>
+                        
+                        <div class="mobile-header">
+                            <button style="background: none; border: none; color: white; font-size: 1.2rem;">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                            <div style="text-align: center; flex: 1;">
+                                <div style="font-size: 0.95rem; font-weight: 600;">TKT-001 Discussion</div>
+                                <div style="font-size: 0.75rem; opacity: 0.9;">3 participants</div>
+                            </div>
+                            <button style="background: none; border: none; color: white; font-size: 1.2rem;">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="mobile-content" style="padding: 15px; display: flex; flex-direction: column;">
+                            <div style="flex: 1; overflow-y: auto;">
+                                <div style="text-align: center; margin-bottom: 15px;">
+                                    <span style="background: rgba(0,0,0,0.05); padding: 5px 15px; border-radius: 15px; font-size: 0.75rem; color: #6b7280;">
+                                        Hôm Nay, 10:30 AM
+                                    </span>
+                                </div>
+                                
+                                <div style="margin-bottom: 12px;">
+                                    <div style="display: flex; align-items: start; gap: 8px;">
+                                        <div class="avatar" style="width: 32px; height: 32px; font-size: 0.75rem;">ĐBL</div>
+                                        <div style="flex: 1;">
+                                            <div style="font-size: 0.75rem; font-weight: 600; margin-bottom: 3px; color: var(--dark);">Đinh Bộ Lĩnh</div>
+                                            <div style="background: var(--light); padding: 10px; border-radius: 12px; border-bottom-left-radius: 4px; font-size: 0.85rem;">
+                                                Máy in ở phòng ER không hoạt động. Phòng 205 cần in đơn thuốc gấp!
+                                                <div style="font-size: 0.7rem; color: #6b7280; margin-top: 5px;">10:30</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-bottom: 12px;">
+                                    <div style="display: flex; justify-content: flex-end;">
+                                        <div style="max-width: 75%;">
+                                            <div style="background: var(--primary); color: white; padding: 10px; border-radius: 12px; border-bottom-right-radius: 4px; font-size: 0.85rem;">
+                                                Tôi đang trên đường đến. Dự kiến 5 phút nữa!
+                                                <div style="font-size: 0.7rem; opacity: 0.8; margin-top: 5px; text-align: right;">10:35 ✓✓</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-bottom: 12px;">
+                                    <div style="display: flex; align-items: start; gap: 8px;">
+                                        <div class="avatar" style="width: 32px; height: 32px; font-size: 0.75rem;">ĐBL</div>
+                                        <div style="flex: 1;">
+                                            <div style="font-size: 0.75rem; font-weight: 600; margin-bottom: 3px; color: var(--dark);">Đinh Bộ Lĩnh</div>
+                                            <div style="background: var(--light); padding: 10px; border-radius: 12px; border-bottom-left-radius: 4px; font-size: 0.85rem;">
+                                                Cảm ơn bạn! Tình huống khẩn cấp 🔴
+                                                <div style="font-size: 0.7rem; color: #6b7280; margin-top: 5px;">10:36</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-bottom: 12px;">
+                                    <div style="display: flex; justify-content: flex-end;">
+                                        <div style="max-width: 75%;">
+                                            <div style="background: var(--primary); color: white; padding: 10px; border-radius: 12px; border-bottom-right-radius: 4px; font-size: 0.85rem;">
+                                                Đã sửa xong! Vấn đề là cạn mực ✅
+                                                <div style="font-size: 0.7rem; opacity: 0.8; margin-top: 5px; text-align: right;">10:50 ✓✓</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; gap: 8px; align-items: center; padding: 10px; background: white; border-radius: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                <button style="background: none; border: none; color: var(--primary); font-size: 1.2rem;">
+                                    <i class="far fa-smile"></i>
+                                </button>
+                                <input type="text" placeholder="Nhập tin nhắn..." style="flex: 1; border: none; outline: none; font-size: 0.9rem;">
+                                <button style="background: none; border: none; color: var(--primary); font-size: 1.2rem;">
+                                    <i class="fas fa-paperclip"></i>
+                                </button>
+                                <button style="background: var(--primary); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Additional Mobile Screens Row 5 - Last 4 Screens -->
+            <div class="screens-grid mobile-grid">
+                <!-- Mobile - Team View -->
+                <div class="mobile-screen">
+                    <div class="mobile-screen-inner">
+                        <div class="mobile-status-bar">
+                            <span>9:41</span>
+                            <span>●●●● <i class="fas fa-wifi"></i> <i class="fas fa-battery-full"></i></span>
+                        </div>
+                        
+                        <div class="mobile-header">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-users"></i>
+                                <div style="font-size: 1.2rem; font-weight: 600;">IT Department</div>
+                            </div>
+                            <button style="background: white; color: var(--primary); border: none; padding: 8px 12px; border-radius: 8px; font-weight: 600;">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="mobile-content">
+                            <div style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                    <div>
+                                        <div style="font-size: 0.8rem; opacity: 0.9;">Trực Tuyến</div>
+                                        <div style="font-size: 1.5rem; font-weight: bold;">8/15</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-size: 0.8rem; opacity: 0.9;">SLA Compliance</div>
+                                        <div style="font-size: 1.5rem; font-weight: bold;">94% ✅</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h3 style="margin-bottom: 12px; font-size: 0.9rem; color: var(--dark);">Trực Tuyến (8)</h3>
+                            
+                            <div class="list-item" style="padding: 12px 0; border-bottom: 1px solid var(--border);">
+                                <div style="position: relative;">
+                                    <div class="avatar" style="width: 45px; height: 45px; font-size: 1rem;">ĐBL</div>
+                                    <div style="position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; background: var(--success); border: 2px solid white; border-radius: 50%;"></div>
+                                </div>
+                                <div class="list-item-content">
+                                    <div class="list-item-title" style="font-size: 0.9rem;">Đinh Bộ Lĩnh</div>
+                                    <div class="list-item-meta">Staff • 8 tasks đang làm</div>
+                                </div>
+                                <button className="btn" style="padding: 8px 12px; font-size: 0.8rem;">
+                                    Chi Tiết
+                                </button>
+                            </div>
+                            
+                            <div class="list-item" style="padding: 12px 0; border-bottom: 1px solid var(--border);">
+                                <div style="position: relative;">
+                                    <div class="avatar" style="width: 45px; height: 45px; font-size: 1rem;">ĐBL</div>
+                                    <div style="position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; background: var(--success); border: 2px solid white; border-radius: 50%;"></div>
+                                </div>
+                                <div class="list-item-content">
+                                    <div class="list-item-title" style="font-size: 0.9rem;">Đinh Bộ Lĩnh</div>
+                                    <div class="list-item-meta">Staff • 5 tasks đang làm</div>
+                                </div>
+                                <button className="btn" style="padding: 8px 12px; font-size: 0.8rem;">
+                                    Chi Tiết
+                                </button>
+                            </div>
+                            
+                            <h3 style="margin: 20px 0 12px 0; font-size: 0.9rem; color: var(--dark);">Ngoại Tuyến (7)</h3>
+                            
+                            <div class="list-item" style="padding: 12px 0; border-bottom: 1px solid var(--border); opacity: 0.6;">
+                                <div style="position: relative;">
+                                    <div class="avatar" style="width: 45px; height: 45px; font-size: 1rem; background: #9ca3af;">ĐBL</div>
+                                    <div style="position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; background: #6b7280; border: 2px solid white; border-radius: 50%;"></div>
+                                </div>
+                                <div class="list-item-content">
+                                    <div class="list-item-title" style="font-size: 0.9rem;">Đinh Bộ Lĩnh</div>
+                                    <div class="list-item-meta">Manager • Ngoại Tuyến 2h trước</div>
+                                </div>
+                            </div>
+                            
+                            <button className="btn" style="width: 100%; margin-top: 15px; padding: 12px;">
+                                <i class="fas fa-comments"></i>
+                                Team Chat
+                            </button>
+                        </div>
+                        
+                        <div class="mobile-nav">
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-home"></i>
+                                <div>Home</div>
+                            </div>
+                            <div class="mobile-nav-item active">
+                                <i class="fas fa-users"></i>
+                                <div>Team</div>
+                            </div>
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-tasks"></i>
+                                <div>Tasks</div>
+                            </div>
+                            <div class="mobile-nav-item">
+                                <i class="fas fa-user"></i>
+                                <div>Tôi</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile - Chế Độ Ngoại Tuyến -->
+                <div class="mobile-screen">
+                    <div class="mobile-screen-inner">
+                        <div class="mobile-status-bar" style="background: #6b7280;">
+                            <span>9:41</span>
+                            <span><i class="fas fa-wifi" style="text-decoration: line-through;"></i> <i class="fas fa-battery-full"></i></span>
+                        </div>
+                        
+                        <div class="mobile-header" style="background: #6b7280;">
+                            <div style="font-size: 1.2rem; font-weight: 600;">⚠️ Chế Độ Ngoại Tuyến</div>
+                        </div>
+                        
+                        <div class="mobile-content">
+                            <div style="background: #fee2e2; border: 2px solid var(--danger); border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 20px;">
+                                <i class="fas fa-wifi-slash" style="font-size: 3rem; color: var(--danger); margin-bottom: 15px;"></i>
+                                <h3 style="color: var(--danger); margin-bottom: 10px; font-size: 1.1rem;">Không Có Kết Nối</h3>
+                                <p style="font-size: 0.85rem; color: #991b1b; line-height: 1.5;">
+                                    Bạn đang làm việc offline. Các thay đổi sẽ được đồng bộ khi kết nối lại.
+                                </p>
+                            </div>
+                            
+                            <div class="mobile-card">
+                                <h4 style="font-size: 0.95rem; margin-bottom: 12px; color: var(--dark);">⏳ Đang Chờ Đồng Bộ (3)</h4>
+                                <div style="font-size: 0.85rem; color: #6b7280; line-height: 1.8;">
+                                    • 2 bình luận<br/>
+                                    • 1 cập nhật trạng thái
+                                </div>
+                            </div>
+                            
+                            <div class="mobile-card">
+                                <h4 style="font-size: 0.95rem; margin-bottom: 12px; color: var(--dark);">💾 Dữ Liệu Đã Lưu</h4>
+                                <div style="font-size: 0.85rem; color: #6b7280; line-height: 1.8;">
+                                    • Tickets của tôi (12)<br/>
+                                    • Tasks của tôi (8)<br/>
+                                    • Files gần đây
+                                </div>
+                            </div>
+                            
+                            <div class="mobile-card">
+                                <h4 style="font-size: 0.95rem; margin-bottom: 12px; color: var(--dark);">✅ Có Thể Sử Dụng</h4>
+                                <div style="display: grid; gap: 8px; font-size: 0.85rem;">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <i class="fas fa-check" style="color: var(--success);"></i>
+                                        <span>Xem tickets</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <i class="fas fa-check" style="color: var(--success);"></i>
+                                        <span>Xem tasks</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <i class="fas fa-check" style="color: var(--success);"></i>
+                                        <span>Thêm bình luận</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <i class="fas fa-check" style="color: var(--success);"></i>
+                                        <span>Cập nhật trạng thái</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mobile-card">
+                                <h4 style="font-size: 0.95rem; margin-bottom: 12px; color: var(--dark);">❌ Không Khả Dụng</h4>
+                                <div style="display: grid; gap: 8px; font-size: 0.85rem; color: #9ca3af;">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <i class="fas fa-times" style="color: var(--danger);"></i>
+                                        <span>Gửi files</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <i class="fas fa-times" style="color: var(--danger);"></i>
+                                        <span>Real-time chat</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button className="btn btn-success" style="width: 100%; padding: 15px; margin-top: 15px;">
+                                <i class="fas fa-sync-alt"></i>
+                                Thử Kết Nối Lại
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile - Settings -->
+                <div class="mobile-screen">
+                    <div class="mobile-screen-inner">
+                        <div class="mobile-status-bar">
+                            <span>9:41</span>
+                            <span>●●●● <i class="fas fa-wifi"></i> <i class="fas fa-battery-full"></i></span>
+                        </div>
+                        
+                        <div class="mobile-header">
+                            <button style="background: none; border: none; color: white; font-size: 1.2rem;">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                            <div style="font-size: 1.2rem; font-weight: 600;">Cài Đặt</div>
+                            <div style="width: 40px;"></div>
+                        </div>
+                        
+                        <div class="mobile-content">
+                            <h3 style="margin-bottom: 12px; font-size: 0.85rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Tài Khoản</h3>
+                            <div class="mobile-card" style="padding: 0;">
+                                <div class="list-item" style="padding: 15px; border-bottom: 1px solid var(--border);">
+                                    <i class="fas fa-user" style="font-size: 1.2rem; color: var(--primary);"></i>
+                                    <div class="list-item-content">
+                                        <div style="font-size: 0.9rem; font-weight: 600;">Thông Tin Cá Nhân</div>
+                                        <div style="font-size: 0.75rem; color: #6b7280;">Tên, Email, Phone</div>
+                                    </div>
+                                    <i class="fas fa-chevron-right" style="color: #9ca3af;"></i>
+                                </div>
+                                <div class="list-item" style="padding: 15px; border-bottom: none;">
+                                    <i class="fas fa-key" style="font-size: 1.2rem; color: var(--primary);"></i>
+                                    <div class="list-item-content">
+                                        <div style="font-size: 0.9rem; font-weight: 600;">Đổi Mật Khẩu</div>
+                                    </div>
+                                    <i class="fas fa-chevron-right" style="color: #9ca3af;"></i>
+                                </div>
+                            </div>
+                            
+                            <h3 style="margin: 20px 0 12px 0; font-size: 0.85rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Thông Báo</h3>
+                            <div class="mobile-card">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                    <div>
+                                        <div style="font-size: 0.9rem; font-weight: 600; color: var(--dark);">Push Notifications</div>
+                                        <div style="font-size: 0.75rem; color: #6b7280;">Nhận thông báo đẩy</div>
+                                    </div>
+                                    <label style="position: relative; display: inline-block; width: 50px; height: 28px;">
+                                        <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                                        <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--success); transition: .4s; border-radius: 28px;"></span>
+                                    </label>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <div style="font-size: 0.9rem; font-weight: 600; color: var(--dark);">Email Notifications</div>
+                                        <div style="font-size: 0.75rem; color: #6b7280;">Nhận email thông báo</div>
+                                    </div>
+                                    <label style="position: relative; display: inline-block; width: 50px; height: 28px;">
+                                        <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                                        <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--success); transition: .4s; border-radius: 28px;"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <h3 style="margin: 20px 0 12px 0; font-size: 0.85rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Bảo Mật</h3>
+                            <div class="mobile-card" style="padding: 0;">
+                                <div class="list-item" style="padding: 15px; border-bottom: 1px solid var(--border);">
+                                    <i class="fas fa-fingerprint" style="font-size: 1.2rem; color: var(--primary);"></i>
+                                    <div class="list-item-content">
+                                        <div style="font-size: 0.9rem; font-weight: 600;">Sinh Trắc Học</div>
+                                        <div style="font-size: 0.75rem; color: var(--success);">✓ Đã bật</div>
+                                    </div>
+                                    <i class="fas fa-chevron-right" style="color: #9ca3af;"></i>
+                                </div>
+                                <div class="list-item" style="padding: 15px;">
+                                    <i class="fas fa-lock" style="font-size: 1.2rem; color: var(--primary);"></i>
+                                    <div class="list-item-content">
+                                        <div style="font-size: 0.9rem; font-weight: 600;">Tự Động Khóa</div>
+                                        <div style="font-size: 0.75rem; color: #6b7280;">Sau 5 phút</div>
+                                    </div>
+                                    <i class="fas fa-chevron-right" style="color: #9ca3af;"></i>
+                                </div>
+                            </div>
+                            
+                            <h3 style="margin: 20px 0 12px 0; font-size: 0.85rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Khác</h3>
+                            <div class="mobile-card" style="padding: 0;">
+                                <div class="list-item" style="padding: 15px; border-bottom: 1px solid var(--border);">
+                                    <i class="fas fa-globe" style="font-size: 1.2rem; color: var(--primary);"></i>
+                                    <div class="list-item-content">
+                                        <div style="font-size: 0.9rem; font-weight: 600;">Ngôn Ngữ</div>
+                                        <div style="font-size: 0.75rem; color: #6b7280;">Tiếng Việt</div>
+                                    </div>
+                                    <i class="fas fa-chevron-right" style="color: #9ca3af;"></i>
+                                </div>
+                                <div class="list-item" style="padding: 15px; border-bottom: 1px solid var(--border);">
+                                    <i class="fas fa-moon" style="font-size: 1.2rem; color: var(--primary);"></i>
+                                    <div class="list-item-content">
+                                        <div style="font-size: 0.9rem; font-weight: 600;">Dark Mode</div>
+                                    </div>
+                                    <label style="position: relative; display: inline-block; width: 50px; height: 28px;">
+                                        <input type="checkbox" style="opacity: 0; width: 0; height: 0;">
+                                        <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #d1d5db; transition: .4s; border-radius: 28px;"></span>
+                                    </label>
+                                </div>
+                                <div class="list-item" style="padding: 15px;">
+                                    <i class="fas fa-info-circle" style="font-size: 1.2rem; color: var(--primary);"></i>
+                                    <div class="list-item-content">
+                                        <div style="font-size: 0.9rem; font-weight: 600;">Về Ứng Dụng</div>
+                                        <div style="font-size: 0.75rem; color: #6b7280;">v1.0.0 (Build 123)</div>
+                                    </div>
+                                    <i class="fas fa-chevron-right" style="color: #9ca3af;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        <!-- End Mobile App Tab -->
+        
+        <div style="text-align: center; color: white; margin-top: 50px; padding: 30px;">
+            <p style="font-size: 1.2rem; margin-bottom: 10px;">
+                <i class="fas fa-heart" style="color: #ef4444;"></i>
+                BUILD WITH LINM-SOFT
+            </p>
+            <p style="font-size: 0.9rem; opacity: 0.8;">Hospital Task Management System Demo</p>
+        </div>
+    </div>
+    
+    <script>
+        function switchTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Deactivate all tab buttons
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            tabBtns.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            if (tabName === 'webapp') {
+                document.getElementById('webapp-tab').classList.add('active');
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+            } else if (tabName === 'mobile') {
+                document.getElementById('mobile-tab').classList.add('active');
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

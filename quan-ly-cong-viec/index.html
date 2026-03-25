@@ -1,0 +1,3367 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Quản Lý Công Việc Y Khoa - Demo</title>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #7c3aed;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --border: #e5e7eb;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .header .subtitle {
+            font-size: 1.2rem;
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+        
+        .header .badges {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--light);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .badge i {
+            color: var(--primary-color);
+        }
+        
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .nav-tab {
+            padding: 12px 24px;
+            background: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .nav-tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .nav-tab.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+        
+        /* Content Sections */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .card h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card h3 {
+            color: var(--secondary-color);
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+        
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card .label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .feature-card {
+            background: var(--light);
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .feature-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .feature-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .feature-card li {
+            padding: 5px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .feature-card li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success-color);
+            font-weight: bold;
+        }
+        
+        /* Workflow Diagram */
+        .workflow-container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
+        
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+        
+        /* Tech Stack */
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .tech-item {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--dark);
+            border: 2px solid var(--border);
+        }
+        
+        .tech-item i {
+            display: block;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        /* Screens Preview */
+        .screens-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 30px;
+        }
+        
+        /* Web App Screen Mockup */
+        .screen-mockup {
+            background: #f9fafb;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .screen-mockup:hover {
+            transform: translateY(-5px);
+        }
+        
+        .screen-mockup h4 {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 15px 20px;
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .screen-content {
+            padding: 20px;
+            background: white;
+        }
+        
+        /* Mobile Screen Mockup */
+        .mobile-screen {
+            max-width: 360px;
+            margin: 0 auto;
+            background: #000;
+            border-radius: 30px;
+            padding: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .mobile-screen-inner {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            height: 680px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .mobile-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .mobile-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f9fafb;
+        }
+        
+        .mobile-nav {
+            display: flex;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            padding: 10px 0;
+        }
+        
+        .mobile-nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            color: #6b7280;
+            font-size: 0.75rem;
+        }
+        
+        .mobile-nav-item.active {
+            color: var(--primary-color);
+        }
+        
+        .mobile-nav-item i {
+            display: block;
+            font-size: 1.3rem;
+            margin-bottom: 4px;
+        }
+        
+        /* Screen UI Components */
+        .mock-header {
+            background: var(--light);
+            padding: 15px;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .mock-searchbar {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .mock-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .mock-btn:hover {
+            background: #1d4ed8;
+            transform: scale(1.05);
+        }
+        
+        .mock-btn-secondary {
+            background: #6b7280;
+        }
+        
+        .mock-btn-secondary:hover {
+            background: #4b5563;
+        }
+        
+        .mock-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+        
+        .mock-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
+        }
+        
+        .mock-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .mock-badge.critical {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .mock-badge.high {
+            background: #fed7aa;
+            color: #ea580c;
+        }
+        
+        .mock-badge.medium {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        
+        .mock-badge.low {
+            background: #d1fae5;
+            color: #059669;
+        }
+        
+        .mock-badge.open {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+        
+        .mock-badge.closed {
+            background: #d1fae5;
+            color: #059669;
+        }
+        
+        .mock-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .mock-stat-box {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        
+        .mock-stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            display: block;
+        }
+        
+        .mock-stat-label {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        
+        .mock-list-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .mock-list-item:last-child {
+            border-bottom: none;
+        }
+        
+        .mock-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .mock-progress {
+            width: 100%;
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .mock-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .mock-kanban {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            font-size: 0.8rem;
+        }
+        
+        .mock-kanban-col {
+            background: var(--light);
+            border-radius: 8px;
+            padding: 10px;
+        }
+        
+        .mock-kanban-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-size: 0.75rem;
+        }
+        
+        .mock-kanban-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px;
+            margin-bottom: 6px;
+            font-size: 0.7rem;
+        }
+        
+        .mock-chat {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .mock-chat-msg {
+            padding: 10px;
+            border-radius: 12px;
+            max-width: 80%;
+            font-size: 0.85rem;
+        }
+        
+        .mock-chat-msg.sent {
+            background: var(--primary-color);
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        
+        .mock-chat-msg.received {
+            background: var(--light);
+            color: var(--dark);
+        }
+        
+        .mock-form-group {
+            margin-bottom: 15px;
+        }
+        
+        .mock-form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 6px;
+        }
+        
+        .mock-form-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+        
+        .mock-form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .mock-table {
+            width: 100%;
+            font-size: 0.85rem;
+        }
+        
+        .mock-table th {
+            text-align: left;
+            padding: 10px;
+            background: var(--light);
+            font-weight: 600;
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .mock-table td {
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        /* Priority Badges */
+        .priority {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .priority-critical { background: #fee2e2; color: #991b1b; }
+        .priority-high { background: #fed7aa; color: #9a3412; }
+        .priority-medium { background: #fef3c7; color: #92400e; }
+        .priority-low { background: #d1fae5; color: #065f46; }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: white;
+            margin-top: 50px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .screens-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Simple Bar Charts */
+        .simple-chart {
+            width: 100%;
+            padding: 20px;
+        }
+
+        .chart-bar {
+            margin-bottom: 15px;
+        }
+
+        .chart-bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .chart-bar-container {
+            width: 100%;
+            height: 30px;
+            background: #e5e7eb;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chart-bar-fill {
+            height: 100%;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: width 0.5s ease;
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .chart-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .chart-legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+
+        .chart-group {
+            margin-bottom: 20px;
+        }
+
+        .chart-group-bars {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .chart-group-bar {
+            flex: 1;
+            height: 120px;
+            border-radius: 5px 5px 0 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 5px;
+            color: white;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .chart-group-label {
+            text-align: center;
+            margin-top: 5px;
+            font-size: 0.85rem;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        /* Workflow Boxes */
+        .workflow-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .workflow-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .workflow-box {
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+            min-width: 150px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .workflow-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .workflow-box.start {
+            background: #e0f2fe;
+            border: 2px solid #3b82f6;
+            color: #1e40af;
+        }
+
+        .workflow-box.status {
+            background: #ddd6fe;
+            border: 2px solid #8b5cf6;
+            color: #5b21b6;
+        }
+
+        .workflow-box.success {
+            background: #d1fae5;
+            border: 2px solid #10b981;
+            color: #065f46;
+        }
+
+        .workflow-box.warning {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            color: #92400e;
+        }
+
+        .workflow-box.error {
+            background: #fee2e2;
+            border: 2px solid #ef4444;
+            color: #991b1b;
+        }
+
+        .workflow-box.decision {
+            background: #fff7ed;
+            border: 2px solid #f97316;
+            color: #9a3412;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            padding: 20px;
+            min-width: 120px;
+        }
+
+        .workflow-arrow {
+            font-size: 1.5rem;
+            color: #6b7280;
+            font-weight: bold;
+        }
+
+        .workflow-arrow-down {
+            writing-mode: vertical-lr;
+            font-size: 1.5rem;
+            color: #6b7280;
+        }
+
+        .workflow-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            font-weight: 500;
+            margin: 0 5px;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                margin: 0;
+            }
+
+            /* Hide navigation tabs */
+            .nav-tabs {
+                display: none;
+            }
+
+            /* Show all sections when printing */
+            .content-section {
+                display: block !important;
+                page-break-before: always;
+                break-before: page; /* Modern browsers */
+            }
+
+            /* Don't break the first section */
+            .content-section:first-of-type {
+                page-break-before: auto;
+                break-before: auto;
+            }
+
+            /* Tables can span pages but don't break rows */
+            table {
+                page-break-inside: auto;
+                break-inside: auto;
+            }
+
+            thead {
+                display: table-header-group; /* Repeat header on each page */
+            }
+
+            tbody tr {
+                page-break-inside: avoid;
+                break-inside: avoid;
+                page-break-after: auto;
+                break-after: auto;
+            }
+
+            /* SVG and diagrams */
+            svg {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            /* Cards and grids */
+            .card,
+            .stat-card,
+            .workflow-step {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            /* Remove shadows for cleaner print */
+            .stat-card,
+            .workflow-step,
+            .priority-tag,
+            .card {
+                box-shadow: none !important;
+                border: 1px solid #e5e7eb;
+            }
+
+            /* Hide interactive elements */
+            button,
+            .btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-hospital"></i> Hệ Thống Quản Lý Công Việc Y Khoa</h1>
+            <p class="subtitle">🏥 Hệ thống quản lý công việc tối ưu cho y khoa</p>
+            <div class="badges">
+                <span class="badge"><i class="fab fa-react"></i> React 18</span>
+                <span class="badge"><i class="fas fa-mobile-alt"></i> React Native</span>
+                <span class="badge"><i class="fas fa-code"></i> C# ASP.NET Core 8</span>
+                <span class="badge"><i class="fas fa-database"></i> PostgreSQL</span>
+                <span class="badge"><i class="fas fa-comment"></i> MQTT Messaging</span>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showSection('overview')">
+                <i class="fas fa-home"></i> Tổng Quan
+            </button>
+            <button class="nav-tab" onclick="showSection('workflows')">
+                <i class="fas fa-project-diagram"></i> Quy Trình
+            </button>
+            <button class="nav-tab" onclick="showSection('statistics')">
+                <i class="fas fa-chart-bar"></i> Thống Kê
+            </button>
+            <button class="nav-tab" onclick="showSection('features')">
+                <i class="fas fa-star"></i> Tính Năng
+            </button>
+            <button class="nav-tab" onclick="showSection('screens')">
+                <i class="fas fa-desktop"></i> Màn Hình
+            </button>
+            <button class="nav-tab" onclick="showSection('tech')">
+                <i class="fas fa-code-branch"></i> Công Nghệ
+            </button>
+        </div>
+
+        <!-- Overview Section -->
+        <div id="overview" class="content-section active">
+            <div class="card">
+                <h2><i class="fas fa-info-circle"></i> Tổng Quan Hệ Thống</h2>
+                <p style="font-size: 1.1rem; line-height: 1.8; color: #4b5563;">
+                    Hệ thống quản lý công việc chuyên biệt cho lĩnh vực y khoa, hỗ trợ <strong>2 workflow chính</strong>:
+                    quản lý support tickets và giao việc (task assignment) với các tính năng real-time, 
+                    SLA tracking, và hỗ trợ đầy đủ trên cả Web App và Mobile App (iOS + Android).
+                </p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-ticket-alt"></i>
+                    <div class="number">2</div>
+                    <div class="label">Quy Trình Chính</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-mobile-alt"></i>
+                    <div class="number">45+</div>
+                    <div class="label">Tổng Màn Hình</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-users"></i>
+                    <div class="number">5</div>
+                    <div class="label">Vai Trò</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-bolt"></i>
+                    <div class="number">Real-time</div>
+                    <div class="label">Cập Nhật & Chat</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-key"></i> Điểm Nổi Bật</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h4><i class="fas fa-ticket-alt"></i> Quản Lý Tickets</h4>
+                        <ul>
+                            <li>Quy trình tiếp nhận & phân loại</li>
+                            <li>Định tuyến theo độ ưu tiên</li>
+                            <li>Theo dõi SLA & leo thang</li>
+                            <li>Chat & cộng tác real-time</li>
+                            <li>Đánh giá mức độ hài lòng</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <h4><i class="fas fa-tasks"></i> Quản Lý Công Việc</h4>
+                        <ul>
+                            <li>3 chiến lược phân công</li>
+                            <li>Tự chọn task từ pool</li>
+                            <li>Theo dõi tiến độ</li>
+                            <li>Ghi nhận thời gian</li>
+                            <li>Quy trình phê duyệt</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <h4><i class="fas fa-mobile"></i> Tính Năng Mobile</h4>
+                        <ul>
+                            <li>Ứng dụng iOS & Android native</li>
+                            <li>Chế độ offline & đồng bộ</li>
+                            <li>Tích hợp camera</li>
+                            <li>Thông báo đẩy</li>
+                            <li>Đăng nhập sinh trắc học</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workflows Section -->
+        <div id="workflows" class="content-section">
+            <div class="card">
+                <h2><i class="fas fa-project-diagram"></i> Quy Trình 1: Quản Lý Support Ticket</h2>
+                <div class="workflow-container">
+                    <svg width="850" height="900" style="display: block; margin: 0 auto;">
+                        <!-- Start -->
+                        <rect x="325" y="10" width="200" height="60" rx="30" fill="#e0f2fe" stroke="#3b82f6" stroke-width="2"/>
+                        <text x="425" y="35" text-anchor="middle" font-weight="bold" fill="#1e40af">Người Dùng Gửi Ticket</text>
+                        <text x="425" y="55" text-anchor="middle" font-size="12" fill="#1e40af"></text>
+                        
+                        <!-- Arrow -->
+                        <line x1="425" y1="70" x2="425" y2="100" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        
+                        <!-- SUBMITTED -->
+                        <rect x="325" y="100" width="200" height="60" rx="8" fill="#ddd6fe" stroke="#8b5cf6" stroke-width="2"/>
+                        <text x="425" y="125" text-anchor="middle" font-weight="bold" fill="#5b21b6">ĐÃ GỬI</text>
+                        <text x="425" y="145" text-anchor="middle" font-size="12" fill="#5b21b6">Đã phân độ ưu tiên</text>
+                        
+                        <!-- Arrow -->
+                        <line x1="425" y1="160" x2="425" y2="190" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        
+                        <!-- Triage Decision -->
+                        <polygon points="425,190 495,230 425,270 355,230" fill="#fff7ed" stroke="#f97316" stroke-width="2"/>
+                        <text x="425" y="235" text-anchor="middle" font-weight="bold" fill="#9a3412">Phân Loại</text>
+                        
+                        <!-- Arrow to REJECTED -->
+                        <line x1="355" y1="230" x2="200" y2="230" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <line x1="200" y1="230" x2="200" y2="310" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        
+                        <!-- REJECTED -->
+                        <rect x="100" y="310" width="200" height="60" rx="8" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+                        <text x="200" y="335" text-anchor="middle" font-weight="bold" fill="#991b1b">TỪ CHỐI</text>
+                        <text x="200" y="355" text-anchor="middle" font-size="12" fill="#991b1b">Đóng với lý do</text>
+                        
+                        <!-- Arrow to PENDING -->
+                        <line x1="425" y1="270" x2="425" y2="310" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        
+                        <!-- PENDING -->
+                        <rect x="325" y="310" width="200" height="60" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                        <text x="425" y="335" text-anchor="middle" font-weight="bold" fill="#92400e">CHỜ</text>
+                        <text x="425" y="355" text-anchor="middle" font-size="12" fill="#92400e">Cần thêm thông tin</text>
+                        
+                        <!-- Arrow to ASSIGNED -->
+                        <line x1="495" y1="230" x2="650" y2="230" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <line x1="650" y1="230" x2="650" y2="310" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        
+                        <!-- ASSIGNED -->
+                        <rect x="550" y="310" width="200" height="60" rx="8" fill="#ddd6fe" stroke="#8b5cf6" stroke-width="2"/>
+                        <text x="650" y="335" text-anchor="middle" font-weight="bold" fill="#5b21b6">ĐÃ PHÂN CÔNG</text>
+                        <text x="650" y="355" text-anchor="middle" font-size="12" fill="#5b21b6">Giao cho nhân viên</text>
+                        
+                        <!-- Arrow -->
+                        <line x1="650" y1="370" x2="650" y2="410" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        
+                        <!-- IN PROGRESS -->
+                        <rect x="550" y="410" width="200" height="60" rx="8" fill="#ddd6fe" stroke="#8b5cf6" stroke-width="2"/>
+                        <text x="650" y="435" text-anchor="middle" font-weight="bold" fill="#5b21b6">ĐANG XỬ LÝ</text>
+                        <text x="650" y="455" text-anchor="middle" font-size="12" fill="#5b21b6">Nhân viên đang làm</text>
+                        
+                        <!-- Arrow -->
+                        <line x1="650" y1="470" x2="650" y2="510" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        
+                        <!-- RESOLVED -->
+                        <rect x="550" y="510" width="200" height="60" rx="8" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+                        <text x="650" y="535" text-anchor="middle" font-weight="bold" fill="#065f46">ĐÃ GIẢI QUYẾT</text>
+                        <text x="650" y="555" text-anchor="middle" font-size="12" fill="#065f46">Đã cung cấp giải pháp</text>
+                        
+                        <!-- Arrow -->
+                        <line x1="650" y1="570" x2="650" y2="600" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        
+                        <!-- Review Decision -->
+                        <polygon points="650,600 720,640 650,680 580,640" fill="#fff7ed" stroke="#f97316" stroke-width="2"/>
+                        <text x="650" y="645" text-anchor="middle" font-weight="bold" fill="#9a3412">Xem Xét</text>
+                        
+                        <!-- Arrow to REOPENED -->
+                        <line x1="580" y1="640" x2="500" y2="640" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <line x1="500" y1="640" x2="500" y2="440" stroke="#6b7280" stroke-width="2" stroke-dasharray="5,5"/>
+                        <line x1="500" y1="440" x2="550" y2="440" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
+                        
+                        <!-- Arrow to CLOSED -->
+                        <line x1="650" y1="680" x2="650" y2="720" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        
+                        <!-- CLOSED -->
+                        <rect x="550" y="720" width="200" height="60" rx="8" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+                        <text x="650" y="745" text-anchor="middle" font-weight="bold" fill="#065f46">ĐÃ ĐÓNG</text>
+                        <text x="650" y="765" text-anchor="middle" font-size="12" fill="#065f46">Hoàn tất</text>
+                        
+                        <!-- Arrow -->
+                        <line x1="650" y1="780" x2="650" y2="820" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        
+                        <!-- User Rating -->
+                        <rect x="550" y="820" width="200" height="60" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                        <text x="650" y="845" text-anchor="middle" font-weight="bold" fill="#92400e">Đánh Giá</text>
+                        <text x="650" y="865" text-anchor="middle" font-size="12" fill="#92400e">1-5 sao</text>
+                        
+                        <!-- Arrow marker definition -->
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <polygon points="0 0, 10 3, 0 6" fill="#6b7280" />
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+
+                <h3>Các Trạng Thái Chính:</h3>
+                <p><strong>ĐÃ GỮI</strong> → <strong>ĐÃ PHÂN LOẠI</strong> → <strong>ĐÃ PHÂN CÔNG</strong> → <strong>ĐANG XỬ LÝ</strong> → <strong>ĐÃ GIẢI QUYẾT</strong> → <strong>ĐÃ ĐÓNG</strong></p>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-tasks"></i> Quy Trình 2: Phân Công & Quản Lý Công Việc</h2>
+                <div class="workflow-container">
+                    <svg width="850" height="900" style="display: block; margin: 0 auto;">
+                        <!-- Start -->
+                        <rect x="325" y="10" width="200" height="60" rx="30" fill="#e0f2fe" stroke="#3b82f6" stroke-width="2"/>
+                        <text x="425" y="40" text-anchor="middle" font-weight="bold" fill="#1e40af">Quản Lý Tạo Công Việc</text>
+                        
+                        <!-- Arrow -->
+                        <line x1="425" y1="70" x2="425" y2="100" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead2)"/>
+                        
+                        <!-- CREATED -->
+                        <rect x="325" y="100" width="200" height="60" rx="8" fill="#ddd6fe" stroke="#8b5cf6" stroke-width="2"/>
+                        <text x="425" y="125" text-anchor="middle" font-weight="bold" fill="#5b21b6">ĐÃ TẠO</text>
+                        <text x="425" y="145" text-anchor="middle" font-size="12" fill="#5b21b6">Khởi tạo task</text>
+                        
+                        <!-- Arrow -->
+                        <line x1="425" y1="160" x2="425" y2="190" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead2)"/>
+                        
+                        <!-- Strategy Decision -->
+                        <polygon points="425,190 495,230 425,270 355,230" fill="#fff7ed" stroke="#f97316" stroke-width="2"/>
+                        <text x="425" y="235" text-anchor="middle" font-weight="bold" fill="#9a3412">Chiến Lược <tspan x="425" dy="0.8em" font-size="0.7em">(Phân Công)</tspan></text>
+                        
+                        <!-- Arrow to Direct -->
+                        <line x1="355" y1="230" x2="200" y2="230" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead2)"/>
+                        <line x1="200" y1="230" x2="200" y2="310" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead2)"/>
+                        
+                        <!-- Direct Assignment -->
+                        <rect x="100" y="310" width="200" height="60" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                        <text x="200" y="330" text-anchor="middle" font-weight="bold" fill="#92400e">Trực Tiếp</text>
+                        <text x="200" y="350" text-anchor="middle" font-size="12" fill="#92400e">Quản lý giao</text>
+                        
+                        <!-- Arrow to Pool -->
+                        <line x1="425" y1="270" x2="425" y2="310" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead2)"/>
+                        
+                        <!-- Pool -->
+                        <rect x="325" y="310" width="200" height="60" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                        <text x="425" y="330" text-anchor="middle" font-weight="bold" fill="#92400e">Pool</text>
+                        <text x="425" y="350" text-anchor="middle" font-size="12" fill="#92400e">Tự chọn</text>
+                        
+                        <!-- Arrow to Team -->
+                        <line x1="495" y1="230" x2="650" y2="230" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead2)"/>
+                        <line x1="650" y1="230" x2="650" y2="310" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead2)"/>
+                        
+                        <!-- Team Assignment -->
+                        <rect x="550" y="310" width="200" height="60" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                        <text x="650" y="330" text-anchor="middle" font-weight="bold" fill="#92400e">Nhóm</text>
+                        <text x="650" y="350" text-anchor="middle" font-size="12" fill="#92400e">Giao cho nhóm</text>
+                        
+                        <!-- Converge arrows to ASSIGNED -->
+                        <line x1="200" y1="370" x2="200" y2="420" stroke="#6b7280" stroke-width="2"/>
+                        <line x1="200" y1="420" x2="425" y2="420" stroke="#6b7280" stroke-width="2"/>
+                        <line x1="425" y1="370" x2="425" y2="420" stroke="#6b7280" stroke-width="2"/>
+                        <line x1="650" y1="370" x2="650" y2="420" stroke="#6b7280" stroke-width="2"/>
+                        <line x1="650" y1="420" x2="425" y2="420" stroke="#6b7280" stroke-width="2"/>
+                        <line x1="425" y1="420" x2="425" y2="450" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead2)"/>
+                        
+                        <!-- ASSIGNED -->
+                        <rect x="325" y="450" width="200" height="60" rx="8" fill="#ddd6fe" stroke="#8b5cf6" stroke-width="2"/>
+                        <text x="425" y="485" text-anchor="middle" font-weight="bold" fill="#5b21b6">ĐÃ PHÂN CÔNG</text>
+                        
+                        <!-- Arrow -->
+                        <line x1="425" y1="510" x2="425" y2="540" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead2)"/>
+                        
+                        <!-- IN PROGRESS -->
+                        <rect x="325" y="540" width="200" height="60" rx="8" fill="#ddd6fe" stroke="#8b5cf6" stroke-width="2"/>
+                        <text x="425" y="565" text-anchor="middle" font-weight="bold" fill="#5b21b6">ĐANG THỰC HIỆN</text>
+                        <text x="425" y="585" text-anchor="middle" font-size="12" fill="#5b21b6">Làm việc</text>
+                        
+                        <!-- Arrow -->
+                        <line x1="425" y1="600" x2="425" y2="630" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead2)"/>
+                        
+                        <!-- REVIEW -->
+                        <rect x="325" y="630" width="200" height="60" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                        <text x="425" y="655" text-anchor="middle" font-weight="bold" fill="#92400e">XEM XÉT</text>
+                        <text x="425" y="675" text-anchor="middle" font-size="12" fill="#92400e">Gửi phê duyệt</text>
+                        
+                        <!-- Arrow -->
+                        <line x1="425" y1="690" x2="425" y2="720" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead2)"/>
+                        
+                        <!-- Approval Decision -->
+                        <polygon points="425,720 495,760 425,800 355,760" fill="#fff7ed" stroke="#f97316" stroke-width="2"/>
+                        <text x="425" y="765" text-anchor="middle" font-weight="bold" fill="#9a3412">Phê Duyệt</text>
+                        
+                        <!-- Arrow to NEEDS REVISION -->
+                        <line x1="355" y1="760" x2="250" y2="760" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead2)"/>
+                        <line x1="250" y1="760" x2="250" y2="570" stroke="#6b7280" stroke-width="2" stroke-dasharray="5,5"/>
+                        <line x1="250" y1="570" x2="325" y2="570" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead2)" stroke-dasharray="5,5"/>
+                        
+                        <!-- Arrow to COMPLETED -->
+                        <line x1="495" y1="760" x2="600" y2="760" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead2)"/>
+                        <line x1="600" y1="760" x2="600" y2="820" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowhead2)"/>
+                        
+                        <!-- COMPLETED -->
+                        <rect x="500" y="820" width="200" height="60" rx="8" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+                        <text x="600" y="845" text-anchor="middle" font-weight="bold" fill="#065f46">HOÀN TẤT</text>
+                        <text x="600" y="865" text-anchor="middle" font-size="12" fill="#065f46">Task hoàn thành</text>
+                        
+                        <!-- Arrow marker definition -->
+                        <defs>
+                            <marker id="arrowhead2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <polygon points="0 0, 10 3, 0 6" fill="#6b7280" />
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+
+                <h3>Các Chiến Lược Phân Công:</h3>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h4>🎯 Giao Trực Tiếp</h4>
+                        <p>Quản lý giao trực tiếp cho nhân viên phù hợp dựa trên kỹ năng, khối lượng công việc, và tình trạng sẵn sàng.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>🏊 Tự Chọn Từ Pool</h4>
+                        <p>Công việc được đăng vào pool, nhân viên tự chọn task phù hợp với năng lực và thời gian của mình.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>👥 Giao Cho Nhóm</h4>
+                        <p>Giao cho cả nhóm, thành viên trong nhóm tự phân chia công việc và cộng tác.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-clock"></i> Quản Lý SLA</h2>
+                
+                <!-- SLA Explanation -->
+                <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 20px; margin-bottom: 30px; border-radius: 8px;">
+                    <h3 style="color: #1e40af; margin-bottom: 10px;"><i class="fas fa-info-circle"></i> SLA là gì?</h3>
+                    <p style="color: #1e3a8a; line-height: 1.8; margin-bottom: 10px;">
+                        <strong>SLA (Service Level Agreement)</strong> là thỏa thuận mức độ dịch vụ - cam kết về thời gian phản hồi và giải quyết 
+                        ticket/task. Hệ thống tự động giám sát và cảnh báo khi sắp hoặc đã vi phạm SLA.
+                    </p>
+                    <ul style="color: #1e3a8a; line-height: 1.8; margin-left: 20px;">
+                        <li><strong>Thời gian phản hồi:</strong> Thời gian tối đa để bắt đầu xử lý</li>
+                        <li><strong>Thời gian giải quyết:</strong> Thời gian tối đa để hoàn thành</li>
+                        <li><strong>Leo thang:</strong> Cảnh báo và thông báo cấp trên khi vi phạm</li>
+                    </ul>
+                </div>
+                
+                <div class="workflow-container">
+                    <svg width="900" height="420" style="display: block; margin: 0 auto;">
+                        <!-- Start -->
+                        <rect x="100" y="20" width="180" height="60" rx="8" fill="#e0f2fe" stroke="#3b82f6" stroke-width="2"/>
+                        <text x="190" y="55" text-anchor="middle" font-weight="bold" fill="#1e40af">Ticket/Task Mới</text>
+                        
+                        <!-- Arrow -->
+                        <line x1="280" y1="50" x2="340" y2="50" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowSLA)"/>
+                        
+                        <!-- Giám Sát SLA -->
+                        <rect x="340" y="20" width="180" height="60" rx="8" fill="#ddd6fe" stroke="#8b5cf6" stroke-width="2"/>
+                        <text x="430" y="45" text-anchor="middle" font-weight="bold" fill="#5b21b6">Giám Sát SLA</text>
+                        <text x="430" y="65" text-anchor="middle" font-size="12" fill="#5b21b6">Background job</text>
+                        
+                        <!-- Arrow -->
+                        <line x1="520" y1="50" x2="580" y2="50" stroke="#6b7280" stroke-width="2" marker-end="url(#arrowSLA)"/>
+                        
+                        <!-- Kiểm Tra Thời Gian -->
+                        <polygon points="670,50 740,90 670,130 600,90" fill="#fff7ed" stroke="#f97316" stroke-width="2"/>
+                        <text x="670" y="85" text-anchor="middle" font-weight="bold" fill="#9a3412">Kiểm Tra</text>
+                        <text x="670" y="102" text-anchor="middle" font-size="12" fill="#9a3412">Thời Gian</text>
+                        
+                        <!-- Arrows from decision to statuses (with proper angles) -->
+                        <line x1="620" y1="110" x2="140" y2="190" stroke="#6b7280" stroke-width="2" stroke-dasharray="3,3" marker-end="url(#arrowSLA)"/>
+                        <line x1="650" y1="120" x2="350" y2="190" stroke="#6b7280" stroke-width="2" stroke-dasharray="3,3" marker-end="url(#arrowSLA)"/>
+                        <line x1="690" y1="125" x2="560" y2="190" stroke="#6b7280" stroke-width="2" stroke-dasharray="3,3" marker-end="url(#arrowSLA)"/>
+                        <line x1="720" y1="110" x2="770" y2="190" stroke="#6b7280" stroke-width="2" stroke-dasharray="3,3" marker-end="url(#arrowSLA)"/>
+                        
+                        <!-- Status boxes -->
+                        <!-- An Toàn -->
+                        <rect x="50" y="190" width="180" height="70" rx="8" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+                        <text x="140" y="215" text-anchor="middle" font-size="20" fill="#065f46">🟢</text>
+                        <text x="140" y="240" text-anchor="middle" font-weight="bold" fill="#065f46">An Toàn</text>
+                        <text x="140" y="255" text-anchor="middle" font-size="12" fill="#065f46">Tiếp tục theo dõi</text>
+                        
+                        <!-- Cảnh Báo -->
+                        <rect x="260" y="190" width="180" height="70" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                        <text x="350" y="215" text-anchor="middle" font-size="20" fill="#92400e">🟡</text>
+                        <text x="350" y="240" text-anchor="middle" font-weight="bold" fill="#92400e">Cảnh Báo</text>
+                        <text x="350" y="255" text-anchor="middle" font-size="12" fill="#92400e">Thông báo người xử lý</text>
+                        
+                        <!-- Nguy Hiểm -->
+                        <rect x="470" y="190" width="180" height="70" rx="8" fill="#fed7aa" stroke="#f97316" stroke-width="2"/>
+                        <text x="560" y="215" text-anchor="middle" font-size="20" fill="#9a3412">🟠</text>
+                        <text x="560" y="240" text-anchor="middle" font-weight="bold" fill="#9a3412">Nguy Hiểm</text>
+                        <text x="560" y="255" text-anchor="middle" font-size="12" fill="#9a3412">Thông báo quản lý</text>
+                        
+                        <!-- KHẨN CẤP -->
+                        <rect x="680" y="190" width="180" height="70" rx="8" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+                        <text x="770" y="215" text-anchor="middle" font-size="20" fill="#991b1b">🔴</text>
+                        <text x="770" y="240" text-anchor="middle" font-weight="bold" fill="#991b1b">KHẨN CẤP</text>
+                        <text x="770" y="255" text-anchor="middle" font-size="12" fill="#991b1b">Leo thang</text>
+                        
+                        <!-- Escalation text -->
+                        <text x="450" y="310" text-anchor="middle" font-weight="bold" fill="#1f2937" font-size="14">Quy Trình Leo Thang:</text>
+                        <text x="450" y="335" text-anchor="middle" fill="#4b5563" font-size="13">Khẩn cấp → Thông báo quản lý → Hệ thống gợi ý phân công lại</text>
+                        <text x="450" y="355" text-anchor="middle" fill="#4b5563" font-size="13">→ Quản lý quyết định → Phân công lại hoặc Giữ + Cảnh báo Giám đốc</text>
+                        
+                        <!-- Arrow marker definition -->
+                        <defs>
+                            <marker id="arrowSLA" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <polygon points="0 0, 10 3, 0 6" fill="#6b7280" />
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+
+                <h3>Cấu Hình SLA Theo Độ Ưu Tiên:</h3>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                    <thead>
+                        <tr style="background: var(--primary-color); color: white;">
+                            <th style="padding: 12px; text-align: left;">Độ Ưu Tiên</th>
+                            <th style="padding: 12px; text-align: left;">Thời Gian Phản Hồi</th>
+                            <th style="padding: 12px; text-align: left;">Thời Gian Giải Quyết</th>
+                            <th style="padding: 12px; text-align: left;">Leo Thang</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background: #fee2e2;">
+                            <td style="padding: 12px;"><span class="priority priority-critical">KHẨN CẤP</span></td>
+                            <td style="padding: 12px;">5 phút</td>
+                            <td style="padding: 12px;">2 giờ</td>
+                            <td style="padding: 12px;">Ngay lập tức</td>
+                        </tr>
+                        <tr style="background: #fed7aa;">
+                            <td style="padding: 12px;"><span class="priority priority-high">CAO</span></td>
+                            <td style="padding: 12px;">30 phút</td>
+                            <td style="padding: 12px;">4 giờ</td>
+                            <td style="padding: 12px;">Sau 2 giờ</td>
+                        </tr>
+                        <tr style="background: #fef3c7;">
+                            <td style="padding: 12px;"><span class="priority priority-medium">TRUNG BÌNH</span></td>
+                            <td style="padding: 12px;">2 giờ</td>
+                            <td style="padding: 12px;">24 giờ</td>
+                            <td style="padding: 12px;">Sau 12 giờ</td>
+                        </tr>
+                        <tr style="background: #d1fae5;">
+                            <td style="padding: 12px;"><span class="priority priority-low">THẤP</span></td>
+                            <td style="padding: 12px;">8 giờ</td>
+                            <td style="padding: 12px;">3 ngày</td>
+                            <td style="padding: 12px;">Sau 2 ngày</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="feature-card" style="margin-top: 20px; border-left-color: var(--danger-color);">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Lưu Ý Quan Trọng</h4>
+                    <p><strong>KHÔNG TỰ ĐỘNG PHÂN CÔNG LẠI:</strong> Khi vi phạm SLA, hệ thống chỉ gợi ý người được gợi và thông báo Quản lý. 
+                    Quản lý phải phê duyệt phân công lại thủ công. Đảm bảo giám sát trong môi trường y khoa.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div id="statistics" class="content-section">
+            <div class="card">
+                <h2><i class="fas fa-chart-bar"></i> Thống Kê & Phân Tích Hệ Thống</h2>
+                
+                <div class="chart-grid">
+                    <div class="card" style="padding: 20px;">
+                        <h3>Phân Bố Trạng Thái Ticket</h3>
+                        <div class="simple-chart">
+                            <div class="chart-bar">
+                                <div class="chart-bar-label">
+                                    <span>📝 Submitted</span>
+                                    <span>15</span>
+                                </div>
+                                <div class="chart-bar-container">
+                                    <div class="chart-bar-fill" style="width: 15%; background: #3b82f6;">15%</div>
+                                </div>
+                            </div>
+                            <div class="chart-bar">
+                                <div class="chart-bar-label">
+                                    <span>👥 Đã Giao</span>
+                                    <span>25</span>
+                                </div>
+                                <div class="chart-bar-container">
+                                    <div class="chart-bar-fill" style="width: 25%; background: #8b5cf6;">25%</div>
+                                </div>
+                            </div>
+                            <div class="chart-bar">
+                                <div class="chart-bar-label">
+                                    <span>⚡ In Progress</span>
+                                    <span>30</span>
+                                </div>
+                                <div class="chart-bar-container">
+                                    <div class="chart-bar-fill" style="width: 30%; background: #f59e0b;">30%</div>
+                                </div>
+                            </div>
+                            <div class="chart-bar">
+                                <div class="chart-bar-label">
+                                    <span>✅ Đã Giải Quyết</span>
+                                    <span>20</span>
+                                </div>
+                                <div class="chart-bar-container">
+                                    <div class="chart-bar-fill" style="width: 20%; background: #10b981;">20%</div>
+                                </div>
+                            </div>
+                            <div class="chart-bar">
+                                <div class="chart-bar-label">
+                                    <span>🔒 Đóng</span>
+                                    <span>10</span>
+                                </div>
+                                <div class="chart-bar-container">
+                                    <div class="chart-bar-fill" style="width: 10%; background: #6b7280;">10%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="padding: 20px;">
+                        <h3>Xu Hướng Hoàn Thành Task</h3>
+                        <div class="simple-chart">
+                            <div class="chart-group">
+                                <div class="chart-group-bars">
+                                    <div style="flex: 1; text-align: center;">
+                                        <div class="chart-group-bar" style="height: 60px; background: #10b981;">12</div>
+                                        <div class="chart-group-bar" style="height: 75px; background: #3b82f6; margin-top: 5px;">15</div>
+                                        <div class="chart-group-label">Tuần 1</div>
+                                    </div>
+                                    <div style="flex: 1; text-align: center;">
+                                        <div class="chart-group-bar" style="height: 95px; background: #10b981;">19</div>
+                                        <div class="chart-group-bar" style="height: 110px; background: #3b82f6; margin-top: 5px;">22</div>
+                                        <div class="chart-group-label">Tuần 2</div>
+                                    </div>
+                                    <div style="flex: 1; text-align: center;">
+                                        <div class="chart-group-bar" style="height: 75px; background: #10b981;">15</div>
+                                        <div class="chart-group-bar" style="height: 90px; background: #3b82f6; margin-top: 5px;">18</div>
+                                        <div class="chart-group-label">Tuần 3</div>
+                                    </div>
+                                    <div style="flex: 1; text-align: center;">
+                                        <div class="chart-group-bar" style="height: 125px; background: #10b981;">25</div>
+                                        <div class="chart-group-bar" style="height: 140px; background: #3b82f6; margin-top: 5px;">28</div>
+                                        <div class="chart-group-label">Tuần 4</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chart-legend">
+                                <div class="chart-legend-item">
+                                    <div class="chart-legend-color" style="background: #10b981;"></div>
+                                    <span>Hoàn thành</span>
+                                </div>
+                                <div class="chart-legend-item">
+                                    <div class="chart-legend-color" style="background: #3b82f6;"></div>
+                                    <span>Đã tạo</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-grid">
+                    <div class="card" style="padding: 20px;">
+                        <h3>Tỷ Lệ Tuân Thủ SLA</h3>
+                        <div class="simple-chart">
+                            <div class="chart-bar">
+                                <div class="chart-bar-label">
+                                    <span>🔴 Khẩn Cấp</span>
+                                    <span>88%</span>
+                                </div>
+                                <div class="chart-bar-container">
+                                    <div class="chart-bar-fill" style="width: 88%; background: #ef4444;">88%</div>
+                                </div>
+                            </div>
+                            <div class="chart-bar">
+                                <div class="chart-bar-label">
+                                    <span>🟠 Cao</span>
+                                    <span>92%</span>
+                                </div>
+                                <div class="chart-bar-container">
+                                    <div class="chart-bar-fill" style="width: 92%; background: #f59e0b;">92%</div>
+                                </div>
+                            </div>
+                            <div class="chart-bar">
+                                <div class="chart-bar-label">
+                                    <span>🟡 Trung Bình</span>
+                                    <span>95%</span>
+                                </div>
+                                <div class="chart-bar-container">
+                                    <div class="chart-bar-fill" style="width: 95%; background: #fbbf24;">95%</div>
+                                </div>
+                            </div>
+                            <div class="chart-bar">
+                                <div class="chart-bar-label">
+                                    <span>🟢 Thấp</span>
+                                    <span>98%</span>
+                                </div>
+                                <div class="chart-bar-container">
+                                    <div class="chart-bar-fill" style="width: 98%; background: #10b981;">98%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="padding: 20px;">
+                        <h3>Hiệu Suất Nhóm</h3>
+                        <div class="simple-chart">
+                            <div class="chart-bar">
+                                <div class="chart-bar-label">
+                                    <span>⚡ Speed</span>
+                                    <span>85/100</span>
+                                </div>
+                                <div class="chart-bar-container">
+                                    <div class="chart-bar-fill" style="width: 85%; background: #8b5cf6;">85</div>
+                                </div>
+                            </div>
+                            <div class="chart-bar">
+                                <div class="chart-bar-label">
+                                    <span>✨ Quality</span>
+                                    <span>90/100</span>
+                                </div>
+                                <div class="chart-bar-container">
+                                    <div class="chart-bar-fill" style="width: 90%; background: #8b5cf6;">90</div>
+                                </div>
+                            </div>
+                            <div class="chart-bar">
+                                <div class="chart-bar-label">
+                                    <span>💬 Giao tiếp</span>
+                                    <span>88/100</span>
+                                </div>
+                                <div class="chart-bar-container">
+                                    <div class="chart-bar-fill" style="width: 88%; background: #8b5cf6;">88</div>
+                                </div>
+                            </div>
+                            <div class="chart-bar">
+                                <div class="chart-bar-label">
+                                    <span>🟢 Sẵn sàng</span>
+                                    <span>92/100</span>
+                                </div>
+                                <div class="chart-bar-container">
+                                    <div class="chart-bar-fill" style="width: 92%; background: #8b5cf6;">92</div>
+                                </div>
+                            </div>
+                            <div class="chart-bar">
+                                <div class="chart-bar-label">
+                                    <span>🎯 Chuyên môn</span>
+                                    <span>87/100</span>
+                                </div>
+                                <div class="chart-bar-container">
+                                    <div class="chart-bar-fill" style="width: 87%; background: #8b5cf6;">87</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="padding: 20px;">
+                    <h3>Phân Bố Độ Ưu Tiên (30 Ngày Qua)</h3>
+                    <div class="simple-chart">
+                        <div class="chart-bar">
+                            <div class="chart-bar-label">
+                                <span>🔴 Khẩn Cấp</span>
+                                <span>Tickets: 8 | Tasks: 5</span>
+                            </div>
+                            <div class="chart-bar-container">
+                                <div class="chart-bar-fill" style="width: 8%; background: #3b82f6;">8</div>
+                            </div>
+                        </div>
+                        <div class="chart-bar">
+                            <div class="chart-bar-label">
+                                <span>🟠 Cao</span>
+                                <span>Tickets: 25 | Tasks: 18</span>
+                            </div>
+                            <div class="chart-bar-container">
+                                <div class="chart-bar-fill" style="width: 25%; background: #3b82f6;">25</div>
+                            </div>
+                        </div>
+                        <div class="chart-bar">
+                            <div class="chart-bar-label">
+                                <span>🟡 Trung Bình</span>
+                                <span>Tickets: 45 | Tasks: 38</span>
+                            </div>
+                            <div class="chart-bar-container">
+                                <div class="chart-bar-fill" style="width: 45%; background: #3b82f6;">45</div>
+                            </div>
+                        </div>
+                        <div class="chart-bar">
+                            <div class="chart-bar-label">
+                                <span>🟢 Thấp</span>
+                                <span>Tickets: 22 | Tasks: 29</span>
+                            </div>
+                            <div class="chart-bar-container">
+                                <div class="chart-bar-fill" style="width: 29%; background: #8b5cf6;">29</div>
+                            </div>
+                        </div>
+                        <div class="chart-legend">
+                            <div class="chart-legend-item">
+                                <div class="chart-legend-color" style="background: #3b82f6;"></div>
+                                <span>Tickets</span>
+                            </div>
+                            <div class="chart-legend-item">
+                                <div class="chart-legend-color" style="background: #8b5cf6;"></div>
+                                <span>Tasks</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div id="features" class="content-section">
+            <div class="card">
+                <h2><i class="fas fa-star"></i> Bộ Tính Năng Hoàn Chỉnh</h2>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h4><i class="fas fa-ticket-alt"></i> Quản Lý Ticket</h4>
+                        <ul>
+                            <li>Gửi ticket với độ ưu tiên & danh mục</li>
+                            <li>Quy trình phân loại & định tuyến</li>
+                            <li>Theo dõi SLA & tự động leo thang</li>
+                            <li>Cập nhật trạng thái real-time</li>
+                            <li>Chat & đính kèm file</li>
+                            <li>Đánh giá mức độ hài lòng</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i class="fas fa-tasks"></i> Phân Công Công Việc</h4>
+                        <ul>
+                            <li>3 chiến lược phân công</li>
+                            <li>Task pool cho tự chọn</li>
+                            <li>Theo dõi tiến độ (0-100%)</li>
+                            <li>Công việc con & danh sách kiểm tra</li>
+                            <li>Ghi nhận thời gian & ước tính</li>
+                            <li>Quy trình xem xét & phê duyệt</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i class="fas fa-comments"></i> Cộng Tác</h4>
+                        <ul>
+                            <li>Nhắn tin chat real-time</li>
+                            <li>Bình luận theo chủ đề</li>
+                            <li>Thông báo @mention</li>
+                            <li>Chia sẻ file & xem trước</li>
+                            <li>Chỉ báo đang gõ</li>
+                            <li>Xác nhận đã đọc</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i class="fas fa-bell"></i> Thông Báo</h4>
+                        <ul>
+                            <li>Thông báo đẩy (FCM)</li>
+                            <li>Thông báo qua email</li>
+                            <li>Thông báo trong ứng dụng</li>
+                            <li>Cảnh báo SMS (tùy chọn)</li>
+                            <li>Tùy chỉnh cá nhân</li>
+                            <li>Chế độ Không Quấy Rối</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i class="fas fa-mobile-alt"></i> Ứng Dụng Mobile</h4>
+                        <ul>
+                            <li>Ứng dụng iOS & Android native</li>
+                            <li>Chế độ offline & đồng bộ</li>
+                            <li>Tích hợp camera</li>
+                            <li>Ghi âm giọng nói</li>
+                            <li>Đăng nhập sinh trắc học</li>
+                            <li>Quét mã QR</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i class="fas fa-chart-line"></i> Báo Cáo & Phân Tích</h4>
+                        <ul>
+                            <li>Báo cáo hiệu suất ticket</li>
+                            <li>Theo dõi tuân thủ SLA</li>
+                            <li>Chỉ số năng suất nhóm</li>
+                            <li>Widget dashboard tùy chỉnh</li>
+                            <li>Xuất ra PDF/Excel</li>
+                            <li>Báo cáo email tự động</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i class="fas fa-shield-alt"></i> Bảo Mật</h4>
+                        <ul>
+                            <li>Xác thực JWT</li>
+                            <li>Kiểm soát truy cập theo vai trò</li>
+                            <li>Giới hạn tốc độ API</li>
+                            <li>Mã hóa dữ liệu</li>
+                            <li>Nhật ký kiểm toán</li>
+                            <li>Chỉ dùng HTTPS</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i class="fas fa-cog"></i> Quản Trị</h4>
+                        <ul>
+                            <li>Quản lý người dùng & nhóm</li>
+                            <li>Cấu hình phòng ban</li>
+                            <li>Tùy chỉnh quy tắc SLA</li>
+                            <li>Mẫu quy trình</li>
+                            <li>Cài đặt hệ thống</li>
+                            <li>Giám sát hoạt động</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i class="fas fa-plug"></i> Tích Hợp</h4>
+                        <ul>
+                            <li>Email (SMTP)</li>
+                            <li>SMS (Twilio)</li>
+                            <li>Lưu trữ file local server</li>
+                            <li>Hệ thống HIS/EMR (API)</li>
+                            <li>Đồng bộ lịch</li>
+                            <li>Thông báo Slack/Teams</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screens Section -->
+        <div id="screens" class="content-section">
+            <!-- Interactive Demo Link -->
+            <div class="card" style="text-align: center; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; border: none; margin-bottom: 40px;">
+                <h2 style="color: white; margin-bottom: 15px;">
+                    <i class="fas fa-desktop"></i> 
+                    <i class="fas fa-mobile-alt"></i> 
+                    Xem Demo Màn Hình Tương Tác - ĐẦY ĐỦ 34 SCREENS!
+                </h2>
+                <p style="font-size: 1.1rem; margin-bottom: 25px; opacity: 0.95;">
+                    🎨 HTML/CSS Mockups • ⚡ Interactive UI • 📱 iPhone 17 Size • 💻 Full Width Web App
+                </p>
+                <a href="app-demo.html" style="display: inline-flex; align-items: center; gap: 12px; background: white; color: var(--primary-color); padding: 18px 40px; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 1.2rem; box-shadow: 0 8px 30px rgba(0,0,0,0.3); transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 12px 40px rgba(0,0,0,0.4)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 8px 30px rgba(0,0,0,0.3)';">
+                    <i class="fas fa-play-circle" style="font-size: 1.5rem;"></i>
+                    Khám Phá 34 Màn Hình Tương Tác
+                </a>
+                <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.85;">
+                    ✨ 15 Web App Screens • 📱 19 Mobile App Screens • 🎯 Professional UI/UX
+                </p>
+            </div>
+            
+            <div class="card">
+                <h2><i class="fas fa-desktop"></i> Màn Hình Web App (25-30 màn)</h2>
+                <p style="color: #6b7280; margin-bottom: 20px;">
+                    <i class="fas fa-info-circle"></i> Dưới đây là các màn hình dạng ASCII để tham khảo. 
+                    <strong>Xem demo tương tác ở trên để thấy mockups HTML/CSS chi tiết!</strong>
+                </p>
+                
+                <div class="screens-grid">
+                    <div class="screen-mockup">
+                        <h4>📊 Dashboard</h4>
+                        <pre>
+┌─────────────────────────────────┐
+│ 🏥 Medical Task Management     │
+│ Search... 🔔 👤 John Doe       │
+├──────┬──────────────────────────┤
+│      │  📊 Statistics           │
+│ 📋   │  ┌────┬────┬────┬────┐  │
+│ Home │  │ 12 │ 8  │ 15 │ 92%│  │
+│      │  │Mở  │ChX │XLý │ SLA│  │
+│ 🎫   │  └────┴────┴────┴────┘  │
+│Ticket│  📈 Charts               │
+│      │  ┌──────────┬──────────┐│
+│ 📋   │  │ Ticket   │  Task    ││
+│ Task │  │ Status   │ Progress ││
+│      │  │ [Chart]  │ [Chart]  ││
+│ 👥   │  └──────────┴──────────┘│
+│ Team │  📋 Recent Activity      │
+│      │  • TKT-001 đã giao...   │
+│ 📊   │  • TSK-456 completed... │
+│Report│  • SLA warning on #789  │
+└──────┴──────────────────────────┘
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>🎫 Tickets List</h4>
+                        <pre>
+┌─────────────────────────────────┐
+│ 🎫 Tickets            [+ New]  │
+│ 🔍 Search... [Filter▼] [Sort▼]│
+├─────────────────────────────────┤
+│ ┌─────────────────────────────┐│
+│ │🔴 TKT-001 | Printer Issue  ││
+│ │👤 John Doe | ⏰ 2h left     ││
+│ │Trạng Thái: ĐANG XỬ LÝ      ││
+│ └─────────────────────────────┘│
+│ ┌─────────────────────────────┐│
+│ │🟡 TKT-002 | Update needed  ││
+│ │👤 Jane Smith | ⏰ 8h left  ││
+│ │Trạng Thái: ĐÃ GIAO         ││
+│ └─────────────────────────────┘│
+│ ┌─────────────────────────────┐│
+│ │🟢 TKT-003 | Equipment req  ││
+│ │👤 Bob Lee | ⏰ 1d left      ││
+│ │Trạng Thái: ĐÃ GỬI          ││
+│ └─────────────────────────────┘│
+│ [1] [2] [3] ... [10]           │
+└─────────────────────────────────┘
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📝 Ticket Detail</h4>
+                        <pre>
+┌─────────────────────────────────┐
+│ ← TKT-001          [Edit][⋮]   │
+├─────────────────────────────────┤
+│ 🔴 KHẨN CẤP | ĐANG XỬ LÝ       │
+│                                  │
+│ 📋 Printer in ER not working    │
+│                                  │
+│ Created: Mar 24, 10:30 AM       │
+│ By: Dr. Sarah Johnson           │
+│ Đã giao: John Doe (IT Team)    │
+│                                  │
+│ ⏰ SLA Status: 🟡 1h 45m left   │
+│                                  │
+│ ┌─────┬─────────┬────────┬───┐ │
+│ │ 💬  │Bình Luận│Hoạt Động│📎│ │
+│ └─────┴─────────┴────────┴───┘ │
+│ Tin Nhắn Chat:                  │
+│ ─────────────────────────────── │
+│ 👤 John: Checking the printer.. │
+│ 👤 Sarah: It's in Room 205     │
+│ 👤 John: On my way! 10:45 AM   │
+│                                  │
+│ [Nhập tin nhắn...] [📎] [Gửi]  │
+│                                  │
+│ [Đổi Trạng Thái▼] [Phân Lại]   │
+└─────────────────────────────────┘
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📋 Task Board (Kanban)</h4>
+                        <pre>
+┌─────────────────────────────────┐
+│ 📋 Tasks - Kanban View  [+ New]│
+├──────┬──────┬──────┬──────┬────┤
+│ĐÃ TẠO│ĐÃ GIAO│ĐANG LÀM│XEM XÉT│XONG│
+├──────┼──────┼──────┼──────┼────┤
+│[Card]│[Card]│[Card]│      │[OK]│
+│ TSK  │ TSK  │ TSK  │      │TSK │
+│ 010  │ 008  │ 005  │      │001 │
+│      │      │      │      │    │
+│[Card]│[Card]│[Card]│      │[OK]│
+│ TSK  │ TSK  │ TSK  │      │TSK │
+│ 011  │ 009  │ 006  │      │002 │
+│      │      │      │      │    │
+│      │      │[Card]│      │    │
+│      │      │ TSK  │      │    │
+│      │      │ 007  │      │    │
+└──────┴──────┴──────┴──────┴────┘
+Kéo & thả để đổi trạng thái
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>👨‍💼 Manager Dashboard</h4>
+                        <pre>
+┌─────────────────────────────────┐
+│ 👨‍💼 Manager Dashboard           │
+├─────────────────────────────────┤
+│ ⚠️ SLA Breach Alerts (3)        │
+│ ┌─────────────────────────────┐│
+│ │🔴 TKT-001 Breached by 30min││
+│ │💡 Suggested: Jane (4.8★)   ││
+│ │[Keep] [Reassign]            ││
+│ └─────────────────────────────┘│
+│                                  │
+│ 📊 Team Workload                │
+│ John Doe    ████████░░ 8 tasks │
+│ Jane Smith  █████░░░░░ 5 tasks │
+│ Bob Lee     ███░░░░░░░ 3 tasks │
+│                                  │
+│ ✅ Chờ Phê Duyệt (2)            │
+│ • TSK-456 - Database update     │
+│ • TSK-789 - System maintenance  │
+│                                  │
+│ 📈 Hiệu Suất Tuần Này           │
+│ Hoàn Thành: 45 | Chờ: 12        │
+│ Tuân Thủ SLA: 94.2%             │
+└─────────────────────────────────┘
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>🏊 Task Pool</h4>
+                        <pre>
+┌─────────────────────────────────┐
+│ 🏊 Tasks Có Sẵn                 │
+│ [Độ Ưu Tiên▼] [Kỹ Năng▼] [PB▼] │
+├─────────────────────────────────┤
+│ ┌─────────────────────────────┐│
+│ │🟠 Update Patient Records    ││
+│ │Est: 16h | Deadline: Mar 30 ││
+│ │Skills: SQL, Database        ││
+│ │Department: IT               ││
+│ │[View Details] [Claim Task]  ││
+│ └─────────────────────────────┘│
+│ ┌─────────────────────────────┐│
+│ │🟡 Fix Login Bug             ││
+│ │Est: 4h | Deadline: Mar 25  ││
+│ │Skills: React, TypeScript    ││
+│ │[View Details] [Claim Task]  ││
+│ └─────────────────────────────┘│
+│ ┌─────────────────────────────┐│
+│ │🟢 Write Documentation       ││
+│ │Est: 8h | Deadline: Mar 28  ││
+│ │Skills: Technical Writing    ││
+│ │[View Details] [Claim Task]  ││
+│ └─────────────────────────────┘│
+└─────────────────────────────────┘
+                        </pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-mobile-alt"></i> Màn Hình Mobile App (20-25 màn)</h2>
+                
+                <div class="screens-grid">
+                    <div class="screen-mockup">
+                        <h4>📱 Mobile - Home</h4>
+                        <pre>
+┌───────────────────┐
+│ 👋 Hello, John    │
+│ IT Department     │
+├───────────────────┤
+│ Stats             │
+│ ┌───────┬───────┐ │
+│ │ 🎫12  │ 📋 8  │ │
+│ │ Open  │ Pend  │ │
+│ └───────┴───────┘ │
+│ ┌───────┬───────┐ │
+│ │ ⚠️ 3  │ ✅92% │ │
+│ │ Alert │  SLA  │ │
+│ └───────┴───────┘ │
+│                   │
+│ Quick Actions     │
+│ [➕ New Ticket]  │
+│ [🔍 Task Pool]   │
+│                   │
+│ Recent Activity   │
+│ • TKT-001 assign │
+│ • TSK-456 done ✅ │
+│ • SLA warning ⚠️  │
+│                   │
+│ [😊 Feedback]     │
+└───────────────────┘
+[Home|Tickets|Tasks|Me]
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📱 Mobile - Ticket Detail</h4>
+                        <pre>
+┌───────────────────┐
+│ ← TKT-001     [⋮] │
+├───────────────────┤
+│ 🔴 CRITICAL       │
+│ Printer Issue     │
+│                   │
+│ 👤 Assigned:      │
+│ John Doe          │
+│                   │
+│ 🕐 Created:       │
+│ Mar 24, 10:30     │
+│                   │
+│ ⏰ SLA:           │
+│ 🟡 1h 45m left    │
+│                   │
+│ 💬 Chat (3)       │
+│ ┌───────────────┐ │
+│ │Sarah: Room   │ │
+│ │205 printer   │ │
+│ │              │ │
+│ │John: On my   │ │
+│ │way! ✓✓       │ │
+│ └───────────────┘ │
+│ [Type...]  [📎]  │
+│                   │
+│ Quick Actions:    │
+│ [📷 Photo]       │
+│ [🎤 Voice]       │
+│ [✅ Resolve]     │
+└───────────────────┘
+[Status] [Assign] [More]
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📱 Mobile - Create Ticket</h4>
+                        <pre>
+┌───────────────────┐
+│ ← New Ticket  [✓] │
+├───────────────────┤
+│ Title             │
+│ ┌───────────────┐ │
+│ │Printer broken │ │
+│ └───────────────┘ │
+│                   │
+│ Description       │
+│ ┌───────────────┐ │
+│ │The printer in │ │
+│ │ER is not...   │ │
+│ └───────────────┘ │
+│                   │
+│ Priority          │
+│ (•) Critical      │
+│ ( ) Cao          │
+│ ( ) Trung Bình        │
+│ ( ) Thấp           │
+│                   │
+│ Category          │
+│ [Technical ▼]     │
+│                   │
+│ 📎 Attachments    │
+│ ┌───────────────┐ │
+│ │ [📷 Camera]   │ │
+│ │ [🎤 Voice]    │ │
+│ │ [📁 Files]    │ │
+│ └───────────────┘ │
+│                   │
+│ [Submit Ticket]   │
+└───────────────────┘
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📱 Mobile - Task Progress</h4>
+                        <pre>
+┌───────────────────┐
+│ ← TSK-456     [⋮] │
+├───────────────────┤
+│ 🟡 Update DB      │
+│                   │
+│ Progress: 65%     │
+│ ▓▓▓▓▓▓▓░░░        │
+│                   │
+│ ☑️ Checklist 3/5  │
+│ ✅ Backup data    │
+│ ✅ Test script    │
+│ ✅ Run migration  │
+│ ☐ Verify results │
+│ ☐ Update docs    │
+│                   │
+│ ⏱️ Time Spent     │
+│ 10.5 / 16 hours  │
+│                   │
+│ [+ Log Hours]    │
+│                   │
+│ 💬 Comments (5)   │
+│ [View messages]   │
+│                   │
+│ [Update Progress] │
+│                   │
+│ [Submit Review]   │
+└───────────────────┘
+[Check items to mark done]
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📱 Mobile - Notifications</h4>
+                        <pre>
+┌───────────────────┐
+│ 🔔 Notifications  │
+│ [All▼] [Mark All] │
+├───────────────────┤
+│ ● New Assignment  │
+│ Ticket TKT-001    │
+│ 5 min ago         │
+│ ─────────────────│
+│ ● SLA Warning     │
+│ Task TSK-456      │
+│ 15 min ago        │
+│ ─────────────────│
+│ ● Comment Reply   │
+│ @John mentioned   │
+│ 1 hour ago        │
+│ ─────────────────│
+│ ○ Status Update   │
+│ TKT-002 đã giải quyết  │
+│ 2 hours ago       │
+│ ─────────────────│
+│ ○ Task Approved   │
+│ TSK-789 đã hoàn thành │
+│ 3 hours ago       │
+│ ─────────────────│
+│ [Load More...]    │
+└───────────────────┘
+[●New ○Read]
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📱 Mobile - Profile</h4>
+                        <pre>
+┌───────────────────┐
+│    [🧑‍💼 Avatar]    │
+│   John Doe        │
+│   Staff • IT Dept │
+├───────────────────┤
+│ Performance       │
+│ ┌─────┬─────┬───┐ │
+│ │ 45  │ 32  │4.8│ │
+│ │Tick │Task │⭐ │ │
+│ └─────┴─────┴───┘ │
+│                   │
+│ Menu              │
+│ ► My Tickets      │
+│ ► My Tasks        │
+│ ► Task Pool       │
+│ ► Notifications   │
+│ ► Settings        │
+│   • Profile       │
+│   • Preferences   │
+│   • Biometric 🔐  │
+│   • Language 🌐   │
+│   • Dark Mode 🌙  │
+│ ► Help & FAQ      │
+│ ► About App       │
+│ ► Logout 🚪       │
+└───────────────────┘
+v1.0.0 (Build 123)
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📊 Reports Dashboard</h4>
+                        <pre>
+┌─────────────────────────────────┐
+│ 📊 Reports & Analytics          │
+│ [Export PDF] [Export Excel]     │
+├─────────────────────────────────┤
+│ 📈 Ticket Performance           │
+│ ┌─────────────────────────────┐│
+│ │ Total Tickets: 145          ││
+│ │ Đã GQ: 120 (82.7%)       ││
+│ │ Avg Resolution Time: 4.5h   ││
+│ │ First Response Time: 25min  ││
+│ │ [View Details →]            ││
+│ └─────────────────────────────┘│
+│                                  │
+│ ⏰ SLA Compliance               │
+│ ┌─────────────────────────────┐│
+│ │ Overall: 94.2% ✅           ││
+│ │ Khẩn Cấp: 88% 🟡            ││
+│ │ Cao: 92% ✅                ││
+│ │ Trung Bình: 95% ✅              ││
+│ │ Thấp: 98% ✅                 ││
+│ │ [View Details →]            ││
+│ └─────────────────────────────┘│
+│                                  │
+│ 👥 Team Performance             │
+│ ┌─────────────────────────────┐│
+│ │ John Doe    ████████ 4.8⭐  ││
+│ │ Jane Smith  ████████ 4.7⭐  ││
+│ │ Bob Lee     ███████░ 4.5⭐  ││
+│ │ [View All Team Members →]   ││
+│ └─────────────────────────────┘│
+│                                  │
+│ 📅 Date Range: [Last 30 Days▼] │
+└─────────────────────────────────┘
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>👥 Team Management</h4>
+                        <pre>
+┌─────────────────────────────────┐
+│ 👥 Team Management    [+ Add]   │
+│ 🔍 Search... [Dept▼] [Role▼]   │
+├─────────────────────────────────┤
+│ IT Department (15 members)      │
+│ ┌─────────────────────────────┐│
+│ │ 👨‍💼 John Doe (Manager)       ││
+│ │ ✅ Hoạt Động | 8 tickets mở   ││
+│ │ Skills: Network, Hardware    ││
+│ │ [View Profile] [Edit]        ││
+│ └─────────────────────────────┘│
+│ ┌─────────────────────────────┐│
+│ │ 👩‍💻 Jane Smith (Staff)       ││
+│ │ ✅ Hoạt Động | 5 tickets mở   ││
+│ │ Skills: Software, Debugging  ││
+│ │ [View Profile] [Edit]        ││
+│ └─────────────────────────────┘│
+│                                  │
+│ Medical Equipment (8 members)   │
+│ ┌─────────────────────────────┐│
+│ │ 👨‍🔧 Bob Lee (Technician)    ││
+│ │ ✅ Hoạt Động | 3 tasks mở     ││
+│ │ Skills: Repair, Maintenance  ││
+│ │ [View Profile] [Edit]        ││
+│ └─────────────────────────────┘│
+│                                  │
+│ [View Departments] [Workload →] │
+└─────────────────────────────────┘
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>💬 Chat/Messages</h4>
+                        <pre>
+┌─────────────────────────────────┐
+│ 💬 TKT-001 Discussion           │
+│ 📎 Files (3) | 👥 Participants  │
+├─────────────────────────────────┤
+│ Today, 10:30 AM                 │
+│ ┌───────────────────────────┐  │
+│ │ 👤 Sarah Johnson           │  │
+│ │ Printer in ER not working  │  │
+│ │ Room 205                   │  │
+│ │ 📎 photo.jpg               │  │
+│ └───────────────────────────┘  │
+│                                  │
+│ 10:35 AM                        │
+│         ┌──────────────────────┐│
+│         │ John Doe      👤     ││
+│         │ I'll check it now!   ││
+│         │ ✓✓ Seen             ││
+│         └──────────────────────┘│
+│                                  │
+│ 10:45 AM                        │
+│ ┌───────────────────────────┐  │
+│ │ 👤 Sarah Johnson           │  │
+│ │ Great! It's urgent 🔴      │  │
+│ └───────────────────────────┘  │
+│                                  │
+│ 10:50 AM                        │
+│         ┌──────────────────────┐│
+│         │ @Sarah Fixed! ✅ 👤 ││
+│         │ Toner issue          ││
+│         │ Typing...            ││
+│         └──────────────────────┘│
+│                                  │
+│ ┌─────────────────────────────┐│
+│ │ Type message... 😊 📎 🎤     ││
+│ └─────────────────────────────┘│
+│                    [Send Button]│
+└─────────────────────────────────┘
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>⚙️ Settings</h4>
+                        <pre>
+┌─────────────────────────────────┐
+│ ⚙️ System Settings               │
+├──────┬──────────────────────────┤
+│      │  Account Settings        │
+│ 👤   │  ┌────────────────────┐ │
+│Profil│  │ Full Name:         │ │
+│      │  │ [John Doe]         │ │
+│ 🔔   │  │                    │ │
+│Notif │  │ Email:             │ │
+│      │  │ [john@hospital..] │ │
+│ 🌐   │  │                    │ │
+│ Lang │  │ Phone:             │ │
+│      │  │ [+84 123456789]   │ │
+│ 🔒   │  │                    │ │
+│Secur │  │ [Save Changes]     │ │
+│      │  └────────────────────┘ │
+│ 🎨   │                          │
+│Theme │  Notification Prefs     │
+│      │  ☑ Email notifications  │
+│ 📊   │  ☑ Push notifications   │
+│ SLA  │  ☑ SMS cho khẩn cấp     │
+│      │  ☐ Do Not Disturb       │
+│ 🏥   │                          │
+│ Dept │  SLA Configuration      │
+│      │  [Configure Rules →]    │
+└──────┴──────────────────────────┘
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📅 Calendar View</h4>
+                        <pre>
+┌─────────────────────────────────┐
+│ 📅 March 2026      [<] [Today] [>]│
+├─────────────────────────────────┤
+│ Mon  Tue  Wed  Thu  Fri  Sat Sun│
+│                     1   2   3    │
+│ 4    5    6    7    8   9   10  │
+│ 11   12   13   14   15  16  17  │
+│ 18   19   20   21   22  23★ 24  │
+│ 25   26   27   28   29  30  31  │
+│                                  │
+│ Today's Schedule - Mar 24       │
+│ ┌─────────────────────────────┐│
+│ │ 09:00 🔴 TKT-001 Due        ││
+│ │ 11:00 🟡 Team Meeting       ││
+│ │ 14:00 🟢 TSK-456 Review     ││
+│ │ 16:30 ⏰ SLA Check          ││
+│ └─────────────────────────────┘│
+│                                  │
+│ Upcoming Deadlines             │
+│ • Mar 25: 3 tasks due           │
+│ • Mar 27: 5 tickets due         │
+│ • Mar 30: Monthly report        │
+│                                  │
+│ [Week View] [Month View] [List] │
+└─────────────────────────────────┘
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>🔍 Advanced Search</h4>
+                        <pre>
+┌─────────────────────────────────┐
+│ 🔍 Advanced Search              │
+├─────────────────────────────────┤
+│ Keywords                        │
+│ ┌─────────────────────────────┐│
+│ │ printer                     ││
+│ └─────────────────────────────┘│
+│                                  │
+│ Type: [☑ Tickets ☑ Tasks]      │
+│                                  │
+│ Status:                         │
+│ ☑ Open  ☑ In Progress  ☐ Closed│
+│                                  │
+│ Priority:                       │
+│ ☑ Critical  ☑ High  ☐ Medium    │
+│                                  │
+│ Date Range:                     │
+│ From: [Mar 1, 2026]             │
+│ To:   [Mar 24, 2026]            │
+│                                  │
+│ Giao cho:                    │
+│ [John Doe ▼]                    │
+│                                  │
+│ Department:                     │
+│ [IT Department ▼]               │
+│                                  │
+│        [Clear] [Search]         │
+│                                  │
+│ Results: 12 items found         │
+│ ─────────────────────────────── │
+│ TKT-001: Printer in ER 🔴       │
+│ TKT-045: Printer maintenance 🟢 │
+│ TSK-123: Install new printer 🟡 │
+└─────────────────────────────────┘
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>✅ Approval Queue</h4>
+                        <pre>
+┌─────────────────────────────────┐
+│ ✅ Chờ Phê Duyệt (5)        │
+│ [Filters▼] [Sort by Date▼]     │
+├─────────────────────────────────┤
+│ ┌─────────────────────────────┐│
+│ │ TSK-456: Database Update    ││
+│ │ Submitted by: John Doe      ││
+│ │ Date: Mar 24, 14:30         ││
+│ │ Estimated: 16h completed    ││
+│ │                              ││
+│ │ ☑ All subtasks done         ││
+│ │ ☑ Code reviewed             ││
+│ │ ☑ Tests passed              ││
+│ │                              ││
+│ │ [View Details]              ││
+│ │ [✓ Approve] [✗ Reject]      ││
+│ └─────────────────────────────┘│
+│                                  │
+│ ┌─────────────────────────────┐│
+│ │ TSK-789: System Maintenance ││
+│ │ Submitted by: Jane Smith    ││
+│ │ Date: Mar 24, 11:00         ││
+│ │ Status: Awaiting approval   ││
+│ │                              ││
+│ │ [View Details]              ││
+│ │ [✓ Approve] [✗ Reject]      ││
+│ └─────────────────────────────┘│
+│                                  │
+│ History: [View Approved (45)]   │
+└─────────────────────────────────┘
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📝 Audit Logs</h4>
+                        <pre>
+┌─────────────────────────────────┐
+│ 📝 Activity & Audit Logs        │
+│ [Export] [Filter▼] [Date Range]│
+├─────────────────────────────────┤
+│ Today - Mar 24, 2026            │
+│ ─────────────────────────────── │
+│ 16:30 👤 John Doe               │
+│ ✏️ Updated TKT-001 status       │
+│ từ ĐANG XỬ LÝ thành ĐÃ GIẢI QUYẾT    │
+│                                  │
+│ 15:45 👤 Manager                │
+│ ✅ Approved TSK-456             │
+│                                  │
+│ 14:20 👤 Sarah Johnson          │
+│ 💬 Added comment to TKT-001     │
+│                                  │
+│ 12:10 👤 System                 │
+│ ⚠️ SLA warning for TKT-002      │
+│                                  │
+│ 10:30 👤 Sarah Johnson          │
+│ ➕ Created new ticket TKT-001   │
+│ Độ Ưu Tiên: KHẨN CẤP              │
+│                                  │
+│ 09:15 👤 John Doe               │
+│ 🔐 Logged in via biometric      │
+│ IP: 192.168.1.100               │
+│                                  │
+│ Yesterday - Mar 23, 2026        │
+│ ─────────────────────────────── │
+│ [Load more...]                  │
+└─────────────────────────────────┘
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📁 File Management</h4>
+                        <pre>
+┌─────────────────────────────────┐
+│ 📁 Files & Attachments          │
+│ [Upload] [New Folder] [Search]  │
+├─────────────────────────────────┤
+│ Path: / Tickets / TKT-001       │
+│                                  │
+│ ┌─ 📁 Tickets (156 files)       │
+│ │  ├─ 📁 TKT-001 (3 files)      │
+│ │  │  ├─ 📷 printer_photo.jpg   │
+│ │  │  │      2.4 MB | Mar 24    │
+│ │  │  ├─ 📄 report.pdf           │
+│ │  │  │      850 KB | Mar 24    │
+│ │  │  └─ 🎤 voice_note.mp3      │
+│ │  │         1.1 MB | Mar 24    │
+│ │  ├─ 📁 TKT-002 (2 files)      │
+│ │  └─ 📁 TKT-003 (1 file)       │
+│ │                                │
+│ └─ 📁 Tasks (89 files)           │
+│    ├─ 📁 TSK-456 (5 files)      │
+│    └─ 📁 TSK-789 (3 files)      │
+│                                  │
+│ Selected: printer_photo.jpg     │
+│ ┌─────────────────────────────┐│
+│ │ Preview  [📥 Download]       ││
+│ │ [🔗 Share] [🗑️ Delete]      ││
+│ └─────────────────────────────┘│
+│                                  │
+│ Storage: 245 MB / 10 GB used    │
+└─────────────────────────────────┘
+                        </pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-mobile-alt"></i> Màn Hình Mobile App (20-25 màn)</h2>
+                
+                <div class="screens-grid">
+                    <div class="screen-mockup">
+                        <h4>📱 Login / Biometric</h4>
+                        <pre>
+┌───────────────────┐
+│                   │
+│   🏥 Hospital     │
+│   Task Manager    │
+│                   │
+│                   │
+│      [Logo]       │
+│                   │
+│                   │
+│   Welcome Back    │
+│                   │
+│ Email/Username    │
+│ ┌───────────────┐ │
+│ │john@email.com │ │
+│ └───────────────┘ │
+│                   │
+│ Password          │
+│ ┌───────────────┐ │
+│ │●●●●●●●●●●     │ │
+│ └───────────────┘ │
+│                   │
+│ ☐ Remember Me     │
+│                   │
+│ [Login Button]    │
+│                   │
+│ ─── OR ───        │
+│                   │
+│ [👆 Biometric]    │
+│ Face ID / Touch ID│
+│                   │
+│ Forgot Password?  │
+└───────────────────┘
+v1.0.0
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📱 Mobile - Home</h4>
+                        <pre>
+┌───────────────────┐
+│ 👋 Hello, John    │
+│ IT Department     │
+├───────────────────┤
+│ Stats             │
+│ ┌───────┬───────┐ │
+│ │ 🎫12  │ 📋 8  │ │
+│ │ Open  │ Pend  │ │
+│ └───────┴───────┘ │
+│ ┌───────┬───────┐ │
+│ │ ⚠️ 3  │ ✅92% │ │
+│ │ Alert │  SLA  │ │
+│ └───────┴───────┘ │
+│                   │
+│ Quick Actions     │
+│ [➕ New Ticket]  │
+│ [🔍 Task Pool]   │
+│ [📷 Scan QR]     │
+│                   │
+│ Recent Activity   │
+│ • TKT-001 assign │
+│ • TSK-456 done ✅ │
+│ • SLA warning ⚠️  │
+│                   │
+│ [😊 Feedback]     │
+└───────────────────┘
+[🏠|🎫|📋|👤]
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📱 Tickets List</h4>
+                        <pre>
+┌───────────────────┐
+│ 🎫 My Tickets  [+]│
+│ [All▼][🔍][⚙️]    │
+├───────────────────┤
+│ ☆ Filter & Sort   │
+│ [Hide completed]  │
+├───────────────────┤
+│ 🔴 TKT-001        │
+│ Printer Issue     │
+│ 👤 Me • ⏰ 1h left│
+│ [View →]          │
+├───────────────────┤
+│ 🟡 TKT-002        │
+│ Software Update   │
+│ 👤 Jane • ⏰ 8h   │
+│ [View →]          │
+├───────────────────┤
+│ 🟢 TKT-003        │
+│ Network Config    │
+│ 👤 Bob • ⏰ 2d    │
+│ [View →]          │
+├───────────────────┤
+│ ✅ TKT-004        │
+│ Đã Giải Quyết          │
+│ Yesterday ✓       │
+│ [View →]          │
+├───────────────────┤
+│ [Load more...]    │
+└───────────────────┘
+[🏠|🎫|📋|👤]
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📱 Mobile - Ticket Detail</h4>
+                        <pre>
+┌───────────────────┐
+│ ← TKT-001     [⋮] │
+├───────────────────┤
+│ 🔴 CRITICAL       │
+│ Printer Issue     │
+│                   │
+│ 👤 Assigned:      │
+│ John Doe          │
+│                   │
+│ 🕐 Created:       │
+│ Mar 24, 10:30     │
+│                   │
+│ ⏰ SLA:           │
+│ 🟡 1h 45m left    │
+│                   │
+│ 💬 Chat (3)       │
+│ ┌───────────────┐ │
+│ │Sarah: Room   │ │
+│ │205 printer   │ │
+│ │              │ │
+│ │John: On my   │ │
+│ │way! ✓✓       │ │
+│ └───────────────┘ │
+│ [Type...]  [📎]  │
+│                   │
+│ Quick Actions:    │
+│ [📷 Photo]       │
+│ [🎤 Voice]       │
+│ [✅ Resolve]     │
+└───────────────────┘
+[Status] [Assign] [More]
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📱 Mobile - Create Ticket</h4>
+                        <pre>
+┌───────────────────┐
+│ ← New Ticket  [✓] │
+├───────────────────┤
+│ Title             │
+│ ┌───────────────┐ │
+│ │Printer broken │ │
+│ └───────────────┘ │
+│                   │
+│ Description       │
+│ ┌───────────────┐ │
+│ │The printer in │ │
+│ │ER is not...   │ │
+│ └───────────────┘ │
+│                   │
+│ Priority          │
+│ (•) Critical      │
+│ ( ) Cao          │
+│ ( ) Trung Bình        │
+│ ( ) Thấp           │
+│                   │
+│ Category          │
+│ [Technical ▼]     │
+│                   │
+│ 📎 Attachments    │
+│ ┌───────────────┐ │
+│ │ [📷 Camera]   │ │
+│ │ [🎤 Voice]    │ │
+│ │ [📁 Files]    │ │
+│ └───────────────┘ │
+│                   │
+│ [Submit Ticket]   │
+└───────────────────┘
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📱 Camera Integration</h4>
+                        <pre>
+┌───────────────────┐
+│ ← Photo      [Flash]│
+├───────────────────┤
+│                   │
+│                   │
+│   ╔═════════╗    │
+│   ║         ║    │
+│   ║ CAMERA  ║    │
+│   ║  VIEW   ║    │
+│   ║         ║    │
+│   ╚═════════╝    │
+│                   │
+│                   │
+│                   │
+│  [Grid] [HDR]    │
+│                   │
+│                   │
+│                   │
+│     ⚪ Capture    │
+│   [🖼️]    [🔄]   │
+│  Gallery Flip     │
+│                   │
+│ Tip: Hold steady  │
+│ for best quality  │
+└───────────────────┘
+[Cancel] [Use Photo]
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📱 QR Code Scanner</h4>
+                        <pre>
+┌───────────────────┐
+│ ← Scan QR Code [💡]│
+├───────────────────┤
+│                   │
+│   ┌───────────┐  │
+│   │ ░░░░░░░░░ │  │
+│   │ ░░░░░░░░░ │  │
+│   │ ░░░░░░░░░ │  │
+│   │ ░░░░░░░░░ │  │
+│   │ ░░░░░░░░░ │  │
+│   └───────────┘  │
+│                   │
+│  ┏━━━━━━━━━━━┓   │
+│  ┃  ▪ ▪ ▪    ┃   │
+│  ┃  ▪ QR ▪   ┃   │
+│  ┃  ▪ ▪ ▪    ┃   │
+│  ┗━━━━━━━━━━━┛   │
+│                   │
+│ Align QR code     │
+│ within frame      │
+│                   │
+│ Recently Scanned: │
+│ • TKT-001         │
+│ • TSK-456         │
+│                   │
+│ [Enter Code]      │
+└───────────────────┘
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📱 Voice Note Recording</h4>
+                        <pre>
+┌───────────────────┐
+│ ← Voice Note   [×]│
+├───────────────────┤
+│                   │
+│                   │
+│      🎤           │
+│                   │
+│   Recording...    │
+│                   │
+│   [░░░▓▓▓░░░]     │
+│   Waveform        │
+│                   │
+│   00:15 / 05:00   │
+│                   │
+│                   │
+│    ⏸️  ⏹️  ✅     │
+│  Pause Stop Send  │
+│                   │
+│                   │
+│ Recent Notes:     │
+│ ┌───────────────┐ │
+│ │ 🎤 Note 1     │ │
+│ │ 00:42 - Today │ │
+│ │ [▶️] [🗑️]     │ │
+│ └───────────────┘ │
+│                   │
+│ Tip: Hold button  │
+│ to record         │
+└───────────────────┘
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📱 Tasks List</h4>
+                        <pre>
+┌───────────────────┐
+│ 📋 My Tasks    [+]│
+│ [All▼][🔍][⚙️]    │
+├───────────────────┤
+│ In Progress (3)   │
+├───────────────────┤
+│ 🟡 TSK-456        │
+│ Database Update   │
+│ ▓▓▓▓▓▓▓░░░ 65%    │
+│ ⏰ Due: Mar 26    │
+├───────────────────┤
+│ 🟠 TSK-457        │
+│ Bug Fix           │
+│ ▓▓▓░░░░░░░ 30%    │
+│ ⏰ Due: Mar 25    │
+├───────────────────┤
+│ Chờ (2)       │
+├───────────────────┤
+│ 🟢 TSK-458        │
+│ Documentation     │
+│ ░░░░░░░░░░ 0%     │
+│ ⏰ Due: Mar 28    │
+├───────────────────┤
+│ Completed (15)    │
+│ [View all →]      │
+└───────────────────┘
+[🏠|🎫|📋|👤]
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📱 Mobile - Task Progress</h4>
+                        <pre>
+┌───────────────────┐
+│ ← TSK-456     [⋮] │
+├───────────────────┤
+│ 🟡 Update DB      │
+│                   │
+│ Progress: 65%     │
+│ ▓▓▓▓▓▓▓░░░        │
+│ [Update %]        │
+│                   │
+│ ☑️ Checklist 3/5  │
+│ ✅ Backup data    │
+│ ✅ Test script    │
+│ ✅ Run migration  │
+│ ☐ Verify results │
+│ ☐ Update docs    │
+│                   │
+│ ⏱️ Time Spent     │
+│ 10.5 / 16 hours  │
+│ [+ Log Hours]    │
+│                   │
+│ 📎 Files (3)      │
+│ • backup.sql      │
+│ • script.sql      │
+│ • results.pdf     │
+│                   │
+│ 💬 Comments (5)   │
+│ [View thread]     │
+│                   │
+│ [Submit Review]   │
+└───────────────────┘
+[🏠|🎫|📋|👤]
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📱 Task Pool</h4>
+                        <pre>
+┌───────────────────┐
+│ 🏊 Task Pool      │
+│ [Filter][Sort]    │
+├───────────────────┤
+│ Available Tasks   │
+│ (12 matching)     │
+├───────────────────┤
+│ 🟠 Ưu Tiên Cao  │
+│ Update Records    │
+│ ⏱️ 16h | Mar 30   │
+│ Skills: SQL, DB   │
+│ [Claim Task]      │
+├───────────────────┤
+│ 🟡 Medium         │
+│ Fix Login Bug     │
+│ ⏱️ 4h | Mar 25    │
+│ Skills: React, TS │
+│ [Claim Task]      │
+├───────────────────┤
+│ 🟢 Ưu Tiên Thấp   │
+│ Documentation     │
+│ ⏱️ 8h | Mar 28    │
+│ Skills: Writing   │
+│ [Claim Task]      │
+├───────────────────┤
+│ 🔵 Info           │
+│ Code Review       │
+│ ⏱️ 2h | Mar 25    │
+│ Skills: Any       │
+│ [Claim Task]      │
+└───────────────────┘
+[🏠|🎫|📋|👤]
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📱 Mobile - Notifications</h4>
+                        <pre>
+┌───────────────────┐
+│ 🔔 Notifications  │
+│ [All▼] [Mark All] │
+├───────────────────┤
+│ ● New Assignment  │
+│ Ticket TKT-001    │
+│ 5 min ago         │
+│ ─────────────────│
+│ ● SLA Warning     │
+│ Task TSK-456      │
+│ 15 min ago        │
+│ ─────────────────│
+│ ● Comment Reply   │
+│ @John mentioned   │
+│ 1 hour ago        │
+│ ─────────────────│
+│ ○ Status Update   │
+│ TKT-002 đã giải quyết  │
+│ 2 hours ago       │
+│ ─────────────────│
+│ ○ Task Approved   │
+│ TSK-789 đã hoàn thành │
+│ 3 hours ago       │
+│ ─────────────────│
+│ ○ Team Message    │
+│ Meeting at 2pm    │
+│ 4 hours ago       │
+│ ─────────────────│
+│ [Load More...]    │
+└───────────────────┘
+[🏠|🎫|📋|👤]
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📱 Chat/Messages</h4>
+                        <pre>
+┌───────────────────┐
+│ ← TKT-001      [i]│
+├───────────────────┤
+│ Today, 10:30 AM   │
+│ Sarah Johnson     │
+│ Printer in ER not │
+│ working. Room 205 │
+│ 📎 photo.jpg      │
+│                   │
+│         10:35 AM  │
+│       John Doe    │
+│  I'll check now!  │
+│          ✓✓ Seen │
+│                   │
+│ 10:45 AM          │
+│ Sarah Johnson     │
+│ Great! It's       │
+│ urgent 🔴         │
+│                   │
+│         10:50 AM  │
+│       John Doe    │
+│ @Sarah Fixed! ✅  │
+│  Toner issue      │
+│          ✓✓ Seen │
+│                   │
+│                   │
+│ [Type message...] │
+│ [😊][📎][🎤][📷] │
+└───────────────────┘
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📱 Team View</h4>
+                        <pre>
+┌───────────────────┐
+│ 👥 Team - IT Dept │
+│ [Search...][Filter]│
+├───────────────────┤
+│ Online (8)        │
+├───────────────────┤
+│ 🟢 John Doe       │
+│ Staff • 8 tasks   │
+│ [View Profile]    │
+├───────────────────┤
+│ 🟢 Jane Smith     │
+│ Staff • 5 tasks   │
+│ [View Profile]    │
+├───────────────────┤
+│ 🟡 Bob Lee        │
+│ Away • 3 tasks    │
+│ [View Profile]    │
+├───────────────────┤
+│ Offline (7)       │
+├───────────────────┤
+│ ⚫ Sarah Johnson  │
+│ Manager           │
+│ Last: 2 hours ago │
+├───────────────────┤
+│ Team Stats        │
+│ Active: 8/15      │
+│ Khối lượng: Trung Bình  │
+│ SLA: 94% ✅       │
+│                   │
+│ [Team Chat]       │
+└───────────────────┘
+[🏠|🎫|📋|👤]
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📱 Offline Mode</h4>
+                        <pre>
+┌───────────────────┐
+│ ⚠️ Offline Mode    │
+├───────────────────┤
+│ 📶 No Connection  │
+│                   │
+│ You're working    │
+│ offline. Changes  │
+│ will sync when    │
+│ you reconnect.    │
+│                   │
+│ ┌───────────────┐ │
+│ │ Chờ (3)   │ │
+│ │ ⏳ 2 comments │ │
+│ │ ⏳ 1 update   │ │
+│ └───────────────┘ │
+│                   │
+│ Cached Data:      │
+│ • My Tickets (12) │
+│ • My Tasks (8)    │
+│ • Recent files    │
+│                   │
+│ Available Actions:│
+│ ✅ View tickets   │
+│ ✅ View tasks     │
+│ ✅ Add comments   │
+│ ✅ Update status  │
+│ ✅ Take photos    │
+│ ❌ Send files     │
+│                   │
+│ [Try Reconnect]   │
+└───────────────────┘
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📱 Mobile - Profile</h4>
+                        <pre>
+┌───────────────────┐
+│    [🧑‍💼 Avatar]    │
+│   John Doe        │
+│   Staff • IT Dept │
+├───────────────────┤
+│ Performance       │
+│ ┌─────┬─────┬───┐ │
+│ │ 45  │ 32  │4.8│ │
+│ │Tick │Task │⭐ │ │
+│ └─────┴─────┴───┘ │
+│                   │
+│ Menu              │
+│ ► My Tickets      │
+│ ► My Tasks        │
+│ ► Task Pool       │
+│ ► Notifications   │
+│ ► Settings        │
+│   • Profile       │
+│   • Preferences   │
+│   • Biometric 🔐  │
+│   • Language 🌐   │
+│   • Dark Mode 🌙  │
+│ ► Help & FAQ      │
+│ ► About App       │
+│ ► Logout 🚪       │
+└───────────────────┘
+[🏠|🎫|📋|👤]
+v1.0.0 (Build 123)
+                        </pre>
+                    </div>
+
+                    <div class="screen-mockup">
+                        <h4>📱 Settings</h4>
+                        <pre>
+┌───────────────────┐
+│ ← Settings        │
+├───────────────────┤
+│ 👤 Account        │
+│ Name, Email, Phone│
+│ [Edit →]          │
+├───────────────────┤
+│ 🔔 Notifications  │
+│ ☑ Push enabled    │
+│ ☑ Email enabled   │
+│ ☑ SMS for urgent  │
+│ [Configure →]     │
+├───────────────────┤
+│ 🔐 Security       │
+│ ☑ Biometric: ON   │
+│ ☑ Auto-lock: 5min │
+│ [Change PIN]      │
+├───────────────────┤
+│ 🌐 Language       │
+│ Vietnamese (VI)   │
+│ [Change →]        │
+├───────────────────┤
+│ 🎨 Appearance     │
+│ Theme: Auto       │
+│ ☑ Dark mode       │
+│ [Customize →]     │
+├───────────────────┤
+│ 💾 Storage        │
+│ Cache: 245 MB     │
+│ [Clear Cache]     │
+├───────────────────┤
+│ ℹ️ About          │
+│ Version 1.0.0     │
+│ [Check Updates]   │
+└───────────────────┘
+[🏠|🎫|📋|👤]
+                        </pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technology Section -->
+        <div id="tech" class="content-section">
+            <div class="card">
+                <h2><i class="fas fa-code-branch"></i> Công Nghệ & Kiến Trúc</h2>
+
+                <h3>Ứng Dụng Mobile</h3>
+                <div class="tech-stack">
+                    <div class="tech-item">
+                        <i class="fab fa-react"></i>
+                        React Native
+                    </div>
+                    <div class="tech-item">
+                        <i class="fab fa-apple"></i>
+                        iOS
+                    </div>
+                    <div class="tech-item">
+                        <i class="fab fa-android"></i>
+                        Android
+                    </div>
+                    <div class="tech-item">
+                        <i class="fas fa-bell"></i>
+                        FCM (Ready)
+                    </div>
+                    <div class="tech-item">
+                        <i class="fas fa-fingerprint"></i>
+                        Biometrics
+                    </div>
+                    <div class="tech-item">
+                        <i class="fas fa-camera"></i>
+                        Camera API
+                    </div>
+                </div>
+
+                <h3>Backend (Mẫu BFF)</h3>
+                <div class="tech-stack">
+                    <div class="tech-item">
+                        <i class="fas fa-code"></i>
+                        C# ASP.NET Core 8
+                    </div>
+                    <div class="tech-item">
+                        <i class="fas fa-layer-group"></i>
+                        Clean Architecture
+                    </div>
+                    <div class="tech-item">
+                        <i class="fas fa-database"></i>
+                        EF Core 8
+                    </div>
+                    <div class="tech-item">
+                        <i class="fab fa-postgresql"></i>
+                        PostgreSQL
+                    </div>
+                    <div class="tech-item">
+                        <i class="fas fa-bolt"></i>
+                        FCM
+                    </div>
+                    <div class="tech-item">
+                        <i class="fas fa-comment"></i>
+                        MQTT (Ready)
+                    </div>
+                    <div class="tech-item">
+                        <i class="fas fa-memory"></i>
+                        Redis Cache
+                    </div>
+                    <div class="tech-item">
+                        <i class="fas fa-search"></i>
+                        Elasticsearch
+                    </div>
+                    <div class="tech-item">
+                        <i class="fas fa-clock"></i>
+                        Hangfire
+                    </div>
+                    <div class="tech-item">
+                        <i class="fas fa-shield-alt"></i>
+                        JWT + Identity
+                    </div>
+                    <div class="tech-item">
+                        <i class="fas fa-server"></i>
+                        Local Storage
+                    </div>
+                    <div class="tech-item">
+                        <i class="fas fa-file-alt"></i>
+                        Swagger/OpenAPI
+                    </div>
+                </div>
+
+                <h3>Sơ Đồ Kiến Trúc</h3>
+                <div class="workflow-container">
+                    <div style="padding: 30px; text-align: center;">
+                        <div style="margin-bottom: 30px;">
+                            <h4 style="color: #3b82f6; margin-bottom: 15px;">🌐 Tầng Client</h4>
+                            <div style="display: flex; gap: 20px; justify-content: center;">
+                                <div class="workflow-box start" style="min-width: 180px;">🌐 Ứng Dụng Web<br><small>React + TypeScript</small></div>
+                                <div class="workflow-box start" style="min-width: 180px;">📱 Ứng Dụng Mobile<br><small>React Native</small></div>
+                            </div>
+                        </div>
+                        <div class="workflow-arrow-down">↓</div>
+                        <div style="margin: 30px 0;">
+                            <h4 style="color: #8b5cf6; margin-bottom: 15px;">🔧 Tầng BFF</h4>
+                            <div class="workflow-box status" style="display: inline-block; min-width: 250px;">ASP.NET Core 8 BFF<br><small>Kiến Trúc Sạch</small></div>
+                        </div>
+                        <div class="workflow-arrow-down">↓</div>
+                        <div style="margin: 30px 0;">
+                            <h4 style="color: #f59e0b; margin-bottom: 15px;">📡 Hạ Tầng</h4>
+                            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                                <div class="workflow-box warning" style="min-width: 130px;">MQTT<br><small>Nhắn tin</small></div>
+                                <div class="workflow-box warning" style="min-width: 130px;">FCM<br><small>Đẩy</small></div>
+                            </div>
+                        </div>
+                        <div class="workflow-arrow-down">↓</div>
+                        <div style="margin: 30px 0;">
+                            <h4 style="color: #10b981; margin-bottom: 15px;">🗄️ Tầng Dữ Liệu</h4>
+                            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                                <div class="workflow-box success" style="min-width: 120px;">PostgreSQL<br><small>Cơ sở dữ liệu</small></div>
+                                <div class="workflow-box success" style="min-width: 120px;">Redis<br><small>Bộ nhớ cache</small></div>
+                                <div class="workflow-box success" style="min-width: 120px;">Elasticsearch<br><small>Tìm kiếm</small></div>
+                                <div class="workflow-box success" style="min-width: 120px;">Local FS<br><small>Lưu file</small></div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 30px;">
+                            <h4 style="color: #6b7280; margin-bottom: 15px;">⏰ Công Việc Nền</h4>
+                            <div class="workflow-box" style="display: inline-block; background: #f3f4f6; border: 2px solid #6b7280; min-width: 180px;">Hangfire<br><small>Jobs & Giám sát SLA</small></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-rocket"></i> Triển Khai & DevOps</h2>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h4><i class="fab fa-docker"></i> Container hóa</h4>
+                        <ul>
+                            <li>Docker & Docker Compose</li>
+                            <li>Sẵn sàng Kubernetes</li>
+                            <li>Multi-stage builds</li>
+                            <li>Kiểm tra sức khỏe</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h4><i class="fas fa-server"></i> Hạ Tầng</h4>
+                        <ul>
+                            <li>PostgreSQL Database</li>
+                            <li>Redis Cache</li>
+                            <li>MQTT Broker</li>
+                            <li>Local File Storage</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h4><i class="fas fa-code-branch"></i> CI/CD</h4>
+                        <ul>
+                            <li>GitHub Actions</li>
+                            <li>Automated Testing</li>
+                            <li>Docker Deployment</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h4><i class="fas fa-chart-line"></i> Giám Sát</h4>
+                        <ul>
+                            <li>Application Insights</li>
+                            <li>Theo dõi lỗi Sentry</li>
+                            <li>Nhật ký có cấu trúc Serilog</li>
+                            <li>Chỉ số hiệu suất</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Hệ Thống Quản Lý Công Việc Y Khoa</strong></p>
+            <p>Phiên bản 1.0.0 | Tháng 3, 2026</p>
+            <p>BUILD WITH <strong>LINM-SOFT</strong> ❤️</p>
+            <p style="margin-top: 20px; opacity: 0.8;">
+                <i class="fas fa-file-alt"></i> 
+                <a href="#" style="color: white; text-decoration: underline;">Tài Liệu</a> | 
+                <a href="#" style="color: white; text-decoration: underline;">Thiết Kế Quy Trình</a> | 
+                <a href="#" style="color: white; text-decoration: underline;">Thiết Kế Màn Hình</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Tab Navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active from all tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Activate clicked tab
+            event.target.closest('.nav-tab').classList.add('active');
+            
+            // Initialize charts if statistics section
+            if (sectionId === 'statistics') {
+                setTimeout(initCharts, 100);
+            }
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
